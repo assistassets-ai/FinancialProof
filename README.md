@@ -21,15 +21,15 @@ A browser-based financial analysis web app with AI-powered deep analyses.
 ## Screenshots
 
 ```
-┌───────────────────────────────────────────────────────────────┐
-│  📊 Chart    │  🧠 Deep Analysis    │  📋 Tasks             │
-├───────────────────────────────────────────────────────────────┤
-│                                                               │
-│  [Candlestick Chart with Indicators]                          │
-│                                                               │
-│  ─────────────────────────────────────────────────────────  │
-│  RSI: 45.2  │  Signal: NEUTRAL  │  Trend: Sideways         │
-└───────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  📊 Chart    │  🧠 Deep Analysis    │  📋 Jobs               │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  [Candlestick Chart with Indicators]                             │
+│                                                                  │
+│  ────────────────────────────────────────────────────────────  │
+│  RSI: 45.2  │  Signal: NEUTRAL  │  Trend: Sideways           │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 ## Installation
@@ -41,13 +41,13 @@ A browser-based financial analysis web app with AI-powered deep analyses.
 
 ### Setup
 
-1. **Clone the repository**
+1. **Clone repository**
    ```bash
-   git clone https://github.com/username/FinancialProof.git
+   git clone https://github.com/lukisch/FinancialProof.git
    cd FinancialProof
    ```
 
-2. **Create a virtual environment** (recommended)
+2. **Create virtual environment** (recommended)
    ```bash
    python -m venv venv
 
@@ -69,7 +69,7 @@ A browser-based financial analysis web app with AI-powered deep analyses.
    # Edit .env file and add API keys
    ```
 
-5. **Launch the app**
+5. **Launch app**
    ```bash
    streamlit run app.py
    ```
@@ -83,42 +83,42 @@ A browser-based financial analysis web app with AI-powered deep analyses.
 
 ```
 FinancialProof/
-├── app.py                    # Main application
-├── config.py                 # Configuration
-├── requirements.txt          # Dependencies
+├── app.py                   # Main application
+├── config.py                # Configuration
+├── requirements.txt         # Dependencies
 │
 ├── core/
-│   ├── database.py           # SQLite database
-│   └── data_provider.py      # yfinance wrapper
+│   ├── database.py          # SQLite database
+│   └── data_provider.py     # yfinance wrapper
 │
 ├── indicators/
-│   ├── technical.py          # Technical indicators
-│   └── signals.py            # Signal generation
+│   ├── technical.py         # Technical indicators
+│   └── signals.py           # Signal generation
 │
 ├── analysis/
-│   ├── base.py               # Abstract base class
-│   ├── registry.py           # Analysis registry
-│   ├── statistical/          # ARIMA, Monte Carlo, Mean Reversion
-│   ├── ml/                   # Random Forest, Neural Network
-│   └── nlp/                  # Sentiment, Research Agent
+│   ├── base.py              # Abstract base class
+│   ├── registry.py          # Analysis registry
+│   ├── statistical/         # ARIMA, Monte Carlo, Mean Reversion
+│   ├── ml/                  # Random Forest, Neural Network
+│   └── nlp/                 # Sentiment, Research Agent
 │
 ├── jobs/
-│   ├── manager.py            # Job management
-│   └── executor.py           # Job execution
+│   ├── manager.py           # Job management
+│   └── executor.py          # Job execution
 │
 ├── ui/
-│   ├── sidebar.py            # Sidebar component
-│   ├── chart_view.py         # Chart view
-│   ├── analysis_view.py      # Analysis tab
-│   └── job_queue.py          # Job queue view
+│   ├── sidebar.py           # Sidebar component
+│   ├── chart_view.py        # Chart view
+│   ├── analysis_view.py     # Analysis tab
+│   └── job_queue.py         # Job queue view
 │
 └── data/
-    └── financial.db          # SQLite database
+    └── financial.db         # SQLite database
 ```
 
 ## Usage
 
-### Enter a Symbol
+### Enter Symbol
 
 Enter a ticker symbol in the sidebar:
 - Stocks: `AAPL`, `MSFT`, `GOOGL`
@@ -126,16 +126,16 @@ Enter a ticker symbol in the sidebar:
 - Crypto: `BTC-USD`, `ETH-USD`
 - Indices: `^GSPC`, `^DJI`
 
-### Start an Analysis
+### Start Analysis
 
 1. Select a time period (1M - 5Y)
 2. Activate desired indicators
 3. Switch to the "Deep Analysis" tab
-4. Choose an analysis method and start the task
+4. Select an analysis method and start the job
 
 ### View Results
 
-- The "Tasks" tab shows all running and completed jobs
+- The "Jobs" tab shows all running and completed jobs
 - Click on a job for details and recommendations
 
 ## Configuration
@@ -151,8 +151,8 @@ Enter a ticker symbol in the sidebar:
 ### Settings in `config.py`
 
 ```python
-DEFAULT_TICKER = "AAPL"       # Default symbol
-CACHE_TTL_MARKET_DATA = 3600  # Cache duration (seconds)
+DEFAULT_TICKER = "AAPL"      # Default symbol
+CACHE_TTL_MARKET_DATA = 3600 # Cache duration (seconds)
 ```
 
 ## Analysis Modules
@@ -161,7 +161,7 @@ CACHE_TTL_MARKET_DATA = 3600  # Cache duration (seconds)
 |--------|----------|-------------|
 | ARIMA | Statistics | Time series forecasting |
 | Monte Carlo | Statistics | Value at Risk simulation |
-| Mean Reversion | Statistics | Return-to-mean analysis |
+| Mean Reversion | Statistics | Mean-reversion analysis |
 | Random Forest | ML | Trend classification |
 | Neural Network | ML | Pattern recognition |
 | Sentiment | NLP | News sentiment analysis |
@@ -199,7 +199,7 @@ GPL v3 - See [LICENSE](LICENSE)
 
 **This tool is for informational purposes only and does not constitute investment advice.**
 
-The analyses and signals provided are not a recommendation to buy or sell securities. Investments in financial markets involve risks. Past performance is not an indicator of future results.
+The analyses and signals provided are not recommendations to buy or sell securities. Investments in financial markets involve risks. Past performance is not an indicator of future results.
 
 ## Changelog
 
@@ -207,4 +207,4 @@ See [CHANGELOG.md](CHANGELOG.md) for all changes.
 
 ---
 
-Deutsche Version: [README.de.md](README.de.md)
+🇩🇪 [Deutsche Version](README.de.md)
