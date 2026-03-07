@@ -30,31 +30,10 @@ st.set_page_config(
 # ===== CUSTOM CSS =====
 st.markdown("""
 <style>
-    /* Dunkles Theme */
-    .stApp {
-        background-color: #0e1117;
-    }
-
-    /* Header Styling */
-    h1, h2, h3 {
-        color: #f0f2f6;
-    }
-
-    /* Sidebar Styling */
-    [data-testid="stSidebar"] {
-        background-color: #1a1a2e;
-    }
-
     /* Button Styling */
     .stButton > button {
         border-radius: 8px;
         font-weight: 500;
-    }
-
-    /* Expander Styling */
-    .streamlit-expanderHeader {
-        background-color: #1a1a2e;
-        border-radius: 8px;
     }
 
     /* Metric Styling */
@@ -70,14 +49,6 @@ st.markdown("""
     .stTabs [data-baseweb="tab"] {
         border-radius: 8px;
         padding: 8px 16px;
-    }
-
-    /* Card-ähnliche Container */
-    .analysis-card {
-        background-color: #1a1a2e;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
     }
 </style>
 """, unsafe_allow_html=True)

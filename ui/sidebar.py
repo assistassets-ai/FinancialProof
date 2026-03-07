@@ -143,6 +143,8 @@ def _render_indicator_settings() -> dict:
 def _render_settings():
     """Rendert den Einstellungen-Bereich"""
     with st.sidebar.expander(texts.SIDEBAR_SETTINGS):
+        st.caption("**Theme:** Wechsel via Menu (⋮ oben rechts) → Settings → Theme")
+        st.markdown("---")
         st.caption("API-Keys für erweiterte Funktionen")
 
         # Twitter API Key

@@ -20,17 +20,13 @@ A browser-based financial analysis web app with AI-powered deep analyses.
 
 ## Screenshots
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│  📊 Chart    │  🧠 Deep Analysis    │  📋 Jobs               │
-├──────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  [Candlestick Chart with Indicators]                             │
-│                                                                  │
-│  ────────────────────────────────────────────────────────────  │
-│  RSI: 45.2  │  Signal: NEUTRAL  │  Trend: Sideways           │
-└──────────────────────────────────────────────────────────────────┘
-```
+**Light Theme:**
+
+<img src="screenshot_light.jpg" alt="FinancialProof Light Theme" width="700">
+
+**Dark Theme:**
+
+<img src="screenshot_dark.jpg" alt="FinancialProof Dark Theme" width="700">
 
 ## Installation
 
@@ -43,7 +39,7 @@ A browser-based financial analysis web app with AI-powered deep analyses.
 
 1. **Clone repository**
    ```bash
-   git clone https://github.com/lukisch/FinancialProof.git
+   git clone https://github.com/assistassets-ai/FinancialProof.git
    cd FinancialProof
    ```
 
