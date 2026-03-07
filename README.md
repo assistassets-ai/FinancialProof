@@ -204,3 +204,29 @@ Die bereitgestellten Analysen und Signale sind keine Empfehlung zum Kauf oder Ve
 ## Changelog
 
 Siehe [CHANGELOG.md](CHANGELOG.md) für alle Änderungen.
+
+---
+
+## English
+
+A browser-based financial analysis web app with technical indicators, AI analysis, and job queue.
+
+### Features
+
+- Technical indicators (RSI, MACD, etc.)
+- AI-powered market analysis
+- Background job queue
+- Interactive charts
+
+### Installation
+
+```bash
+git clone https://github.com/lukisch/REL-PUB_FinancialProof.git
+cd REL-PUB_FinancialProof
+pip install -r requirements.txt
+python "app.py"
+```
+
+### License
+
+See [LICENSE](LICENSE) for details.
