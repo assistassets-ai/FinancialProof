@@ -22,44 +22,55 @@ from config import config
 def ttl_cache(ttl_seconds: int = 300, maxsize: int = 128):
     """
     Time-to-live Cache Decorator (Ersatz für @st.cache_data)
-    
+
     Args:
         ttl_seconds: Cache-Lebenszeit in Sekunden
         maxsize: Maximale Cache-Größe
     """
+    import threading
+
     def decorator(func: Callable):
         cache = {}
         timestamps = {}
-        
+        lock = threading.Lock()
+
         @wraps(func)
         def wrapper(*args, **kwargs):
             # Cache-Key aus Argumenten erstellen
             key = str(args) + str(sorted(kwargs.items()))
             current_time = time.time()
-            
-            # Prüfen ob im Cache und noch gültig
-            if key in cache and key in timestamps:
-                if current_time - timestamps[key] < ttl_seconds:
-                    return cache[key]
-            
-            # Alten Cache aufräumen wenn zu groß
-            if len(cache) >= maxsize:
-                # Älteste Einträge entfernen
-                oldest_keys = sorted(timestamps.keys(), key=lambda k: timestamps[k])[:maxsize//4]
-                for old_key in oldest_keys:
-                    cache.pop(old_key, None)
-                    timestamps.pop(old_key, None)
-            
-            # Neuen Wert berechnen und cachen
+
+            with lock:
+                # Prüfen ob im Cache und noch gültig
+                if key in cache and key in timestamps:
+                    if current_time - timestamps[key] < ttl_seconds:
+                        return cache[key]
+
+                # Alten Cache aufräumen wenn zu groß
+                if len(cache) >= maxsize:
+                    # Älteste Einträge entfernen
+                    oldest_keys = sorted(timestamps.keys(), key=lambda k: timestamps[k])[:maxsize//4]
+                    for old_key in oldest_keys:
+                        cache.pop(old_key, None)
+                        timestamps.pop(old_key, None)
+
+            # Neuen Wert außerhalb des Locks berechnen (vermeidet langen Lock-Hold)
             result = func(*args, **kwargs)
-            cache[key] = result
-            timestamps[key] = current_time
+
+            with lock:
+                cache[key] = result
+                timestamps[key] = current_time
             return result
-        
+
         # Cache-Kontrollfunktionen
-        wrapper.cache_clear = lambda: (cache.clear(), timestamps.clear())
+        def cache_clear():
+            with lock:
+                cache.clear()
+                timestamps.clear()
+
+        wrapper.cache_clear = cache_clear
         wrapper.cache_info = lambda: {"size": len(cache), "maxsize": maxsize, "ttl": ttl_seconds}
-        
+
         return wrapper
     return decorator
 

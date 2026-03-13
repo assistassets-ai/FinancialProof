@@ -251,7 +251,7 @@ class ResearchAgent(BaseAnalyzer):
             elif num >= 1e3:
                 return f"{num/1e3:.2f}K"
             return f"{num:.2f}"
-        except:
+        except Exception:
             return str(num)
 
     def _build_result(

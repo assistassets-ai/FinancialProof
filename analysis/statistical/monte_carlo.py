@@ -141,14 +141,14 @@ class MonteCarloAnalyzer(BaseAnalyzer):
 
         Verwendet Geometric Brownian Motion (GBM).
         """
-        np.random.seed(42)  # Für Reproduzierbarkeit
+        rng = np.random.default_rng(seed=42)  # Für Reproduzierbarkeit
 
         # Zeit-Inkrement
         dt = 1  # 1 Tag
 
         # Pfade simulieren
         # dS = S * (mu*dt + sigma*sqrt(dt)*Z)
-        random_walks = np.random.standard_normal((num_simulations, days))
+        random_walks = rng.standard_normal((num_simulations, days))
 
         # GBM Pfade
         drift = (mu - 0.5 * sigma**2) * dt
