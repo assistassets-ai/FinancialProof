@@ -30,12 +30,21 @@ def ttl_cache(ttl_seconds: int = 300, maxsize: int = 128):
     import threading
 
     def decorator(func: Callable):
+        """Apply TTL caching to a callable.
+
+        Args:
+            func: The function to wrap with caching behaviour.
+
+        Returns:
+            Wrapped function with cache_clear and cache_info attributes.
+        """
         cache = {}
         timestamps = {}
         lock = threading.Lock()
 
         @wraps(func)
         def wrapper(*args, **kwargs):
+            """Call func, returning a cached result if still within the TTL."""
             # Cache-Key aus Argumenten erstellen
             key = str(args) + str(sorted(kwargs.items()))
             current_time = time.time()
@@ -64,6 +73,7 @@ def ttl_cache(ttl_seconds: int = 300, maxsize: int = 128):
 
         # Cache-Kontrollfunktionen
         def cache_clear():
+            """Clear all cached entries and timestamps."""
             with lock:
                 cache.clear()
                 timestamps.clear()
@@ -206,7 +216,7 @@ class DataProvider:
                 current = hist['Close'].iloc[-1]
                 previous = hist['Close'].iloc[-2]
                 change = current - previous
-                change_pct = (change / previous) * 100
+                change_pct = (change / previous) * 100 if previous != 0 else 0.0
                 return (current, change, change_pct)
             elif len(hist) == 1:
                 return (hist['Close'].iloc[-1], 0, 0)

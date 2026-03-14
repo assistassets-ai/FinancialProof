@@ -54,6 +54,12 @@ class SentimentAnalyzer(BaseAnalyzer):
 
     @classmethod
     def get_parameter_schema(cls) -> Dict[str, Any]:
+        """Return JSON schema for analysis parameters.
+
+        Returns:
+            Dict containing a JSON Schema object describing all configurable
+            parameters with their types, defaults, and constraints.
+        """
         return {
             "type": "object",
             "properties": {

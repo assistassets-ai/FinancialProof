@@ -31,6 +31,15 @@ GERMAN_HINTS = [
 
 
 def is_german(text):
+    """Heuristically detect whether a string is German.
+
+    Args:
+        text: Input string to check.
+
+    Returns:
+        True if the text contains German-specific characters or common German
+        keywords, False otherwise.
+    """
     if any(ch in text for ch in "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df"):
         return True
     text_lower = text.lower()
@@ -38,6 +47,14 @@ def is_german(text):
 
 
 def find_german_strings(source_dir):
+    """Recursively scan Python files for German GUI strings.
+
+    Args:
+        source_dir: Root directory to search.
+
+    Returns:
+        Set of unique German strings found in the source files.
+    """
     german_strings = set()
     skip_dirs = {'build', 'dist', 'venv', '.venv', '__pycache__', 'releases'}
 
@@ -59,6 +76,14 @@ def find_german_strings(source_dir):
 
 
 def manage_translations(source_dir="."):
+    """Scan source directory and update translations.json with new German strings.
+
+    Reads existing translations, finds new German strings in Python files, and
+    adds missing keys with an empty English value. Prints a summary report.
+
+    Args:
+        source_dir: Root of the project to scan (default: current directory).
+    """
     trans_file = os.path.join(source_dir, TRANSLATION_FILE)
 
     if os.path.exists(trans_file):

@@ -50,6 +50,12 @@ class ARIMAAnalyzer(BaseAnalyzer):
 
     @classmethod
     def get_parameter_schema(cls) -> Dict[str, Any]:
+        """Return JSON schema for analysis parameters.
+
+        Returns:
+            Dict containing a JSON Schema object describing all configurable
+            parameters with their types, defaults, and constraints.
+        """
         return {
             "type": "object",
             "properties": {
@@ -177,12 +183,22 @@ class ARIMAAnalyzer(BaseAnalyzer):
         Verwendet exponentielles Glätten.
         """
         class SimpleForecast:
+            """Fallback forecast model using exponential smoothing."""
+
             def __init__(self, data):
                 self.data = data
                 self.alpha = 0.3  # Glättungsfaktor
                 self._best_order = (0, 0, 0)
 
             def forecast(self, steps):
+                """Generate point forecasts using exponential trend smoothing.
+
+                Args:
+                    steps: Number of future time steps to forecast.
+
+                Returns:
+                    numpy array of forecasted values.
+                """
                 # Exponentielles Glätten
                 forecast = []
                 last = self.data.iloc[-1]
@@ -196,6 +212,15 @@ class ARIMAAnalyzer(BaseAnalyzer):
                 return np.array(forecast)
 
             def get_forecast(self, steps, alpha=0.05):
+                """Generate forecasts with confidence intervals.
+
+                Args:
+                    steps: Number of future time steps to forecast.
+                    alpha: Significance level (default 0.05 = 95% CI).
+
+                Returns:
+                    ForecastResult with predicted_mean and conf_int attributes.
+                """
                 pred = self.forecast(steps)
                 # Konfidenzintervall basierend auf historischer Volatilität
                 std = self.data.pct_change().std() * self.data.iloc[-1]
@@ -207,6 +232,8 @@ class ARIMAAnalyzer(BaseAnalyzer):
                 ])
 
                 class ForecastResult:
+                    """Minimal forecast result container compatible with statsmodels API."""
+
                     def __init__(self, pred, conf):
                         self.predicted_mean = pred
                         self.conf_int = lambda: conf

@@ -89,63 +89,60 @@ class DatabaseManager:
 
     def _init_db(self):
         """Initialisiert die Datenbank mit dem Schema"""
-        schema = """
-        -- Beobachtete Assets (Watchlist)
-        CREATE TABLE IF NOT EXISTS watchlist (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            symbol TEXT UNIQUE NOT NULL,
-            name TEXT,
-            asset_type TEXT DEFAULT 'stock',
-            sector TEXT,
-            notes TEXT,
-            added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-
-        -- Portfolio-Positionen
-        CREATE TABLE IF NOT EXISTS portfolio (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            symbol TEXT NOT NULL,
-            quantity REAL,
-            avg_buy_price REAL,
-            buy_date DATE,
-            FOREIGN KEY (symbol) REFERENCES watchlist(symbol) ON DELETE CASCADE
-        );
-
-        -- Analyse-Aufträge
-        CREATE TABLE IF NOT EXISTS jobs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            symbol TEXT NOT NULL,
-            analysis_type TEXT NOT NULL,
-            parameters TEXT,
-            status TEXT DEFAULT 'pending',
-            progress INTEGER DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            started_at TIMESTAMP,
-            completed_at TIMESTAMP,
-            error_message TEXT
-        );
-
-        -- Analyse-Ergebnisse
-        CREATE TABLE IF NOT EXISTS results (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            job_id INTEGER NOT NULL,
-            summary TEXT,
-            details TEXT,
-            data TEXT,
-            signals TEXT,
-            confidence REAL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
-        );
-
-        -- Indices für Performance
-        CREATE INDEX IF NOT EXISTS idx_jobs_symbol ON jobs(symbol);
-        CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status);
-        CREATE INDEX IF NOT EXISTS idx_results_job ON results(job_id);
-        """
+        statements = [
+            # Beobachtete Assets (Watchlist)
+            """CREATE TABLE IF NOT EXISTS watchlist (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                symbol TEXT UNIQUE NOT NULL,
+                name TEXT,
+                asset_type TEXT DEFAULT 'stock',
+                sector TEXT,
+                notes TEXT,
+                added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )""",
+            # Portfolio-Positionen
+            """CREATE TABLE IF NOT EXISTS portfolio (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                symbol TEXT NOT NULL,
+                quantity REAL,
+                avg_buy_price REAL,
+                buy_date DATE,
+                FOREIGN KEY (symbol) REFERENCES watchlist(symbol) ON DELETE CASCADE
+            )""",
+            # Analyse-Aufträge
+            """CREATE TABLE IF NOT EXISTS jobs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                symbol TEXT NOT NULL,
+                analysis_type TEXT NOT NULL,
+                parameters TEXT,
+                status TEXT DEFAULT 'pending',
+                progress INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                started_at TIMESTAMP,
+                completed_at TIMESTAMP,
+                error_message TEXT
+            )""",
+            # Analyse-Ergebnisse
+            """CREATE TABLE IF NOT EXISTS results (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                job_id INTEGER NOT NULL,
+                summary TEXT,
+                details TEXT,
+                data TEXT,
+                signals TEXT,
+                confidence REAL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
+            )""",
+            # Indices für Performance
+            "CREATE INDEX IF NOT EXISTS idx_jobs_symbol ON jobs(symbol)",
+            "CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status)",
+            "CREATE INDEX IF NOT EXISTS idx_results_job ON results(job_id)",
+        ]
 
         with self.get_connection() as conn:
-            conn.executescript(schema)
+            for stmt in statements:
+                conn.execute(stmt)
 
     # ===== WATCHLIST OPERATIONEN =====
 

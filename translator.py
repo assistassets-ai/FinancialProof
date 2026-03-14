@@ -93,13 +93,31 @@ class TranslationSystem:
         return key
 
     def set_language(self, lang: str):
+        """Set the active display language.
+
+        Args:
+            lang: Language code, either 'de' (German) or 'en' (English).
+                  Invalid codes are silently ignored.
+        """
         if lang in ['de', 'en']:
             self.current_lang = lang
 
     def get_language(self) -> str:
+        """Return the currently active language code.
+
+        Returns:
+            Current language code ('de' or 'en').
+        """
         return self.current_lang
 
     def add_translation(self, key: str, de: str, en: str):
+        """Add or overwrite a translation entry and persist to disk.
+
+        Args:
+            key: Translation key (typically the German source string).
+            de: German translation text.
+            en: English translation text.
+        """
         self.translations[key] = {"de": de, "en": en}
         self._save_translations()
 
@@ -150,6 +168,11 @@ class TranslationSystem:
         return any(hint in text_lower for hint in self.german_hints)
 
     def get_missing_translations(self) -> List[str]:
+        """Return all keys that lack an English translation.
+
+        Returns:
+            List of translation keys where the English value is empty or missing.
+        """
         return [k for k, v in self.translations.items() if not v.get("en")]
 
 

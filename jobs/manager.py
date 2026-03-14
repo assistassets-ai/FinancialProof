@@ -203,6 +203,19 @@ class JobQueue:
 
     def __init__(self):
         self._running_jobs: Dict[int, Any] = {}
+        self._recover_stale_jobs()
+
+    def _recover_stale_jobs(self):
+        """
+        Markiert Jobs, die beim letzten Programmstart noch RUNNING waren,
+        als FAILED (Crash-Recovery).
+        """
+        stale_jobs = JobManager.get_running_jobs()
+        for job in stale_jobs:
+            JobManager.fail_job(
+                job.id,
+                error="Job unterbrochen: Prozess wurde unerwartet beendet (Crash-Recovery)"
+            )
 
     def enqueue(
         self,
@@ -229,8 +242,11 @@ class JobQueue:
         return stats.get('pending', 0)
 
     def is_job_running(self, job_id: int) -> bool:
-        """Prüft ob ein Job läuft"""
-        return job_id in self._running_jobs
+        """Prüft ob ein Job läuft (in-memory Cache + DB-Fallback)"""
+        if job_id in self._running_jobs:
+            return True
+        job = JobManager.get_job(job_id)
+        return job is not None and job.status == JobStatus.RUNNING
 
     def mark_complete(self, job_id: int, result: Any):
         """Markiert einen Job als abgeschlossen"""
