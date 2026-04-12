@@ -1,22 +1,46 @@
 # FinancialProof
 
-A browser-based financial analysis web app with AI-powered deep analyses.
+> ⚠️ **Keine Anlageberatung / No Financial Advice**
+>
+> FinancialProof ist ein **technisches Werkzeug** zur statistischen
+> Mustererkennung auf Finanzdaten. Es ist:
+>
+> - **Keine Anlageberatung** (§ 32 KWG, § 2 Abs. 9 WpHG)
+> - **Keine Kauf-/Verkaufsempfehlung**
+> - **Keine Prognose** künftiger Kursentwicklungen
+> - **Nicht BaFin-zugelassen**, nicht reguliert
+>
+> Die angezeigten Indikatoren sind historische statistische Muster.
+> Anlageentscheidungen bleiben eigenverantwortlich — konsultieren Sie
+> qualifizierte Fachleute (Bank, Steuerberater, Anlageberater).
+>
+> Unentgeltliche Open-Source-Schenkung. Haftung auf Vorsatz und grobe
+> Fahrlässigkeit beschränkt (§ 521 BGB). Nutzung auf eigenes Risiko.
+
+A browser-based tool for statistical pattern analysis on financial market data.
 
 ## Features
 
 - **Technical Indicators**: SMA, EMA, RSI, Bollinger Bands, MACD, Stochastic, ATR
-- **Automatic Signals**: Buy/sell signals based on technical patterns
-- **AI Analyses**:
-  - ARIMA time series forecasting
-  - Monte Carlo simulation (VaR)
+- **Indicator Calculation**: Rule-based detection of technical patterns (e.g. MA crossovers, RSI extremes) — historical, not predictive
+- **Statistical & Pattern Analyses**:
+  - ARIMA time series analysis (historical fit, no forecast claim)
+  - Monte Carlo simulation (historical Value-at-Risk estimation)
   - Mean Reversion analysis
-  - Random Forest trend prediction
-  - Neural Network pattern recognition
-  - Sentiment analysis (News)
+  - Random Forest trend classification (historical)
+  - Neural Network pattern recognition (historical)
+  - Sentiment analysis (news texts)
   - Web Research Agent
 - **Job Queue System**: Asynchronous analysis tasks with SQLite persistence
 - **Watchlist**: Portfolio overview with multiple assets
 - **German User Interface**
+
+> **Note on terminology:** Earlier versions of this project used the term
+> "buy/sell signals". This has been replaced by "technical indicators" and
+> "statistical patterns" throughout the UI and documentation, to avoid any
+> implication of investment advice (§ 32 KWG, § 2 Abs. 9 WpHG). The
+> underlying mathematical logic is unchanged; only the naming and framing
+> have been adjusted.
 
 ## Screenshots
 
@@ -75,6 +99,10 @@ A browser-based financial analysis web app with AI-powered deep analyses.
    http://localhost:8501
    ```
 
+On first launch, you will be asked to acknowledge the legal disclaimer
+(not-financial-advice acknowledgement). The app will not proceed until
+all four checkboxes are confirmed.
+
 ## Project Structure
 
 ```
@@ -89,7 +117,7 @@ FinancialProof/
 │
 ├── indicators/
 │   ├── technical.py         # Technical indicators
-│   └── signals.py           # Signal generation
+│   └── signals.py           # Pattern detection (internal module name)
 │
 ├── analysis/
 │   ├── base.py              # Abstract base class
@@ -106,7 +134,8 @@ FinancialProof/
 │   ├── sidebar.py           # Sidebar component
 │   ├── chart_view.py        # Chart view
 │   ├── analysis_view.py     # Analysis tab
-│   └── job_queue.py         # Job queue view
+│   ├── job_queue.py         # Job queue view
+│   └── disclaimer_widget.py # First-start acknowledgement
 │
 └── data/
     └── financial.db         # SQLite database
@@ -125,14 +154,15 @@ Enter a ticker symbol in the sidebar:
 ### Start Analysis
 
 1. Select a time period (1M - 5Y)
-2. Activate desired indicators
-3. Switch to the "Deep Analysis" tab
+2. Activate desired technical indicators
+3. Switch to the "Statistical Analysis" tab
 4. Select an analysis method and start the job
 
 ### View Results
 
 - The "Jobs" tab shows all running and completed jobs
-- Click on a job for details and recommendations
+- Click on a job for details and the calculated indicators
+- Results are **historical analyses**, not recommendations
 
 ## Configuration
 
@@ -155,13 +185,16 @@ CACHE_TTL_MARKET_DATA = 3600 # Cache duration (seconds)
 
 | Module | Category | Description |
 |--------|----------|-------------|
-| ARIMA | Statistics | Time series forecasting |
-| Monte Carlo | Statistics | Value at Risk simulation |
+| ARIMA | Statistics | Historical time series fit |
+| Monte Carlo | Statistics | Historical VaR simulation |
 | Mean Reversion | Statistics | Mean-reversion analysis |
-| Random Forest | ML | Trend classification |
-| Neural Network | ML | Pattern recognition |
+| Random Forest | ML | Historical trend classification |
+| Neural Network | ML | Historical pattern recognition |
 | Sentiment | NLP | News sentiment analysis |
 | Research Agent | NLP | Web research |
+
+All modules produce **descriptive, historical statistics**. None of the
+outputs are forecasts, predictions, or trading recommendations.
 
 ## Technology Stack
 
@@ -174,14 +207,12 @@ CACHE_TTL_MARKET_DATA = 3600 # Cache duration (seconds)
 
 ## Roadmap
 
-See [ROADMAP.md](ROADMAP.md) for planned features:
+See [ROADMAP.md](ROADMAP.md) for planned features.
 
-- [ ] Phase 7: Trading integration (Alpaca, CCXT)
-- [ ] Phase 8: Strategy Engine
-- [ ] Phase 9: Automated Trading
-- [ ] Phase 10: Extended Analyses
-- [ ] Phase 11: Performance & Scaling
-- [ ] Phase 12: Backtesting & Reporting
+**Note:** Any future trading-integration features (Alpaca, CCXT, automated
+order routing) are considered **out of scope** for this repository until
+the regulatory classification under KWG / WpHG / MiFID II has been
+clarified. The current repository is a pure analysis tool.
 
 ## Contributing
 
@@ -193,43 +224,68 @@ GPL v3 - See [LICENSE](LICENSE)
 
 ## Disclaimer
 
-**This tool is for informational purposes only and does not constitute investment advice.**
+**This tool is for informational and research purposes only and does not
+constitute investment advice, financial advice, or trading recommendations.**
 
-The analyses and signals provided are not recommendations to buy or sell securities. Investments in financial markets involve risks. Past performance is not an indicator of future results.
+The displayed technical indicators and statistical patterns are
+derived from historical market data. They are **not** recommendations
+to buy or sell securities, and they are **not** forecasts of future
+price movements. Past performance does not indicate future results.
+
+Consult a licensed financial advisor, bank, or tax advisor before making
+investment decisions. The authors disclaim all liability for losses
+incurred through use of this software, limited to intent and gross
+negligence (§ 521 BGB).
+
+FinancialProof is **not** authorized or regulated by BaFin or any other
+financial supervisory authority. It is **not** a financial instrument
+under § 2 WpHG and does **not** perform investment services under
+§ 1 KWG.
 
 ## Changelog
 
-Siehe [CHANGELOG.md](CHANGELOG.md) für alle Änderungen.
+See [CHANGELOG.md](CHANGELOG.md) for all changes.
 
 ---
 
-## English
+## Deutsch
 
-A browser-based financial analysis web app with technical indicators, AI analysis, and job queue.
+Ein browserbasiertes Werkzeug zur statistischen Mustererkennung auf
+Finanzmarktdaten.
 
-### Features
+### Funktionen
 
-- Technical indicators (RSI, MACD, etc.)
-- AI-powered market analysis
-- Background job queue
-- Interactive charts
+- Technische Indikatoren (RSI, MACD, Bollinger, SMA, EMA, …)
+- Indikator-Berechnung aus historischen Marktdaten (regelbasiert)
+- Statistische und Machine-Learning-Analysen (historische Auswertung)
+- Hintergrund-Job-Queue
+- Interaktive Charts
 
 ### Installation
 
 ```bash
-git clone https://github.com/lukisch/REL-PUB_FinancialProof.git
-cd REL-PUB_FinancialProof
+git clone https://github.com/assistassets-ai/FinancialProof.git
+cd FinancialProof
 pip install -r requirements.txt
-python "app.py"
+streamlit run app.py
 ```
 
-### License
+Beim ersten Start erscheint ein Haftungs-Hinweis mit vier
+Pflicht-Checkboxen, die bestätigt werden müssen, bevor die Anwendung
+genutzt werden kann.
 
-See [LICENSE](LICENSE) for details.
+### Lizenz
 
-> **Kein Rechts-/Steuer-/Anlage-Rat.** Dieses Projekt ist ein technisches Hilfswerkzeug, keine professionelle Beratung. Bei finanziellen, rechtlichen oder steuerlichen Entscheidungen konsultieren Sie qualifizierte Fachleute.
+Siehe [LICENSE](LICENSE) für Details.
+
+> **Kein Rechts-/Steuer-/Anlage-Rat.** Dieses Projekt ist ein technisches
+> Hilfswerkzeug zur historischen Musteranalyse, keine professionelle
+> Beratung. Bei finanziellen, rechtlichen oder steuerlichen Entscheidungen
+> konsultieren Sie qualifizierte Fachleute.
 >
-> **No legal/tax/investment advice.** This project is a technical tool, not professional advice. Consult qualified professionals for financial, legal, or tax decisions.
+> **No legal/tax/investment advice.** This project is a technical tool
+> for historical pattern analysis, not professional advice. Consult
+> qualified professionals for financial, legal, or tax decisions.
 
 
 ---
@@ -238,7 +294,6 @@ See [LICENSE](LICENSE) for details.
 
 Dieses Projekt ist eine **unentgeltliche Open-Source-Schenkung** im Sinne der §§ 516 ff. BGB. Die Haftung des Urhebers ist gemäß **§ 521 BGB** auf **Vorsatz und grobe Fahrlässigkeit** beschränkt. Ergänzend gelten die Haftungsausschlüsse aus GPL-3.0 / MIT / Apache-2.0 §§ 15–16 (je nach gewählter Lizenz).
 
-Nutzung auf eigenes Risiko. Keine Wartungszusage, keine Verfügbarkeitsgarantie, keine Gewähr für Fehlerfreiheit oder Eignung für einen bestimmten Zweck.
+Nutzung auf eigenes Risiko. Keine Wartungszusage, keine Verfügbarkeitsgarantie, keine Gewähr für Fehlerfreiheit oder Eignung für einen bestimmten Zweck. Insbesondere keine Gewähr für die Eignung zu Anlage- oder Handelsentscheidungen.
 
-This project is an unpaid open-source donation. Liability is limited to intent and gross negligence (§ 521 German Civil Code). Use at your own risk. No warranty, no maintenance guarantee, no fitness-for-purpose assumed.
-
+This project is an unpaid open-source donation. Liability is limited to intent and gross negligence (§ 521 German Civil Code). Use at your own risk. No warranty, no maintenance guarantee, no fitness-for-purpose assumed — in particular, no fitness for investment or trading decisions.

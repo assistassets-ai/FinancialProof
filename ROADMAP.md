@@ -1,5 +1,11 @@
 # FinancialProof - Entwicklungs-Roadmap
 
+> **Rechtlicher Hinweis:** FinancialProof ist ein technisches Werkzeug
+> zur statistischen Mustererkennung, **keine Anlageberatung** (§ 32 KWG
+> / § 2 Abs. 9 WpHG). Die unten skizzierten Trading-Phasen sind
+> **ausgesetzt**, bis die regulatorische Einordnung unter KWG / WpHG /
+> MiFID II geklärt ist. Siehe README.
+
 ## Aktueller Stand (v1.0) ✅
 
 Die Basis-Anwendung ist vollständig implementiert:
@@ -7,15 +13,16 @@ Die Basis-Anwendung ist vollständig implementiert:
 - ✅ Browserbasierte Streamlit Web-App
 - ✅ Watchlist mit Portfolio-Übersicht
 - ✅ Technische Indikatoren (SMA, EMA, RSI, Bollinger, MACD)
-- ✅ Automatische Kauf-/Verkaufssignale
+- ✅ Automatische Erkennung bullischer/bärischer Muster (historisch, deskriptiv)
 - ✅ 7 Analyse-Module (ARIMA, Monte Carlo, Mean Reversion, Random Forest, Neural Network, Sentiment, Research Agent)
 - ✅ Job-Queue System mit SQLite-Persistenz
 - ✅ Regelbasierte automatische Methodenauswahl
 - ✅ Deutsche Benutzeroberfläche
+- ✅ Erststart-Acknowledgement (§ 32 KWG / § 2 Abs. 9 WpHG)
 
 ---
 
-## Phase 7: Trading-Anbindung 🔜
+## Phase 7: Trading-Anbindung ⏸️ AUSGESETZT (regulatorisch)
 
 ### 7.0 Konfiguration erweitern
 **Update `config.py`:**

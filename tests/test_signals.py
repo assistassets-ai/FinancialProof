@@ -103,7 +103,8 @@ class TestFormatSignal:
             confidence=0.8
         )
         result = format_signal_for_display(signal)
-        assert result["type"] == "Kaufen"
+        # Neutrales Label statt "Kaufen" (Rechtsaudit § 32 KWG)
+        assert result["type"] == "Bullisches Muster"
         assert result["strength"] == "Stark"
         assert result["confidence"] == "80%"
         assert result["price"] == "150.50"
@@ -119,5 +120,6 @@ class TestFormatSignal:
             confidence=0.65
         )
         result = format_signal_for_display(signal)
-        assert result["type"] == "Verkaufen"
+        # Neutrales Label statt "Verkaufen" (Rechtsaudit § 32 KWG)
+        assert result["type"] == "Bärisches Muster"
         assert result["strength"] == "Mittel"

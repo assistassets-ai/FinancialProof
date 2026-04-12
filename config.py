@@ -125,7 +125,8 @@ class UIText:
     """Deutsche Beschriftungen für die Benutzeroberfläche"""
 
     # Allgemein
-    APP_TITLE = "FinancialProof - Finanz-Analyst"
+    APP_TITLE = "FinancialProof - Statistische Marktanalyse"
+    APP_SUBTITLE = "Historische Mustererkennung – keine Anlageberatung"
 
     # Sidebar
     SIDEBAR_TITLE = "Markt-Auswahl"
@@ -148,8 +149,8 @@ class UIText:
     }
 
     # Tabs
-    TAB_CHART = "Chart & Technik"
-    TAB_ANALYSIS = "Tiefen-Analyse"
+    TAB_CHART = "Chart & technische Indikatoren"
+    TAB_ANALYSIS = "Statistische Analyse"
     TAB_JOBS = "Aufträge"
 
     # Indikatoren
@@ -175,10 +176,13 @@ class UIText:
     JOB_COMPLETED = "Abgeschlossen"
     JOB_FAILED = "Fehlgeschlagen"
 
-    # Signale
-    SIGNAL_BUY = "Kaufsignal"
-    SIGNAL_SELL = "Verkaufssignal"
-    SIGNAL_HOLD = "Halten"
+    # Indikator-Labels (intern weiterhin "Signal"-Klassen, aber UI neutral)
+    # Rechtlicher Hintergrund: Vermeidung der Suggestion einer Anlageempfehlung
+    # (§ 32 KWG, § 2 Abs. 9 WpHG). Die zugrundeliegende Logik bleibt identisch,
+    # es wird lediglich die Benennung neutralisiert.
+    SIGNAL_BUY = "Bullisches Muster"
+    SIGNAL_SELL = "Bärisches Muster"
+    SIGNAL_HOLD = "Neutral"
 
     # Meldungen
     MSG_NO_DATA = "Keine Daten gefunden. Bitte Symbol prüfen."
@@ -192,6 +196,70 @@ class UIText:
     API_YOUTUBE = "YouTube API Key"
     API_SAVE = "Speichern"
     API_LATER = "Später"
+
+    # Disclaimer (Erststart-Acknowledgement, § 32 KWG / § 2 Abs. 9 WpHG)
+    DISCLAIMER_VERSION = "1.0"
+    DISCLAIMER_TITLE = "Wichtiger Haftungshinweis — keine Anlageberatung"
+    DISCLAIMER_INTRO = (
+        "FinancialProof ist ein technisches Werkzeug zur statistischen "
+        "Mustererkennung auf historischen Finanzdaten. "
+        "Bevor Sie die Anwendung nutzen können, müssen Sie die vier "
+        "folgenden Punkte bestätigen."
+    )
+    DISCLAIMER_BODY = (
+        "FinancialProof ist:\n"
+        "\n"
+        "• KEINE Anlageberatung im Sinne von § 32 KWG oder § 2 Abs. 9 WpHG.\n"
+        "• KEINE Kauf- oder Verkaufsempfehlung für Wertpapiere, Kryptowerte "
+        "oder andere Finanzinstrumente.\n"
+        "• KEINE Prognose künftiger Kurs- oder Marktentwicklungen.\n"
+        "• NICHT BaFin-zugelassen und nicht durch eine Aufsichtsbehörde "
+        "reguliert.\n"
+        "\n"
+        "Alle angezeigten Indikatoren, Muster, Statistiken und "
+        "Analyseergebnisse beschreiben HISTORISCHE Eigenschaften der "
+        "eingespielten Marktdaten. Aus ihnen lassen sich keine gesicherten "
+        "Aussagen über zukünftige Entwicklungen ableiten. Vergangene "
+        "Wertentwicklungen sind kein verlässlicher Indikator für zukünftige "
+        "Ergebnisse.\n"
+        "\n"
+        "Anlageentscheidungen liegen ausschließlich in Ihrer Verantwortung. "
+        "Konsultieren Sie vor jeder Anlageentscheidung qualifizierte "
+        "Fachleute (Bank, Steuerberater, zugelassener Anlageberater).\n"
+        "\n"
+        "Dieses Projekt ist eine unentgeltliche Open-Source-Schenkung "
+        "(§§ 516 ff. BGB). Die Haftung des Urhebers ist gemäß § 521 BGB "
+        "auf Vorsatz und grobe Fahrlässigkeit beschränkt. Nutzung auf "
+        "eigenes Risiko."
+    )
+    DISCLAIMER_CHECK_NO_ADVICE = (
+        "Ich verstehe: Dieses Tool ist **keine Anlageberatung** und "
+        "**keine Empfehlung zum Kauf/Verkauf** von Wertpapieren."
+    )
+    DISCLAIMER_CHECK_HISTORICAL = (
+        "Ich verstehe: Die angezeigten Indikatoren sind **historische "
+        "statistische Muster**, keine Prognosen."
+    )
+    DISCLAIMER_CHECK_OWN_RESPONSIBILITY = (
+        "Ich treffe Anlageentscheidungen **auf eigene Verantwortung** nach "
+        "Rücksprache mit qualifizierten Fachleuten (Bank, Steuerberater, "
+        "Anlageberater)."
+    )
+    DISCLAIMER_CHECK_OWN_RISK = (
+        "Ich nutze das Tool **auf eigenes Risiko** (Haftung auf Vorsatz "
+        "und grobe Fahrlässigkeit beschränkt, § 521 BGB)."
+    )
+    DISCLAIMER_BTN_ACCEPT = "Akzeptieren und fortfahren"
+    DISCLAIMER_BTN_REJECT = "Ablehnen"
+    DISCLAIMER_INFO_BUTTONS = (
+        "Alle vier Kästchen müssen bestätigt werden, bevor der "
+        "Akzeptieren-Button aktiviert wird. Ein Klick auf Ablehnen "
+        "beendet die Anwendung."
+    )
+    DISCLAIMER_REJECTED = (
+        "Sie haben den Haftungshinweis abgelehnt. FinancialProof wird "
+        "nicht gestartet. Sie können den Browser-Tab nun schließen."
+    )
 
 
 # Singleton für einfachen Import

@@ -7,10 +7,30 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### Rechtliche Korrekturen (Rechtsaudit Stufe 2, § 32 KWG / § 2 Abs. 9 WpHG)
+- **Terminologie neutralisiert:** UI-Labels „Kauf-/Verkaufssignal" durch
+  „bullisches/bärisches Muster" ersetzt. Interne Code-Identifier
+  (`SignalType.BUY/SELL`, `SignalGenerator`) bleiben aus
+  Rückwärtskompatibilitätsgründen erhalten. Docstrings klargestellt:
+  rein deskriptive historische Muster, keine Anlageberatung.
+- **README:** Prominentes „Keine Anlageberatung / No Financial Advice"-Banner
+  direkt unter dem Titel. Marketing-Sprache („AI-powered deep analyses",
+  „automatic buy/sell signals") durch neutrale Formulierungen ersetzt
+  („Statistical pattern analyses", „Indicator calculation",
+  „historical pattern recognition"). Hinweis auf die Terminologie-Änderung.
+- **Erststart-Acknowledgement:** Neues Streamlit-Modul
+  `ui/disclaimer_widget.py` blockiert die Haupt-UI bis der Nutzer vier
+  Pflicht-Checkboxen bestätigt hat: keine Anlageberatung, historische
+  Muster, Eigenverantwortung, eigenes Risiko (§ 521 BGB). Persistenz
+  per SHA-256-Hash des Disclaimer-Texts (`data/.disclaimer_acceptance.json`)
+  — bei Textänderung wird erneut bestätigt. `st.stop()` bei Ablehnung.
+- Tests entsprechend angepasst (keine Funktionsänderung der
+  Analyse-Logik).
+
 ### Geplant
-- Trading-Anbindung (Alpaca, CCXT)
+- Automatisierte Trading-Anbindung: **out of scope**, bis regulatorische
+  Einordnung unter KWG/WpHG/MiFID II geklärt ist.
 - Strategy Engine mit Regelwerk
-- Automatisiertes Trading
 - Backtesting-Engine
 - Multi-User Support
 

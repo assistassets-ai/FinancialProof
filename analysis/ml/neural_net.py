@@ -342,9 +342,10 @@ class NeuralNetAnalyzer(BaseAnalyzer):
             recommendation = "hold"
 
         summary = (
-            f"Deep Learning Analyse ({model_type}): "
-            f"Muster deuten auf {direction}en Kurs "
-            f"(Konfidenz: {confidence*100:.1f}%). "
+            f"Deep-Learning-Musteranalyse ({model_type}): "
+            f"Modell ordnet die jüngsten Features der Klasse "
+            f"\"{direction}\" zu (Modell-Konfidenz: {confidence*100:.1f}%). "
+            f"Kein Handelssignal, keine Prognose, keine Empfehlung."
         )
 
         if used_deep_learning:
@@ -381,7 +382,10 @@ class NeuralNetAnalyzer(BaseAnalyzer):
             signals=[{
                 'type': 'buy' if prediction == 1 else 'sell',
                 'indicator': model_type,
-                'description': f'Muster-Erkennung: {direction} erwartet',
+                'description': (
+                    f'Muster-Klassifikation: Klasse "{direction}" '
+                    f'(keine Prognose, keine Empfehlung)'
+                ),
                 'confidence': confidence
             }],
             recommendation=recommendation,

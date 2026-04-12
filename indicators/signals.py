@@ -1,6 +1,21 @@
 """
-FinancialProof - Signal-Generierung
-Automatische Kauf-/Verkaufssignale basierend auf technischen Indikatoren
+FinancialProof - Indikator-Berechnung (Pattern Detection).
+
+Regelbasierte Erkennung technischer Muster aus historischen Marktdaten.
+Die Funktionen hier produzieren rein deskriptive Statistiken zu
+vergangenen Preisbewegungen (z.B. MA-Crossover, RSI-Extrema,
+Bollinger-Band-Berührungen, MACD-Kreuzungen, Kerzenmuster).
+
+Diese Muster sind:
+  * KEINE Anlageberatung (§ 32 KWG / § 2 Abs. 9 WpHG)
+  * KEINE Kauf- oder Verkaufsempfehlungen
+  * KEINE Prognosen künftiger Kurse
+
+Die internen Klassen-/Enum-Namen ``Signal``, ``SignalType.BUY`` /
+``SignalType.SELL`` sind historisch gewachsene Code-Identifier und
+werden aus Kompatibilitätsgründen beibehalten; in der Nutzeroberfläche
+werden sie jedoch als „bullisches Muster" bzw. „bärisches Muster"
+beschriftet.
 """
 import pandas as pd
 import numpy as np
@@ -13,14 +28,14 @@ from indicators.technical import TechnicalIndicators
 
 
 class SignalType(str, Enum):
-    """Signaltypen"""
-    BUY = "buy"
-    SELL = "sell"
-    HOLD = "hold"
+    """Musterklassen (interner Code-Identifier, kein Anlage-Urteil)."""
+    BUY = "buy"    # bullisches Muster
+    SELL = "sell"  # bärisches Muster
+    HOLD = "hold"  # neutrales Muster
 
 
 class SignalStrength(str, Enum):
-    """Signalstärke"""
+    """Stärke eines erkannten Musters."""
     STRONG = "strong"
     MODERATE = "moderate"
     WEAK = "weak"
@@ -28,7 +43,12 @@ class SignalStrength(str, Enum):
 
 @dataclass
 class Signal:
-    """Ein einzelnes Trading-Signal"""
+    """Ein einzelnes erkanntes technisches Muster.
+
+    Kein Trading-Signal im Sinne einer Kauf-/Verkaufsempfehlung,
+    sondern eine deskriptive Klassifikation einer historischen
+    Preisbewegung (MA-Crossover, RSI-Extremum, Kerzenmuster etc.).
+    """
     date: datetime
     signal_type: SignalType
     strength: SignalStrength
@@ -40,20 +60,26 @@ class Signal:
 
 
 class SignalGenerator:
-    """Generiert Trading-Signale aus verschiedenen Indikatoren"""
+    """Erkennt technische Muster aus historischen Indikator-Zeitreihen.
+
+    Erzeugt deskriptive Klassifikationen (bullisch / bärisch / neutral)
+    vergangener Preisbewegungen. Keine Anlageberatung, keine Prognose.
+    """
 
     def __init__(self):
         self.signals: List[Signal] = []
 
     def generate_all_signals(self, df: pd.DataFrame) -> List[Signal]:
         """
-        Generiert alle Signale für einen DataFrame.
+        Erkennt alle technischen Muster im DataFrame.
 
         Args:
             df: DataFrame mit OHLCV und berechneten Indikatoren
 
         Returns:
-            Liste von Signal-Objekten, sortiert nach Datum
+            Liste von Mustern (``Signal``-Objekten), sortiert nach Datum.
+            Die Bezeichnung "Signal" ist historisch; die Objekte
+            beschreiben rein deskriptiv erkannte Muster.
         """
         self.signals = []
 
@@ -74,16 +100,21 @@ class SignalGenerator:
         return self.signals
 
     def get_latest_signal(self, df: pd.DataFrame) -> Optional[Signal]:
-        """Gibt das aktuellste Signal zurück"""
+        """Gibt das zuletzt erkannte Muster zurück."""
         signals = self.generate_all_signals(df)
         return signals[0] if signals else None
 
     def get_signal_summary(self, df: pd.DataFrame) -> Dict:
         """
-        Erstellt eine Zusammenfassung aller aktuellen Signale.
+        Erstellt eine Zusammenfassung der zuletzt erkannten Muster.
+
+        Die Aggregation ``overall_signal`` ist rein deskriptiv
+        (Häufigkeitsvergleich bullisch vs. bärisch in den letzten
+        Tagen) und stellt KEINE Kauf-/Verkaufsempfehlung dar.
 
         Returns:
-            Dict mit 'overall_signal', 'buy_count', 'sell_count', 'signals'
+            Dict mit 'overall_signal', 'buy_count', 'sell_count',
+            'recent_signals'
         """
         signals = self.generate_all_signals(df)
 
@@ -121,9 +152,9 @@ class SignalGenerator:
 
     def _ma_crossover_signals(self, df: pd.DataFrame):
         """
-        MA Crossover Signale:
-        - Golden Cross (SMA20 kreuzt SMA50 nach oben) -> Kaufen
-        - Death Cross (SMA20 kreuzt SMA50 nach unten) -> Verkaufen
+        MA-Crossover-Muster:
+        - Golden Cross (SMA20 kreuzt SMA50 nach oben) -> bullisch
+        - Death Cross (SMA20 kreuzt SMA50 nach unten) -> bärisch
         """
         if 'sma_20' not in df.columns or 'sma_50' not in df.columns:
             return
@@ -163,10 +194,10 @@ class SignalGenerator:
 
     def _rsi_signals(self, df: pd.DataFrame):
         """
-        RSI Signale:
-        - RSI < 30 (Überverkauft) -> Kaufen
-        - RSI > 70 (Überkauft) -> Verkaufen
-        - Divergenzen erkennen
+        RSI-Muster:
+        - RSI < 30 (überverkauft) -> bullisches Muster
+        - RSI > 70 (überkauft)    -> bärisches Muster
+        - Divergenzen werden separat behandelt
         """
         if 'rsi' not in df.columns:
             return
@@ -207,10 +238,10 @@ class SignalGenerator:
 
     def _bollinger_signals(self, df: pd.DataFrame):
         """
-        Bollinger Band Signale:
-        - Kurs berührt unteres Band -> Kaufen
-        - Kurs berührt oberes Band -> Verkaufen
-        - Squeeze-Ausbrüche erkennen
+        Bollinger-Band-Muster:
+        - Kurs berührt unteres Band -> bullisches Muster
+        - Kurs berührt oberes Band  -> bärisches Muster
+        - Squeeze-Ausbrüche werden separat gekennzeichnet
         """
         if 'bb_lower' not in df.columns:
             return
@@ -286,9 +317,9 @@ class SignalGenerator:
 
     def _macd_signals(self, df: pd.DataFrame):
         """
-        MACD Signale:
-        - MACD kreuzt Signal-Linie nach oben -> Kaufen
-        - MACD kreuzt Signal-Linie nach unten -> Verkaufen
+        MACD-Muster:
+        - MACD kreuzt Signal-Linie nach oben  -> bullisches Muster
+        - MACD kreuzt Signal-Linie nach unten -> bärisches Muster
         """
         if 'macd' not in df.columns or 'macd_signal' not in df.columns:
             return
@@ -334,9 +365,9 @@ class SignalGenerator:
 
     def _price_action_signals(self, df: pd.DataFrame):
         """
-        Preis-Aktions-Signale:
-        - Wichtige Kerzenmuster erkennen
-        - Support/Resistance Durchbrüche
+        Preis-Aktions-Muster:
+        - Kerzenmuster (Engulfing etc.)
+        - Support/Resistance-Durchbrüche
         """
         # Bullish Engulfing
         bullish_engulfing = (
@@ -377,10 +408,15 @@ class SignalGenerator:
             ))
 
 
-# ===== SIGNAL-FORMATTER =====
+# ===== FORMATTER FÜR UI-ANZEIGE =====
 
 def format_signal_for_display(signal: Signal) -> Dict:
-    """Formatiert ein Signal für die Anzeige in der UI"""
+    """Formatiert ein erkanntes Muster für die UI.
+
+    Die UI-Labels sind bewusst neutral gewählt (bullisch / bärisch /
+    neutral) und nicht als Kauf-/Verkaufsempfehlung formuliert —
+    siehe Docstring oben (§ 32 KWG, § 2 Abs. 9 WpHG).
+    """
     emoji_map = {
         SignalType.BUY: "🟢",
         SignalType.SELL: "🔴",
@@ -393,9 +429,15 @@ def format_signal_for_display(signal: Signal) -> Dict:
         SignalStrength.WEAK: "Schwach"
     }
 
+    type_label_map = {
+        SignalType.BUY: "Bullisches Muster",
+        SignalType.SELL: "Bärisches Muster",
+        SignalType.HOLD: "Neutral",
+    }
+
     return {
         'emoji': emoji_map.get(signal.signal_type, "⚪"),
-        'type': "Kaufen" if signal.signal_type == SignalType.BUY else "Verkaufen" if signal.signal_type == SignalType.SELL else "Halten",
+        'type': type_label_map.get(signal.signal_type, "Neutral"),
         'strength': strength_map.get(signal.strength, ""),
         'indicator': signal.indicator,
         'description': signal.description,

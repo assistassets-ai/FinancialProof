@@ -16,15 +16,23 @@ from ui.sidebar import render_sidebar
 from ui.chart_view import render_chart_view
 from ui.analysis_view import render_analysis_view
 from ui.job_queue import render_job_queue
+from ui.disclaimer_widget import ensure_acknowledged
 
 
 # ===== PAGE CONFIGURATION =====
+# Muss VOR jedem anderen Streamlit-Aufruf erfolgen.
 st.set_page_config(
     page_title=texts.APP_TITLE,
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# ===== ERSTSTART-ACKNOWLEDGEMENT (§ 32 KWG / § 2 Abs. 9 WpHG) =====
+# Blockiert die App, bis der Nutzer vier Pflicht-Checkboxen bestätigt hat.
+# Persistiert via SHA-256-Hash des Disclaimer-Texts. Bei Textänderung wird
+# erneut bestätigt. Ruft intern st.stop(), wenn nicht akzeptiert.
+ensure_acknowledged()
 
 
 # ===== CUSTOM CSS =====

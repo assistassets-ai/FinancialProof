@@ -1,6 +1,7 @@
 """
 FinancialProof - Chart View UI Komponente
-Kursverlauf mit technischen Indikatoren und Signalen
+Kursverlauf mit technischen Indikatoren und erkannten Mustern
+(keine Anlageempfehlung; siehe Disclaimer in der App)
 """
 import streamlit as st
 import plotly.graph_objects as go
@@ -181,7 +182,7 @@ def _render_main_chart(
                         size=12,
                         color='#26a69a'
                     ),
-                    name='Kauf',
+                    name='Bullisches Muster',
                     hovertext=signal.description,
                     showlegend=False
                 ),
@@ -200,7 +201,7 @@ def _render_main_chart(
                         size=12,
                         color='#ef5350'
                     ),
-                    name='Verkauf',
+                    name='Bärisches Muster',
                     hovertext=signal.description,
                     showlegend=False
                 ),
@@ -294,27 +295,31 @@ def _render_main_chart(
 
 
 def _render_signal_summary(signal_summary: dict):
-    """Rendert die Signal-Zusammenfassung"""
-    st.subheader("Signal-Übersicht")
+    """Rendert die Muster-Übersicht (deskriptiv, keine Empfehlung)."""
+    st.subheader("Muster-Übersicht")
+    st.caption(
+        "Rein deskriptive Zusammenfassung historischer Muster — "
+        "keine Kauf-/Verkaufsempfehlung, keine Prognose."
+    )
 
     col1, col2, col3 = st.columns(3)
 
     overall = signal_summary.get('overall_signal')
     if overall:
         if overall.value == 'buy':
-            col1.success(f"🟢 Gesamt: KAUFEN")
+            col1.success("🟢 Tendenz: überwiegend bullische Muster")
         elif overall.value == 'sell':
-            col1.error(f"🔴 Gesamt: VERKAUFEN")
+            col1.error("🔴 Tendenz: überwiegend bärische Muster")
         else:
-            col1.info(f"🟡 Gesamt: HALTEN")
+            col1.info("🟡 Tendenz: gemischt / neutral")
 
-    col2.metric("Kauf-Signale", signal_summary.get('buy_count', 0))
-    col3.metric("Verkauf-Signale", signal_summary.get('sell_count', 0))
+    col2.metric("Bullische Muster", signal_summary.get('buy_count', 0))
+    col3.metric("Bärische Muster", signal_summary.get('sell_count', 0))
 
-    # Letzte Signale anzeigen
+    # Letzte erkannte Muster anzeigen
     recent = signal_summary.get('recent_signals', [])
     if recent:
-        with st.expander("Letzte Signale", expanded=False):
+        with st.expander("Zuletzt erkannte Muster", expanded=False):
             for signal in recent[:5]:
                 formatted = format_signal_for_display(signal)
                 st.markdown(
