@@ -15,7 +15,7 @@ numpy>=1.24.0
 plotly>=5.18.0
 
 # ===== Statistische Analyse =====
-statsmodels>=0.14.0
+statsmodels>=0.14.6
 scipy>=1.11.0
 arch>=6.2.0
 
