@@ -7,6 +7,17 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### Qualität und Repository-Hygiene
+- Zentrales Logging mit Console- und Rotating-File-Handler ergänzt.
+- Fehlerpfade in DataProvider, ARIMA und Sentiment-Analyse von `print()`
+  auf Logger umgestellt.
+- Testabdeckung für Analyse-Kernlogik, Job-Executor, Logging und UI-Helfer
+  erweitert.
+- `env.example`, README-Konfiguration und Screenshot-Pfade auf die aktuelle
+  Repository-Struktur gebracht.
+- `.gitignore` um lokale Secret-Dateien, Test-Locks, Release-Artefakte und
+  interne Steuerdateien erweitert.
+
 ### Rechtliche Korrekturen (Rechtsaudit Stufe 2, § 32 KWG / § 2 Abs. 9 WpHG)
 - **Terminologie neutralisiert:** UI-Labels „Kauf-/Verkaufssignal" durch
   „bullisches/bärisches Muster" ersetzt. Interne Code-Identifier
@@ -63,10 +74,10 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Candlestick-Muster (Hammer, Engulfing, Doji)
 
 #### Analyse-Module
-- **ARIMA**: Zeitreihen-Prognose mit statsmodels
+- **ARIMA**: Historischer Zeitreihen-Fit mit statsmodels
 - **Monte Carlo**: Value at Risk Simulation
 - **Mean Reversion**: Rückkehr-zum-Mittelwert Analyse
-- **Random Forest**: ML-basierte Trendvorhersage
+- **Random Forest**: ML-basierte historische Trendklassifikation
 - **Neural Network**: Deep Learning Pattern Recognition
 - **Sentiment**: News-Stimmungsanalyse mit NLP
 - **Research Agent**: Web-Recherche Agent
@@ -114,4 +125,4 @@ Bei Datenbank-Schema-Änderungen wird ein Migrations-Skript bereitgestellt.
 
 - [Roadmap](ROADMAP.md)
 - [Contributing](CONTRIBUTING.md)
-- [GitHub Issues](https://github.com/username/FinancialProof/issues)
+- [GitHub Issues](https://github.com/assistassets-ai/FinancialProof/issues)

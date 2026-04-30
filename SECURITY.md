@@ -1,5 +1,17 @@
 # Security Policy
 
+## Sicherheitsrichtlinie (Deutsch)
+
+Melde Sicherheitslücken bitte ausschließlich über GitHubs private
+Vulnerability-Reporting-Funktion:
+
+1. Öffne den **Security**-Tab dieses Repositorys
+2. Wähle **Report a vulnerability**
+3. Beschreibe Auswirkung, Reproduktion und betroffene Version
+
+Bitte keine öffentlichen Issues für Sicherheitslücken erstellen und keine
+echten API-Keys, `.env`-Dateien, Datenbanken oder Logdateien anhängen.
+
 ## Supported Versions
 
 | Version | Supported          |
@@ -16,9 +28,8 @@ If you discover a security vulnerability, please report it via GitHub's private 
 
 **Please do not open public issues for security vulnerabilities.**
 
-We will respond within 48 hours and work with you to understand and address the issue.
+We will triage vulnerability reports and work with reporters to understand and address confirmed issues.
 
 ## Security Updates
 
 Security updates will be released as soon as possible after a vulnerability is confirmed. Updates will be documented in the release notes.
-

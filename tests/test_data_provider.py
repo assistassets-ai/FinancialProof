@@ -44,13 +44,15 @@ class TestGetMarketData:
             result = DataProvider.get_market_data("INVALID_TICKER_XYZ")
         assert result is None
 
-    def test_returns_none_on_exception(self):
+    def test_returns_none_on_exception(self, caplog):
         """get_market_data gibt None zurueck bei einer Exception von yfinance."""
         with patch("yfinance.download", side_effect=Exception("Network error")):
             from core.data_provider import DataProvider
             DataProvider.get_market_data.cache_clear()
-            result = DataProvider.get_market_data("AAPL")
+            with caplog.at_level("WARNING"):
+                result = DataProvider.get_market_data("AAPL")
         assert result is None
+        assert "Fehler beim Laden der Daten fuer AAPL" in caplog.text
 
     def test_required_columns_present(self, sample_df):
         """get_market_data gibt DataFrame mit allen OHLCV-Spalten zurueck."""

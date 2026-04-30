@@ -5,7 +5,7 @@ title FinancialProof - Starten...
 echo.
 echo  ╔═══════════════════════════════════════════════════════════╗
 echo  ║                   FINANCIALPROOF                          ║
-echo  ║           Marktanalyse und Prognose-Tool                  ║
+echo  ║           Historische Markt- und Musteranalyse            ║
 echo  ╚═══════════════════════════════════════════════════════════╝
 echo.
 
@@ -57,13 +57,13 @@ if errorlevel 1 (
 
 REM Prüfen ob .env existiert
 if not exist ".env" (
-    if exist ".env.example" (
+    if exist "env.example" (
         echo [WARNUNG] Keine .env Datei gefunden.
-        echo           Kopiere .env.example nach .env und passe die Werte an.
+        echo           Kopiere env.example nach .env und passe die Werte an.
         echo.
-        copy .env.example .env >nul
-        echo [INFO] .env wurde aus .env.example erstellt.
-        echo        Bitte API-Keys in .env eintragen!
+        copy env.example .env >nul
+        echo [INFO] .env wurde aus env.example erstellt.
+        echo        API-Keys werden in der App lokal gespeichert.
         echo.
     )
 )

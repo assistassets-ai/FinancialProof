@@ -4,19 +4,23 @@ Wrapper für yfinance mit Caching und Fehlerbehandlung
 
 Migriert von Streamlit: 2026-01-25
 - @st.cache_data durch TTL-aware Cache-Decorator ersetzt
-- Keine GUI-Abhängigkeiten mehr (BACH PORT_004)
+- Keine GUI-Abhängigkeiten mehr
 """
+import logging
+import sys
+import time
+from functools import wraps
+from pathlib import Path
+from typing import Optional, Dict, List, Any, Tuple, Callable
+
 import yfinance as yf
 import pandas as pd
 from datetime import datetime
-from typing import Optional, Dict, List, Any, Tuple, Callable
-from functools import wraps
-import time
-import sys
-from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import config
+
+logger = logging.getLogger(__name__)
 
 
 def ttl_cache(ttl_seconds: int = 300, maxsize: int = 128):
@@ -154,7 +158,7 @@ class DataProvider:
             return df
 
         except Exception as e:
-            print(f"Fehler beim Laden der Daten für {ticker}: {e}")
+            logger.warning("Fehler beim Laden der Daten fuer %s: %s", ticker, e)
             return None
 
     @staticmethod
@@ -265,7 +269,7 @@ class DataProvider:
                     result[tickers[0]] = data.dropna()
 
         except Exception as e:
-            print(f"Fehler beim Laden mehrerer Ticker: {e}")
+            logger.warning("Fehler beim Laden mehrerer Ticker %s: %s", tickers, e)
 
         return result
 

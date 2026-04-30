@@ -33,6 +33,7 @@ A browser-based tool for statistical pattern analysis on financial market data.
   - Web Research Agent
 - **Job Queue System**: Asynchronous analysis tasks with SQLite persistence
 - **Watchlist**: Portfolio overview with multiple assets
+- **Operational Logging**: Rotating local log file for runtime diagnostics
 - **German User Interface**
 
 > **Note on terminology:** Earlier versions of this project used the term
@@ -46,11 +47,11 @@ A browser-based tool for statistical pattern analysis on financial market data.
 
 **Light Theme:**
 
-<img src="screenshot_light.jpg" alt="FinancialProof Light Theme" width="700">
+<img src="README/screenshots/screenshot_light.jpg" alt="FinancialProof Light Theme" width="700">
 
 **Dark Theme:**
 
-<img src="screenshot_dark.jpg" alt="FinancialProof Dark Theme" width="700">
+<img src="README/screenshots/screenshot_dark.jpg" alt="FinancialProof Dark Theme" width="700">
 
 ## Installation
 
@@ -83,10 +84,10 @@ A browser-based tool for statistical pattern analysis on financial market data.
    pip install -r requirements.txt
    ```
 
-4. **Configure environment variables** (optional)
+4. **Configure local environment** (optional)
    ```bash
-   cp .env.example .env
-   # Edit .env file and add API keys
+   cp env.example .env
+   # Optional: adjust FINANCIALPROOF_LOG_LEVEL
    ```
 
 5. **Launch app**
@@ -138,7 +139,7 @@ FinancialProof/
 │   └── disclaimer_widget.py # First-start acknowledgement
 │
 └── data/
-    └── financial.db         # SQLite database
+    └── financial.db         # Generated SQLite database (not committed)
 ```
 
 ## Usage
@@ -166,13 +167,19 @@ Enter a ticker symbol in the sidebar:
 
 ## Configuration
 
-### Environment Variables
+### Local Configuration
+
+The sample file [`env.example`](env.example) contains empty, non-secret
+defaults only and is loaded through `python-dotenv` when copied to `.env`.
+Do not commit `.env`, `data/.key`, `data/.secrets`,
+`data/.disclaimer_acceptance.json`, logs, or local databases.
+
+API keys for optional Twitter/X and YouTube integrations are entered through
+the Streamlit sidebar and stored locally in `data/.secrets`.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `OPENAI_API_KEY` | OpenAI API key for Research Agent | - |
-| `TWITTER_BEARER_TOKEN` | Twitter API for Sentiment | - |
-| `YOUTUBE_API_KEY` | YouTube API for video analysis | - |
+| `FINANCIALPROOF_LOG_LEVEL` | Python logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`) | `INFO` |
 
 ### Settings in `config.py`
 
@@ -204,6 +211,7 @@ outputs are forecasts, predictions, or trading recommendations.
 - **ML**: scikit-learn, TensorFlow (optional)
 - **NLP**: transformers, TextBlob
 - **Database**: SQLite
+- **Logging**: Python logging with rotating file handler
 
 ## Roadmap
 

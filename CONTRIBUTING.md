@@ -28,7 +28,7 @@ Dieses Projekt folgt einem Code of Conduct. Durch die Teilnahme erklärst du dic
 ### Bug Reports
 
 1. Prüfe, ob der Bug bereits gemeldet wurde
-2. Erstelle ein [Issue](https://github.com/username/FinancialProof/issues/new) mit:
+2. Erstelle ein [Issue](https://github.com/assistassets-ai/FinancialProof/issues/new) mit:
    - Klare Beschreibung des Problems
    - Schritte zur Reproduktion
    - Erwartetes vs. tatsächliches Verhalten
@@ -60,7 +60,7 @@ Dieses Projekt folgt einem Code of Conduct. Durch die Teilnahme erklärst du dic
 
 ```bash
 # Repository klonen
-git clone https://github.com/username/FinancialProof.git
+git clone https://github.com/assistassets-ai/FinancialProof.git
 cd FinancialProof
 
 # Virtuelle Umgebung erstellen
@@ -70,7 +70,7 @@ venv\Scripts\activate     # Windows
 
 # Dependencies installieren
 pip install -r requirements.txt
-pip install -r requirements-dev.txt  # Entwickler-Tools
+pip install pytest pytest-cov black flake8 mypy
 ```
 
 ### Entwickler-Dependencies
@@ -184,7 +184,7 @@ Docs: README mit Installation erweitert
 1. Automatische Checks (CI) müssen bestanden sein
 2. Mindestens ein Maintainer muss approven
 3. Alle Kommentare müssen adressiert sein
-4. Branch muss aktuell mit `main` sein
+4. Branch muss aktuell mit `master` sein
 
 ### Nach dem Merge
 
@@ -259,5 +259,8 @@ def test_analyze_empty_data(analyzer):
 
 - Erstelle ein Issue mit dem Label `question`
 - Kontaktiere die Maintainer
+
+Bitte keine echten API-Keys, `.env`-Dateien, Datenbanken oder lokale
+Analyseergebnisse in Issues, Pull Requests oder Commits hochladen.
 
 Vielen Dank für deinen Beitrag!

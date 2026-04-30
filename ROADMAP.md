@@ -25,16 +25,9 @@ Die Basis-Anwendung ist vollständig implementiert:
 ## Phase 7: Trading-Anbindung ⏸️ AUSGESETZT (regulatorisch)
 
 ### 7.0 Konfiguration erweitern
-**Update `config.py`:**
-```python
-class Config:
-    # ... bestehende Config ...
-
-    # TRADING API (Alpaca Paper Trading)
-    API_KEY = os.getenv("ALPACA_API_KEY", "")
-    API_SECRET = os.getenv("ALPACA_API_SECRET", "")
-    API_BASE_URL = "https://paper-api.alpaca.markets"  # Paper URL!
-```
+Keine aktiven Broker- oder Trading-API-Konfigurationen im Repository
+pflegen. Solche Variablen bleiben ausgesetzt, bis die regulatorische
+Einordnung geklärt ist.
 
 ### 7.1 Broker-Integration
 **Ziel:** Verbindung zu echten Trading-Konten herstellen
@@ -531,17 +524,17 @@ backtesting/
 ## Priorisierte Nächste Schritte
 
 ### Kurzfristig (Nächste Version)
-1. **Paper Trading mit Alpaca** - Risikofrei testen
-2. **Strategy Engine Basis** - Einfache Wenn-Dann Regeln
-3. **Trading-Dashboard UI** - Konto & Positionen anzeigen
+1. **Error Handling härten** - verbleibende Module auf klare Fehlerpfade und Logging prüfen
+2. **API Rate Limiting** - externe Datenquellen kontrolliert und nachvollziehbar abfragen
+3. **Dokumentation ergänzen** - API-/CLI-nahe Beispiele und Betriebshinweise ausbauen
+4. **Trading-/Broker-Funktionen ausgesetzt lassen** - erst nach regulatorischer Klärung
 
 ### Mittelfristig
-4. **Automatisierte Empfehlungen** - KI-Signale als Benachrichtigungen
-5. **Erweiterte Regeln** - Stop-Loss, Take-Profit
-6. **Twitter/YouTube Sentiment** - Mehr Datenquellen
+5. **Twitter/YouTube Sentiment** - Mehr Datenquellen ohne Anlageempfehlungs-Framing
+6. **Backtesting als reine historische Auswertung** - keine Live-Order-Funktion
+7. **Barrierefreiheit und Mehrsprachigkeit** - UI-Texte und README weiter schärfen
 
 ### Langfristig
-7. **Reinforcement Learning** - Selbstlernende Strategien
 8. **Multi-User & Cloud** - Für mehrere Nutzer
 9. **Mobile App** - React Native oder Flutter
 
@@ -549,9 +542,9 @@ backtesting/
 
 ## Technische Schulden & Verbesserungen
 
-- [ ] Unit Tests für alle Module
+- [x] Analyse-, Job-, Logging- und UI-Helfer-Tests erweitert
 - [ ] Error Handling verbessern
-- [ ] Logging-System einführen
+- [x] Logging-System einführen
 - [ ] API Rate Limiting
 - [ ] Dokumentation (Docstrings, README)
 
@@ -560,8 +553,8 @@ backtesting/
 ## Ressourcen & Links
 
 ### APIs
-- [Alpaca Markets](https://alpaca.markets/) - Paper & Live Trading
-- [CCXT](https://github.com/ccxt/ccxt) - Krypto-Börsen
+- [Alpaca Markets](https://alpaca.markets/) - nur als ausgesetzte Referenz, keine aktuelle Integration
+- [CCXT](https://github.com/ccxt/ccxt) - nur als ausgesetzte Referenz, keine aktuelle Integration
 - [yfinance](https://github.com/ranaroussi/yfinance) - Marktdaten
 
 ### Bibliotheken für Backtesting
@@ -580,15 +573,15 @@ backtesting/
 - Deutsche UI
 
 ### v1.1.0 (Geplant)
-- Paper Trading Integration
-- Basis Strategy Engine
-- Trading Dashboard
+- Hardening, Logging und Dokumentationsausbau
+- API Rate Limiting
+- Erweiterte historische Auswertungen ohne Broker-Integration
 
 ### v1.2.0 (Geplant)
-- Automatisierte Empfehlungen
-- Erweiterte Regeln
-- Twitter Sentiment
+- Backtesting als reine historische Simulation
+- Twitter/YouTube Sentiment
+- Mehrsprachige Dokumentation
 
 ---
 
-*Letzte Aktualisierung: Januar 2026*
+*Letzte Aktualisierung: April 2026*

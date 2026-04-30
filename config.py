@@ -9,22 +9,37 @@ from dataclasses import dataclass, field
 from cryptography.fernet import Fernet
 import json
 
+try:
+    from dotenv import load_dotenv
+except ImportError:  # pragma: no cover - optional dependency fallback
+    load_dotenv = None
+
+
+BASE_DIR = Path(__file__).parent
+
+if load_dotenv is not None:
+    load_dotenv(BASE_DIR / ".env")
+
 
 @dataclass
 class Config:
     """Zentrale Konfigurationsklasse"""
 
     # Pfade
-    BASE_DIR: Path = field(default_factory=lambda: Path(__file__).parent)
+    BASE_DIR: Path = field(default_factory=lambda: BASE_DIR)
     DATA_DIR: Path = field(init=False)
     DB_PATH: Path = field(init=False)
     SECRETS_PATH: Path = field(init=False)
+    LOG_FILE: Path = field(init=False)
 
     # App Settings
     APP_NAME: str = "FinancialProof"
     APP_VERSION: str = "1.0.0"
     DEFAULT_TICKER: str = "AAPL"
     DEFAULT_PERIOD: str = "1y"
+    LOG_LEVEL: str = field(default_factory=lambda: os.getenv("FINANCIALPROOF_LOG_LEVEL", "INFO").upper())
+    LOG_MAX_BYTES: int = 1_048_576
+    LOG_BACKUP_COUNT: int = 3
 
     # Chart Settings
     CHART_THEME: str = "plotly_dark"
@@ -45,6 +60,7 @@ class Config:
         self.DATA_DIR = self.BASE_DIR / "data"
         self.DB_PATH = self.DATA_DIR / "financial.db"
         self.SECRETS_PATH = self.DATA_DIR / ".secrets"
+        self.LOG_FILE = self.DATA_DIR / "financialproof.log"
         self._ensure_directories()
 
     def _ensure_directories(self):

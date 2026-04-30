@@ -21,6 +21,7 @@ class TestConfig:
         cfg = Config()
         assert cfg.DATA_DIR == cfg.BASE_DIR / "data"
         assert cfg.DB_PATH == cfg.DATA_DIR / "financial.db"
+        assert cfg.LOG_FILE == cfg.DATA_DIR / "financialproof.log"
 
     def test_cache_ttl_values(self):
         cfg = Config()
@@ -31,6 +32,13 @@ class TestConfig:
     def test_default_sma_periods(self):
         cfg = Config()
         assert cfg.DEFAULT_SMA_PERIODS == [20, 50, 200]
+
+    def test_log_level_can_be_overridden_by_environment(self, monkeypatch):
+        monkeypatch.setenv("FINANCIALPROOF_LOG_LEVEL", "warning")
+
+        cfg = Config()
+
+        assert cfg.LOG_LEVEL == "WARNING"
 
 
 class TestUIText:

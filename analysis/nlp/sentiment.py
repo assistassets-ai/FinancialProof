@@ -2,17 +2,21 @@
 FinancialProof - Sentiment Analyse
 NLP-basierte Stimmungsanalyse von News und Social Media
 """
-import pandas as pd
-import numpy as np
+import logging
+import re
 from datetime import datetime
 from typing import Dict, Any, List, Optional
-import re
+
+import pandas as pd
+import numpy as np
 
 from analysis.base import (
     BaseAnalyzer, AnalysisResult, AnalysisParameters,
     AnalysisCategory, AnalysisTimeframe
 )
 from analysis.registry import AnalysisRegistry
+
+logger = logging.getLogger(__name__)
 
 
 @AnalysisRegistry.register
@@ -123,6 +127,7 @@ class SentimentAnalyzer(BaseAnalyzer):
             return result
 
         except Exception as e:
+            logger.exception("Sentiment-Analyse fuer %s fehlgeschlagen", symbol)
             return self.create_empty_result(self.name, symbol, str(e))
 
     def _fetch_news(self, symbol: str, limit: int) -> List[Dict]:
@@ -148,7 +153,7 @@ class SentimentAnalyzer(BaseAnalyzer):
             return articles
 
         except Exception as e:
-            print(f"News fetch error: {e}")
+            logger.warning("News-Abruf fuer %s fehlgeschlagen: %s", symbol, e)
             return []
 
     def _analyze_articles(self, articles: List[Dict]) -> List[Dict]:

@@ -6,7 +6,11 @@ Aufgabenliste im [TODO.md Format](https://github.com/todomd/todo.md) - kompatibe
 
 ## Backlog
 
-### Phase 7: Trading-Anbindung
+> Hinweis: Trading- und Broker-Anbindungen sind regulatorisch ausgesetzt,
+> bis KWG/WpHG/MiFID-II-Einordnung geklärt ist. Bis dahin bleibt
+> FinancialProof ein reines Analysewerkzeug.
+
+### Phase 7: Trading-Anbindung (ausgesetzt)
 - [ ] Alpaca Paper Trading Integration ~5d #feature @dev
 - [ ] TradingBot Klasse implementieren ~2d #core
 - [ ] Broker-Abstraktionsschicht ~2d #architecture
@@ -28,7 +32,7 @@ Aufgabenliste im [TODO.md Format](https://github.com/todomd/todo.md) - kompatibe
 - [ ] Strategie-Konfigurator UI ~2d #ui
 - [ ] Asset-Typ spezifische Regeln ~1d #feature
 
-### Phase 9: Automatisiertes Trading
+### Phase 9: Automatisiertes Trading (ausgesetzt)
 - [ ] Auto-Trade Workflow implementieren ~3d #feature
 - [ ] Automatisierungs-Level System ~1d #feature
 - [ ] Kill Switch für Notfälle ~1d #security
@@ -102,17 +106,24 @@ _Keine Aufgaben in Review_
 - [x] ROADMAP.md erstellen #docs
 - [x] LICENSE hinzufügen #docs
 - [x] .gitignore konfigurieren #devops
-- [x] .env.example erstellen #devops
+- [x] env.example erstellen #devops
+
+### Qualität & Tests
+- [x] Analyse-Kernlogik (Base/Registry/MethodSelector) mit Unit-Tests abgesichert #testing
+- [x] Job-/Executor-Logik (Manager, Queue, Executor) mit Unit-Tests abgesichert #testing
+- [x] Test-Suite von optionalen Abhängigkeiten entkoppelt (yfinance/cryptography) #testing
+- [x] Disclaimer-Persistenz und UI-Helfer (Formatierung, Cleanup-Retention) mit Unit-Tests abgesichert #testing
+- [x] Streamlit-Interaktionspfade für Sidebar, Chart-View und Analyse-Trigger mit Tests abgesichert #testing
 
 ---
 
 ## Technische Schulden
 
-- [ ] Unit Tests für alle Module schreiben ~5d #testing
+- [x] Interaktions-/E2E-Tests für verbleibende Streamlit-Views und Integrationspfade schreiben ~3d #testing
 - [ ] Error Handling verbessern ~2d #quality
-- [ ] Logging-System einführen ~1d #quality
+- [x] Logging-System einführen ~1d #quality
 - [ ] API Rate Limiting implementieren ~1d #quality
-- [ ] Docstrings vervollständigen ~2d #docs
+- [x] Docstrings vervollständigen ~2d #docs
 - [ ] Type Hints überall hinzufügen ~2d #quality
 
 ---

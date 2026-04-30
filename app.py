@@ -11,6 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from config import texts
+from core.logging_utils import configure_logging
 from core.data_provider import DataProvider
 from ui.sidebar import render_sidebar
 from ui.chart_view import render_chart_view
@@ -18,12 +19,16 @@ from ui.analysis_view import render_analysis_view
 from ui.job_queue import render_job_queue
 from ui.disclaimer_widget import ensure_acknowledged
 
+configure_logging()
+
+APP_ICON_PATH = Path(__file__).parent / "FinancialProof.ico"
+PAGE_ICON = str(APP_ICON_PATH) if APP_ICON_PATH.exists() else "📈"
 
 # ===== PAGE CONFIGURATION =====
 # Muss VOR jedem anderen Streamlit-Aufruf erfolgen.
 st.set_page_config(
     page_title=texts.APP_TITLE,
-    page_icon="📈",
+    page_icon=PAGE_ICON,
     layout="wide",
     initial_sidebar_state="expanded"
 )

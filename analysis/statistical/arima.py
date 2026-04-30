@@ -2,11 +2,13 @@
 FinancialProof - ARIMA Zeitreihenanalyse
 Prognosen basierend auf AutoRegressive Integrated Moving Average
 """
-import pandas as pd
-import numpy as np
+import logging
+import warnings
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Tuple
-import warnings
+
+import pandas as pd
+import numpy as np
 
 # Unterdrücke statsmodels Warnungen
 warnings.filterwarnings('ignore', category=UserWarning)
@@ -17,6 +19,8 @@ from analysis.base import (
     AnalysisCategory, AnalysisTimeframe
 )
 from analysis.registry import AnalysisRegistry
+
+logger = logging.getLogger(__name__)
 
 
 @AnalysisRegistry.register
@@ -124,6 +128,7 @@ class ARIMAAnalyzer(BaseAnalyzer):
             return result
 
         except Exception as e:
+            logger.exception("ARIMA-Analyse fuer %s fehlgeschlagen", symbol)
             return self.create_empty_result(self.name, symbol, str(e))
 
     def _fit_arima(self, data: pd.Series) -> Any:
@@ -174,7 +179,7 @@ class ARIMAAnalyzer(BaseAnalyzer):
             # Fallback ohne statsmodels
             return self._simple_forecast_model(data)
         except Exception as e:
-            print(f"ARIMA Fit Error: {e}")
+            logger.warning("ARIMA-Fit fehlgeschlagen: %s", e)
             return None
 
     def _simple_forecast_model(self, data: pd.Series):
@@ -259,7 +264,7 @@ class ARIMAAnalyzer(BaseAnalyzer):
             return np.array(forecast), np.array(conf_int)
 
         except Exception as e:
-            print(f"Forecast error: {e}")
+            logger.warning("ARIMA-Prognose-Fallback aktiviert: %s", e)
             # Fallback: Lineare Extrapolation
             last_price = model.data.iloc[-1] if hasattr(model, 'data') else 100
             trend = 0.001  # Minimaler Aufwärtstrend
