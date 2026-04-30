@@ -2,6 +2,7 @@
 FinancialProof - Mean Reversion Analyse
 Identifiziert Rückkehr-Potenzial zum historischen Mittelwert
 """
+import logging
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -13,6 +14,9 @@ from analysis.base import (
     AnalysisCategory, AnalysisTimeframe
 )
 from analysis.registry import AnalysisRegistry
+
+
+logger = logging.getLogger(__name__)
 
 
 @AnalysisRegistry.register
@@ -107,6 +111,7 @@ class MeanReversionAnalyzer(BaseAnalyzer):
             return result
 
         except Exception as e:
+            logger.exception("Mean-Reversion-Analyse fuer %s fehlgeschlagen", symbol)
             return self.create_empty_result(self.name, symbol, str(e))
 
     def _calculate_metrics(self, prices: pd.Series, lookback: int) -> Dict:
@@ -159,7 +164,8 @@ class MeanReversionAnalyzer(BaseAnalyzer):
             ratio = var_first / var_second if var_second > 0 else 1
             is_stable = 0.5 < ratio < 2.0
             return is_stable, 0.1 if is_stable else 0.5
-        except Exception:
+        except Exception as e:
+            logger.warning("Stationaritaetstest fehlgeschlagen: %s", e)
             return False, 1.0
 
     def _calculate_half_life(self, prices: pd.Series) -> float:
@@ -196,7 +202,8 @@ class MeanReversionAnalyzer(BaseAnalyzer):
 
             return max(1, min(half_life, 365))  # Clamp zwischen 1 Tag und 1 Jahr
 
-        except Exception:
+        except Exception as e:
+            logger.warning("Half-Life-Berechnung fehlgeschlagen: %s", e)
             return 30  # Default: 30 Tage
 
     def _build_result(

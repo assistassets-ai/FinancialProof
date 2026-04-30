@@ -173,6 +173,11 @@ exports/
 
 # Internal planning files
 PLAN.txt
+Plan.txt
+TASK.md
+TASK.txt
+NOTIZ.md
+NOTIZ.txt
 
 # Private / Archive
 _archive/
@@ -190,6 +195,3 @@ tmpclaude-*
 
 # Claude Code local settings
 .claude/
-
-# GitHub Workflow (manuell hinzufuegen - OAuth Token hat keinen workflow scope)
-.github/workflows/

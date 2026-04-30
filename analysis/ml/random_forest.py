@@ -2,6 +2,7 @@
 FinancialProof - Random Forest Trend-Klassifikation
 Machine Learning Modell zur Vorhersage der Kursrichtung
 """
+import logging
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -12,6 +13,9 @@ from analysis.base import (
     AnalysisCategory, AnalysisTimeframe
 )
 from analysis.registry import AnalysisRegistry
+
+
+logger = logging.getLogger(__name__)
 
 
 @AnalysisRegistry.register
@@ -120,11 +124,13 @@ class RandomForestAnalyzer(BaseAnalyzer):
             return result
 
         except ImportError as e:
+            logger.warning("Random-Forest-Abhaengigkeit fuer %s fehlt: %s", symbol, e)
             return self.create_empty_result(
                 self.name, symbol,
                 f"scikit-learn nicht installiert: {e}"
             )
         except Exception as e:
+            logger.exception("Random-Forest-Analyse fuer %s fehlgeschlagen", symbol)
             return self.create_empty_result(self.name, symbol, str(e))
 
     def _prepare_features(

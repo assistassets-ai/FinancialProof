@@ -11,6 +11,14 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Zentrales Logging mit Console- und Rotating-File-Handler ergänzt.
 - Fehlerpfade in DataProvider, ARIMA und Sentiment-Analyse von `print()`
   auf Logger umgestellt.
+- Fehlerpfade in Random Forest, Neural Network, Monte Carlo und Mean Reversion
+  protokolliert und mit Regressionstests abgesichert.
+- Community-Dateien aktualisiert: Code of Conduct ohne öffentliche
+  E-Mail-Adresse und Test-Template mit neutraler Terminologie.
+- CI-Workflow wieder versionierbar gemacht und auf `master`/`main`-Branches
+  sowie echte Testfehler ausgerichtet.
+- TESTLOG und interne Indikator-Kommentare auf neutrale Muster-/Indikator-
+  Terminologie aktualisiert.
 - Testabdeckung für Analyse-Kernlogik, Job-Executor, Logging und UI-Helfer
   erweitert.
 - `env.example`, README-Konfiguration und Screenshot-Pfade auf die aktuelle

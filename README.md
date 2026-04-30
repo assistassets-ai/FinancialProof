@@ -104,6 +104,24 @@ On first launch, you will be asked to acknowledge the legal disclaimer
 (not-financial-advice acknowledgement). The app will not proceed until
 all four checkboxes are confirmed.
 
+## Development and Tests
+
+Run the local test suite before submitting changes:
+
+```bash
+python -m pytest tests -q
+```
+
+Current repository status:
+
+- 105 unit and regression tests cover analysis modules, job execution,
+  logging, disclaimer persistence and Streamlit helper flows.
+- Analyzer failure paths return error results and write diagnostic log entries
+  instead of failing silently.
+- Local runtime files are excluded from Git: `.env`, local databases,
+  `.secrets`, disclaimer acknowledgements, logs, caches, release artifacts and
+  internal task/test-lock files.
+
 ## Project Structure
 
 ```
@@ -300,7 +318,7 @@ Siehe [LICENSE](LICENSE) für Details.
 
 ## Haftung / Liability
 
-Dieses Projekt ist eine **unentgeltliche Open-Source-Schenkung** im Sinne der §§ 516 ff. BGB. Die Haftung des Urhebers ist gemäß **§ 521 BGB** auf **Vorsatz und grobe Fahrlässigkeit** beschränkt. Ergänzend gelten die Haftungsausschlüsse aus GPL-3.0 / MIT / Apache-2.0 §§ 15–16 (je nach gewählter Lizenz).
+Dieses Projekt ist eine **unentgeltliche Open-Source-Schenkung** im Sinne der §§ 516 ff. BGB. Die Haftung des Urhebers ist gemäß **§ 521 BGB** auf **Vorsatz und grobe Fahrlässigkeit** beschränkt. Ergänzend gelten die Haftungsausschlüsse aus GPL-3.0, wie in der [LICENSE](LICENSE) dokumentiert.
 
 Nutzung auf eigenes Risiko. Keine Wartungszusage, keine Verfügbarkeitsgarantie, keine Gewähr für Fehlerfreiheit oder Eignung für einen bestimmten Zweck. Insbesondere keine Gewähr für die Eignung zu Anlage- oder Handelsentscheidungen.
 

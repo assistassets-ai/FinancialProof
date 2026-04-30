@@ -16,8 +16,7 @@ TEST-XXX _(wird vom Maintainer vergeben)_
 
 ## Testbereich
 - [ ] Core (Datenbank, Data Provider)
-- [ ] Indicators (Technische Indikatoren)
-- [ ] Signals (Kauf-/Verkaufssignale)
+- [ ] Indicators (technische Indikatoren und historische Muster)
 - [ ] Analysis (KI-Module)
 - [ ] Jobs (Job-Queue System)
 - [ ] UI (Benutzeroberfläche)
@@ -45,7 +44,7 @@ Falls spezifische Testdaten benötigt werden:
 - Andere Parameter: ...
 
 ## Abhängigkeiten
-- [ ] Benötigt API-Keys (welche?)
+- [ ] Benötigt optionale API-Keys (welche?)
 - [ ] Benötigt spezielle Libraries
 - [ ] Benötigt vorherige Tests (TEST-XXX)
 

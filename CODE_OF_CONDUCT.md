@@ -4,30 +4,35 @@
 
 ### Unser Versprechen
 
-Wir als Mitglieder, Beitragende und Leitende verpflichten uns, die Teilnahme an unserer
-Community zu einer belaetigungsfreien Erfahrung fuer alle zu machen, unabhaengig von
-Alter, Koerpergroesse, sichtbarer oder unsichtbarer Behinderung, ethnischer Zugehoerigkeit,
-Geschlechtsmerkmalen, Geschlechtsidentitaet und -ausdruck, Erfahrungsgrad, Bildung,
-sozio-oekonomischem Status, Nationalitaet, persoenlichem Aussehen, Herkunft, Religion
-oder sexueller Identitaet und Orientierung.
+Wir als Mitglieder, Beitragende und Projektverantwortliche verpflichten uns,
+die Teilnahme an unserer Community zu einer belästigungsfreien Erfahrung für
+alle zu machen, unabhängig von Alter, Körpergröße, sichtbarer oder
+unsichtbarer Behinderung, ethnischer Zugehörigkeit, Geschlechtsmerkmalen,
+Geschlechtsidentität und -ausdruck, Erfahrungsgrad, Bildung,
+sozioökonomischem Status, Nationalität, persönlichem Aussehen, Herkunft,
+Religion oder sexueller Identität und Orientierung.
 
 ### Unsere Standards
 
-Beispiele fuer Verhalten, das zu einem positiven Umfeld beitraegt:
+Beispiele für Verhalten, das zu einem positiven Umfeld beiträgt:
 - Verwendung einladender und inklusiver Sprache
 - Respektvoller Umgang mit unterschiedlichen Standpunkten und Erfahrungen
-- Konstruktive Kritik hoeflich annehmen
-- Fokus auf das Beste fuer die Community
+- Konstruktive Kritik höflich annehmen
+- Fokus auf das Beste für die Community
 
 Inakzeptables Verhalten umfasst:
-- Trolling, beleidigende Kommentare und persoenliche oder politische Angriffe
-- Oeffentliche oder private Belaestigung
-- Veroeffentlichung privater Informationen anderer ohne ausdrueckliche Erlaubnis
+- Trolling, beleidigende Kommentare und persönliche oder politische Angriffe
+- Öffentliche oder private Belästigung
+- Veröffentlichung privater Informationen anderer ohne ausdrückliche Erlaubnis
 
-### Durchsetzung
+### Meldung und Durchsetzung
 
-Faelle von missbräuchlichem Verhalten koennen dem Projektteam unter
-**lukas@geiger.sh** gemeldet werden. Alle Beschwerden werden geprueft und untersucht.
+Wenn Sie problematisches Verhalten beobachten, melden Sie es bitte über die im
+Repository vorgesehenen GitHub-Kanäle oder nehmen Sie direkt über GitHub
+Kontakt mit den Maintainern auf. Sensible Meldungen sollen nicht in
+öffentlichen Issues gepostet werden.
+
+Alle Beschwerden werden geprüft und angemessen bearbeitet.
 
 ---
 
@@ -35,11 +40,12 @@ Faelle von missbräuchlichem Verhalten koennen dem Projektteam unter
 
 ### Our Pledge
 
-We as members, contributors, and leaders pledge to make participation in our
-community a harassment-free experience for everyone, regardless of age, body size,
-visible or invisible disability, ethnicity, sex characteristics, gender identity
-and expression, level of experience, education, socio-economic status, nationality,
-personal appearance, race, religion, or sexual identity and orientation.
+We as members, contributors, and project maintainers pledge to make
+participation in our community a harassment-free experience for everyone,
+regardless of age, body size, visible or invisible disability, ethnicity, sex
+characteristics, gender identity and expression, level of experience,
+education, socio-economic status, nationality, personal appearance, race,
+religion, or sexual identity and orientation.
 
 ### Our Standards
 
@@ -54,10 +60,13 @@ Unacceptable behavior includes:
 - Public or private harassment
 - Publishing others' private information without explicit permission
 
-### Enforcement
+### Reporting and Enforcement
 
-Instances of abusive behavior may be reported to the project team at
-**lukas@geiger.sh**. All complaints will be reviewed and investigated.
+If you observe abusive behavior, please use the GitHub contact channels
+provided by this repository or contact the maintainers directly through GitHub.
+Sensitive reports should not be posted in public issues.
+
+All complaints will be reviewed and handled appropriately.
 
 ---
 

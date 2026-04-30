@@ -204,10 +204,10 @@ class SignalGenerator:
 
         rsi = df['rsi']
 
-        # Überverkauft -> Kaufsignal (wenn RSI von unter 30 wieder steigt)
+        # Überverkauft -> bullisches Muster (wenn RSI von unter 30 wieder steigt)
         oversold_exit = (rsi > 30) & (rsi.shift(1) <= 30)
 
-        # Überkauft -> Verkaufssignal (wenn RSI von über 70 wieder fällt)
+        # Überkauft -> bärisches Muster (wenn RSI von über 70 wieder fällt)
         overbought_exit = (rsi < 70) & (rsi.shift(1) >= 70)
 
         for idx in df.index[oversold_exit]:

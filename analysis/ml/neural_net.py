@@ -2,6 +2,7 @@
 FinancialProof - Neural Network Pattern Recognition
 Deep Learning für Muster-Erkennung in Kursdaten
 """
+import logging
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -12,6 +13,9 @@ from analysis.base import (
     AnalysisCategory, AnalysisTimeframe
 )
 from analysis.registry import AnalysisRegistry
+
+
+logger = logging.getLogger(__name__)
 
 
 @AnalysisRegistry.register
@@ -130,6 +134,7 @@ class NeuralNetAnalyzer(BaseAnalyzer):
             return result
 
         except Exception as e:
+            logger.exception("Neural-Network-Analyse fuer %s fehlgeschlagen", symbol)
             return self.create_empty_result(self.name, symbol, str(e))
 
     def _prepare_sequences(

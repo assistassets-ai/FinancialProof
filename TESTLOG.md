@@ -51,21 +51,21 @@ Dokumentation angeforderter Tests, Testergebnisse und Testabdeckung.
 
 ---
 
-### TEST-003: Signal-Generierung
+### TEST-003: Technische Muster und Indikatoren
 **Angefordert:** 2026-01-20
 **Priorität:** Mittel
 **Status:** Ausstehend
 
-**Testbereich:** Signals
-**Beschreibung:** Kauf-/Verkaufssignale testen
+**Testbereich:** Indicators / Pattern Detection
+**Beschreibung:** Historische technische Muster und Indikatorzustände testen. Diese Tests prüfen keine Kauf-/Verkaufsempfehlungen.
 
 **Testfälle:**
-- [ ] Golden Cross wird erkannt (SMA50 kreuzt SMA200 nach oben)
-- [ ] Death Cross wird erkannt (SMA50 kreuzt SMA200 nach unten)
-- [ ] RSI Überkauft-Signal bei RSI > 70
-- [ ] RSI Überverkauft-Signal bei RSI < 30
-- [ ] Bollinger Breakout oben erkannt
-- [ ] Bollinger Breakout unten erkannt
+- [ ] Golden-Cross-Muster wird erkannt (SMA50 kreuzt SMA200 nach oben)
+- [ ] Death-Cross-Muster wird erkannt (SMA50 kreuzt SMA200 nach unten)
+- [ ] RSI-Überkauft-Zustand bei RSI > 70 erkannt
+- [ ] RSI-Überverkauft-Zustand bei RSI < 30 erkannt
+- [ ] Bollinger-Ausbruch oben erkannt
+- [ ] Bollinger-Ausbruch unten erkannt
 - [ ] MACD Crossover erkannt
 
 **Zugewiesen:** -
@@ -83,15 +83,15 @@ Dokumentation angeforderter Tests, Testergebnisse und Testabdeckung.
 
 **Testfälle:**
 - [ ] ARIMA läuft ohne Fehler
-- [ ] ARIMA liefert Prognose mit Konfidenz
+- [ ] ARIMA liefert historische Modellkennzahlen
 - [ ] Monte Carlo Simulation läuft
 - [ ] Monte Carlo liefert VaR-Werte
 - [ ] Mean Reversion Analyse funktioniert
 - [ ] Random Forest Training erfolgreich
-- [ ] Random Forest Prediction funktioniert
+- [ ] Random Forest Trendklassifikation funktioniert
 - [ ] Neural Network (falls TensorFlow installiert)
 - [ ] Sentiment-Analyse mit News
-- [ ] Research Agent (falls API-Key)
+- [ ] Research Agent (falls optionale API-Keys vorhanden)
 
 **Zugewiesen:** -
 **Issue:** -
@@ -151,7 +151,18 @@ _Aktuell keine Tests in Durchführung_
 
 ## Abgeschlossene Tests
 
-_Noch keine Tests abgeschlossen_
+### AUTO-2026-04-30: Automatisierte Regressionstests
+**Durchgeführt:** 2026-04-30
+**Status:** Bestanden
+
+**Umfang:**
+- Analyse-Kernlogik und Registry
+- Job-Manager, Job-Queue und Executor
+- Logging-Initialisierung und Analyzer-Fehlerpfade
+- Disclaimer-Persistenz und UI-Helfer
+- Streamlit-Interaktionspfade für Sidebar, Chart und Analyse-Trigger
+
+**Ergebnis:** 105/105 Tests bestanden (`python -m pytest tests -q`).
 
 <!--
 ### TEST-XXX: Beispiel abgeschlossener Test
@@ -181,13 +192,13 @@ _Noch keine Tests abgeschlossen_
 
 | Modul | Abdeckung | Status |
 |-------|-----------|--------|
-| core/ | 0% | Ausstehend |
-| indicators/ | 0% | Ausstehend |
-| analysis/ | 0% | Ausstehend |
-| jobs/ | 0% | Ausstehend |
-| ui/ | 0% | Ausstehend |
+| core/ | automatisierte Tests vorhanden | Aktiv |
+| indicators/ | automatisierte Tests vorhanden | Aktiv |
+| analysis/ | automatisierte Tests vorhanden | Aktiv |
+| jobs/ | automatisierte Tests vorhanden | Aktiv |
+| ui/ | automatisierte Tests vorhanden | Aktiv |
 
-**Gesamtabdeckung:** 0%
+**Gesamtabdeckung:** 105 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
 **Ziel:** 80%
 
 ---
@@ -208,16 +219,16 @@ _Noch keine Tests abgeschlossen_
 
 ```bash
 # Alle Tests
-pytest
+python -m pytest tests -q
 
 # Mit Coverage
-pytest --cov=. --cov-report=html
+python -m pytest tests --cov=. --cov-report=html
 
 # Einzelnes Modul
-pytest tests/test_indicators.py
+python -m pytest tests/test_indicators.py
 
 # Nur markierte Tests
-pytest -m "slow"
+python -m pytest -m "slow"
 ```
 
 ---
@@ -230,4 +241,4 @@ pytest -m "slow"
 
 ---
 
-*Letzte Aktualisierung: 2026-01-20*
+*Letzte Aktualisierung: 2026-04-30*
