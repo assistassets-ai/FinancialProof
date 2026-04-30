@@ -166,7 +166,10 @@ class BaseAnalyzer(ABC):
                 f"{self.min_data_points} benötigt"
             )
 
-        if data['Close'].isnull().sum() > len(data) * 0.1:
+        if (
+            'Close' in data.columns
+            and data['Close'].isnull().sum() > len(data) * 0.1
+        ):
             errors.append("Zu viele fehlende Werte in den Kursdaten")
 
         return errors

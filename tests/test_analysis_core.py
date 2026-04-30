@@ -89,6 +89,22 @@ class TestBaseAnalyzer:
         assert any("Fehlende Spalten" in error for error in errors)
         assert any("Zu wenig Datenpunkte" in error for error in errors)
 
+    def test_validate_data_reports_missing_close_without_key_error(self):
+        analyzer = DummyAnalyzer()
+        incomplete = pd.DataFrame(
+            {
+                "Open": [100.0, 101.0],
+                "High": [102.0, 103.0],
+                "Low": [99.0, 100.0],
+                "Volume": [1_000.0, 1_100.0],
+            }
+        )
+
+        errors = analyzer.validate_data(incomplete)
+
+        assert any("Fehlende Spalten: Close" in error for error in errors)
+        assert any("Zu wenig Datenpunkte" in error for error in errors)
+
     def test_validate_data_reports_many_missing_close_values(self, valid_ohlcv):
         analyzer = DummyAnalyzer()
         valid_ohlcv.loc[:9, "Close"] = np.nan

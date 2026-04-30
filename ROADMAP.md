@@ -6,7 +6,7 @@
 > **ausgesetzt**, bis die regulatorische Einordnung unter KWG / WpHG /
 > MiFID II geklärt ist. Siehe README.
 
-## Aktueller Stand (v1.0) ✅
+## Aktueller Stand (v1.1-dev) ✅
 
 Die Basis-Anwendung ist vollständig implementiert:
 
@@ -19,10 +19,17 @@ Die Basis-Anwendung ist vollständig implementiert:
 - ✅ Regelbasierte automatische Methodenauswahl
 - ✅ Deutsche Benutzeroberfläche
 - ✅ Erststart-Acknowledgement (§ 32 KWG / § 2 Abs. 9 WpHG)
+- ✅ Logging-Hardening und 106 automatisierte Tests
+- ✅ OHLCV-Validierung meldet fehlende Pflichtspalten ohne `KeyError`
 
 ---
 
 ## Phase 7: Trading-Anbindung ⏸️ AUSGESETZT (regulatorisch)
+
+Dieser Abschnitt ist ein historischer Konzeptentwurf, **kein aktiver
+Implementierungsplan**. Keine Broker-API, Order-Funktion, Auto-Trade-Logik
+oder Secret-Konfiguration implementieren, bis die regulatorische Einordnung
+unter KWG/WpHG/MiFID II geklärt ist.
 
 ### 7.0 Konfiguration erweitern
 Keine aktiven Broker- oder Trading-API-Konfigurationen im Repository
@@ -40,163 +47,40 @@ Einordnung geklärt ist.
 | **CCXT** | Global | Krypto | Universal |
 | **Trade Republic** | EU | Aktien, ETFs, Krypto | (Inoffiziell) |
 
-#### Neue Dateien:
-```
-core/
-├── trader.py           # Trading-Bot Hauptklasse
-├── broker_alpaca.py    # Alpaca-spezifische Implementation
-├── broker_ccxt.py      # Krypto-Börsen via CCXT
-└── broker_base.py      # Abstrakte Broker-Klasse
-```
+#### Nicht im aktiven Scope
 
-#### Code-Beispiel: `core/trader.py`
-```python
-import alpaca_trade_api as tradeapi
-from config import Config
+Keine `trader.py`, Broker-Adapter, Order-API oder Broker-Credential-Konfiguration
+anlegen. Historische Recherche zu Broker-APIs bleibt außerhalb des
+Repository-Codes und darf keine Secrets, Beispiel-Keys oder ausführbaren
+Order-Flow enthalten.
 
-class TradingBot:
-    def __init__(self):
-        self.api = tradeapi.REST(
-            Config.API_KEY,
-            Config.API_SECRET,
-            Config.API_BASE_URL,
-            api_version='v2'
-        )
-
-    def get_account_summary(self):
-        """Holt Kontostand und Buying Power"""
-        account = self.api.get_account()
-        return {
-            "cash": float(account.cash),
-            "equity": float(account.equity),
-            "buying_power": float(account.buying_power),
-            "status": account.status
-        }
-
-    def get_positions(self):
-        """Holt alle offenen Aktien-Positionen"""
-        positions = self.api.list_positions()
-        return [
-            {
-                "symbol": p.symbol,
-                "qty": float(p.qty),
-                "current_price": float(p.current_price),
-                "profit_usd": float(p.unrealized_pl),
-                "profit_pct": float(p.unrealized_plpc) * 100
-            }
-            for p in positions
-        ]
-
-    def place_order(self, symbol, qty, side="buy", type="market"):
-        """Platziert einen Trade (Market Order)"""
-        order = self.api.submit_order(
-            symbol=symbol,
-            qty=qty,
-            side=side,
-            type=type,
-            time_in_force='gtc'
-        )
-        return {"status": "success", "order_id": order.id}
-```
-
-#### Funktionen:
-- [ ] Konto-Übersicht (Cash, Equity, Buying Power)
-- [ ] Offene Positionen anzeigen
-- [ ] Market Orders platzieren
-- [ ] Limit Orders platzieren
-- [ ] Stop-Loss Orders
-- [ ] Order-Historie
+#### Gesperrte Funktionen:
+- [ ] Keine Konto-Übersicht
+- [ ] Keine Positionsanzeige
+- [ ] Keine Order-Erfassung
+- [ ] Keine Order-Historie
+- [ ] Keine Broker-Zugangsdaten
 
 #### Sicherheitsmaßnahmen:
-- [ ] Paper Trading Modus (Spielgeld) als Standard
-- [ ] Bestätigungs-Dialog vor echten Trades
-- [ ] Maximale Order-Größe konfigurierbar
-- [ ] Tägliches Trading-Limit
-- [ ] Keine Leerverkäufe ohne explizite Aktivierung
+- [ ] Broker-/Order-Code bleibt aus dem Repository entfernt
+- [ ] Dokumentation enthält keine ausführbaren Order-Beispiele
+- [ ] Tests und Templates enthalten keine Beispiel-Secrets
 
 ---
 
-### 7.2 Trading-Dashboard (UI)
-**Neue Datei:** `ui/trading_view.py`
+### 7.2 Broker-UI (gesperrt)
 
-#### Code-Beispiel: `ui/trading_view.py`
-```python
-import streamlit as st
-from core.trader import TradingBot
-import pandas as pd
-
-def render_trading_dashboard():
-    st.header("Live Trading Portfolio (Paper Account)")
-
-    bot = TradingBot()
-    account = bot.get_account_summary()
-
-    if "error" in account:
-        st.error(f"Verbindung fehlgeschlagen: {account['error']}")
-        return
-
-    # Konto-Übersicht
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Cash", f"${account['cash']:,.2f}")
-    c2.metric("Portfolio Wert", f"${account['equity']:,.2f}")
-    c3.metric("Buying Power", f"${account['buying_power']:,.2f}")
-
-    st.divider()
-
-    # Offene Positionen
-    st.subheader("Offene Positionen")
-    positions = bot.get_positions()
-
-    if positions:
-        df_pos = pd.DataFrame(positions)
-        st.dataframe(df_pos)
-    else:
-        st.info("Keine offenen Positionen.")
-
-    st.divider()
-
-    # Schnelle Order
-    st.subheader("Schnelle Order")
-    symbol = st.text_input("Symbol", "AAPL").upper()
-    qty = st.number_input("Menge", min_value=1, value=1)
-    action = st.radio("Aktion", ["Kaufen", "Verkaufen"])
-
-    if st.button("Order ausführen"):
-        side = "buy" if action == "Kaufen" else "sell"
-        res = bot.place_order(symbol, qty, side)
-        if res['status'] == 'success':
-            st.success(f"Order platziert!")
-            st.rerun()
-        else:
-            st.error(res.get('message', 'Fehler'))
-```
-
-#### Komponenten:
-```
-┌─────────────────────────────────────────────────────────┐
-│  🏦 Live Trading Portfolio (Paper Account)              │
-├─────────────────────────────────────────────────────────┤
-│  Cash: $10,000  │  Equity: $12,500  │  Buying: $8,000   │
-├─────────────────────────────────────────────────────────┤
-│  📦 Offene Positionen                                   │
-│  ┌───────┬───────┬──────────┬──────────┬───────────┐   │
-│  │Symbol │ Menge │ Akt.Kurs │ Gewinn $ │ Gewinn %  │   │
-│  ├───────┼───────┼──────────┼──────────┼───────────┤   │
-│  │ AAPL  │  10   │  $175.50 │  +$125   │  +7.7%    │   │
-│  │ MSFT  │   5   │  $380.20 │  -$45    │  -2.3%    │   │
-│  └───────┴───────┴──────────┴──────────┴───────────┘   │
-├─────────────────────────────────────────────────────────┤
-│  ⚡ Schnelle Order          │  🧠 KI-Empfehlungen       │
-│  Symbol: [AAPL    ]         │  Job #12: 🟢 BUY MSFT    │
-│  Menge:  [1       ]         │  Konfidenz: 88%          │
-│  (●) Kaufen  ( ) Verkaufen  │  [Jetzt Handeln]         │
-│  [Order ausführen]          │                          │
-└─────────────────────────────────────────────────────────┘
-```
+Kein UI für Konten, Positionen oder Orders anlegen. Zulässig bleiben nur
+deskriptive Analyseansichten für historische Daten, Charts, Jobs und lokale
+Diagnostik.
 
 ---
 
-## Phase 8: Strategy Engine (Regelwerk) 🔜
+## Phase 8: Analyse-Regelwerk 🔜
+
+Ziel ist ein Regelwerk für **historische Analyse-Presets**, nicht für
+Order-Entscheidungen. Alle Ergebnisse bleiben deskriptiv und dürfen nicht als
+Kauf-/Verkaufsempfehlung formuliert werden.
 
 ### 8.1 Datenbank-Schema Erweiterung
 
@@ -211,18 +95,15 @@ CREATE TABLE strategies (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Trading-Historie
-CREATE TABLE trades (
+-- Historische Analyse-Auswertung
+CREATE TABLE analysis_runs (
     id INTEGER PRIMARY KEY,
     symbol TEXT NOT NULL,
-    side TEXT,                    -- 'buy', 'sell'
-    quantity REAL,
-    price REAL,
     strategy_id INTEGER,
-    job_id INTEGER,               -- Welche Analyse hat den Trade ausgelöst?
-    status TEXT,                  -- 'pending', 'filled', 'cancelled'
-    broker_order_id TEXT,
-    executed_at TIMESTAMP,
+    job_id INTEGER,               -- Welche Analyse wurde ausgewertet?
+    pattern_class TEXT,           -- 'bullish', 'bearish', 'neutral'
+    notes TEXT,
+    evaluated_at TIMESTAMP,
     FOREIGN KEY (strategy_id) REFERENCES strategies(id),
     FOREIGN KEY (job_id) REFERENCES jobs(id)
 );
@@ -271,8 +152,8 @@ class StrategyEngine:
 
         return {
             "strategy_name": strategy_data["name"],
-            "action": "BUY" if passed else "HOLD",
-            "reason": "Regeln erfüllt" if passed else ", ".join(reasons)
+            "pattern_class": "bullish" if passed else "neutral",
+            "reason": "Historisches Muster erfüllt" if passed else ", ".join(reasons)
         }
 ```
 
@@ -329,21 +210,15 @@ class StrategyManager:
 {
   "name": "Krypto Aggressiv",
   "asset_type": "CRYPTO",
-  "buy_rules": {
+  "pattern_rules": {
     "min_confidence": 0.85,
     "max_rsi": 40,
     "required_signals": ["bullish"],
     "min_volume_ratio": 1.5
   },
-  "sell_rules": {
-    "min_confidence": 0.80,
-    "min_rsi": 70,
-    "stop_loss_percent": -5,
-    "take_profit_percent": 15
-  },
-  "position_sizing": {
-    "max_position_percent": 10,
-    "max_positions": 5
+  "risk_notes": {
+    "max_rsi_warning": 70,
+    "volatility_warning_percent": 5
   }
 }
 ```
@@ -362,90 +237,62 @@ def render_settings_view():
     col1, col2 = st.columns([1, 1])
 
     with col1:
-        st.subheader("Neue Strategie anlegen")
+        st.subheader("Neues Analyse-Preset anlegen")
 
-        strat_name = st.text_input("Name der Strategie", "Krypto Aggressiv")
+        strat_name = st.text_input("Name des Presets", "Krypto Volatilität")
         asset_type = st.selectbox("Anwenden auf:", ["STOCK", "CRYPTO", "FOREX"])
 
         st.markdown("---")
         st.write("**Regelwerk definieren:**")
 
         min_conf = st.slider("Mindest-Sicherheit (KI)", 0.5, 0.99, 0.80)
-        max_rsi = st.number_input("Maximaler RSI (Kauf-Limit)", 30, 90, 70)
+        max_rsi = st.number_input("RSI-Warnschwelle", 30, 90, 70)
 
         if st.button("Strategie speichern"):
             rules = {"min_confidence": min_conf, "max_rsi": max_rsi}
             if StrategyManager.save_strategy(strat_name, asset_type, rules):
-                st.success(f"Strategie '{strat_name}' gespeichert!")
+                st.success(f"Analyse-Preset '{strat_name}' gespeichert!")
 
     with col2:
-        st.subheader("Aktive Regelwerke")
-        # Hier Strategien aus DB anzeigen
+        st.subheader("Aktive Analyse-Presets")
+        # Hier Presets aus DB anzeigen
 ```
 
 #### Funktionen:
-- [ ] Strategie erstellen/bearbeiten/löschen
+- [ ] Analyse-Preset erstellen/bearbeiten/löschen
 - [ ] Regeln per Slider/Input definieren
 - [ ] Asset-Typ zuweisen (Aktien, Krypto, etc.)
-- [ ] Strategie aktivieren/deaktivieren
+- [ ] Preset aktivieren/deaktivieren
 - [ ] Backtesting der Strategie (historische Simulation)
 
 ---
 
-## Phase 9: Automatisiertes Trading 🔜
+## Phase 9: Automatisiertes Trading ⏸️ AUSGESETZT (regulatorisch)
+
+Nicht implementieren, bis KWG/WpHG/MiFID-II-Fragen geklärt sind. Diese Phase
+bleibt als abgelegter Ideenspeicher erhalten und ist kein aktiver Scope für
+FinancialProof.
 
 ### 9.1 Auto-Trading Workflow
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  Analyse    │────▶│  Strategy   │────▶│  Trading    │
-│  (KI/Stats) │     │  Engine     │     │  Bot        │
-└─────────────┘     └─────────────┘     └─────────────┘
-       │                   │                   │
-       ▼                   ▼                   ▼
- "AAPL: Bullish"    "Regeln erfüllt:    "Order gesendet:
-  Konfidenz: 88%     BUY Signal"         BUY 5x AAPL"
-```
-
-#### Code-Beispiel: Auto-Trade Integration in `jobs/manager.py`
-```python
-from core.strategy import StrategyEngine
-from core.trader import TradingBot
-
-class JobManager:
-    @staticmethod
-    def auto_trade_based_on_result(job_id, symbol, result_data, market_data):
-        """
-        Entscheidet basierend auf KI-Ergebnis und Strategie, ob gehandelt wird.
-        """
-        engine = StrategyEngine()
-        decision = engine.evaluate(result_data, market_data, symbol)
-
-        if decision["action"] == "BUY":
-            bot = TradingBot()
-            trade_res = bot.place_order(symbol=symbol, qty=1, side="buy")
-            return f"Auto-Trade: {trade_res['message']}"
-
-        return f"Kein Trade: {decision['reason']}"
-```
+Kein Workflow, kein Code-Beispiel und keine Job-Integration im aktiven Scope.
+Analyse-Jobs dürfen historische Muster klassifizieren und protokollieren, aber
+keine Handlungsaufforderung und keine Order auslösen.
 
 ### 9.2 Automatisierungs-Level
 
 | Level | Name | Beschreibung |
 |-------|------|--------------|
-| 0 | **Manuell** | Alle Trades von Hand |
-| 1 | **Empfehlungen** | KI zeigt Signale, User entscheidet |
-| 2 | **Semi-Auto** | KI fragt vor jedem Trade nach Bestätigung |
-| 3 | **Auto (Paper)** | Automatisch auf Paper-Konto |
-| 4 | **Auto (Live)** | Automatisch auf echtem Konto (⚠️ Risiko!) |
+| 0 | **Analyse** | Historische Daten anzeigen und Muster beschreiben |
+| 1 | **Reporting** | Analyse-Ergebnisse exportieren |
+| 2-4 | **Nicht freigegeben** | Keine Broker-, Order- oder Automationsfunktion |
 
 ### 9.3 Sicherheits-Features
 
-- [ ] **Kill Switch**: Sofortiger Stopp aller Auto-Trades
-- [ ] **Tägliches Limit**: Max. Verlust pro Tag (z.B. -3%)
-- [ ] **Positionslimit**: Max. % des Portfolios pro Trade
-- [ ] **Zeitfenster**: Trading nur zu bestimmten Uhrzeiten
-- [ ] **Benachrichtigungen**: Email/Push bei Trades
+- [ ] Keine Broker-Abhängigkeiten in `requirements.txt`
+- [ ] Keine Order-Funktionen oder Broker-Adapter im Code
+- [ ] Keine Trading-Secrets in Templates, Tests oder Dokumentation
+- [ ] Deskriptive Sprache in UI, README und Changelog beibehalten
 
 ---
 

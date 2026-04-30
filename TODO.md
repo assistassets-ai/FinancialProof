@@ -10,34 +10,19 @@ Aufgabenliste im [TODO.md Format](https://github.com/todomd/todo.md) - kompatibe
 > bis KWG/WpHG/MiFID-II-Einordnung geklärt ist. Bis dahin bleibt
 > FinancialProof ein reines Analysewerkzeug.
 
-### Phase 7: Trading-Anbindung (ausgesetzt)
-- [ ] Alpaca Paper Trading Integration ~5d #feature @dev
-- [ ] TradingBot Klasse implementieren ~2d #core
-- [ ] Broker-Abstraktionsschicht ~2d #architecture
-- [ ] CCXT Integration für Krypto ~3d #feature
-- [ ] Trading-Dashboard UI ~2d #ui
-- [ ] Konto-Übersicht Komponente ~1d #ui
-- [ ] Order-Formular mit Validierung ~1d #ui
-- [ ] Sicherheitsmaßnahmen implementieren ~2d #security
-  - [ ] Paper Trading als Standard
-  - [ ] Bestätigungs-Dialog vor echten Trades
-  - [ ] Maximale Order-Größe konfigurierbar
-  - [ ] Tägliches Trading-Limit
+### Ausgesetzt: Trading- und Broker-Anbindung
 
-### Phase 8: Strategy Engine
-- [ ] Datenbank-Schema für Strategien erweitern ~1d #database
-- [ ] StrategyEngine Klasse ~2d #core
-- [ ] StrategyManager CRUD ~1d #core
+Diese Aufgaben sind absichtlich nicht im aktiven Backlog. Keine Broker-API,
+Order-Funktion, Auto-Trade-Logik oder Secret-Konfiguration implementieren, bis
+die regulatorische Einordnung unter KWG/WpHG/MiFID II geklärt ist.
+
+### Phase 8: Analyse-Regelwerk
+- [ ] Datenbank-Schema für Analyse-Presets erweitern ~1d #database
+- [ ] Regel-Engine für historische Musterklassen ~2d #core
+- [ ] Preset-Manager CRUD ~1d #core
 - [ ] Regel-JSON Parser ~1d #core
-- [ ] Strategie-Konfigurator UI ~2d #ui
-- [ ] Asset-Typ spezifische Regeln ~1d #feature
-
-### Phase 9: Automatisiertes Trading (ausgesetzt)
-- [ ] Auto-Trade Workflow implementieren ~3d #feature
-- [ ] Automatisierungs-Level System ~1d #feature
-- [ ] Kill Switch für Notfälle ~1d #security
-- [ ] Benachrichtigungen (Email/Telegram) ~2d #feature
-- [ ] Zeitfenster-Konfiguration ~1d #feature
+- [ ] Analyse-Konfigurator UI ~2d #ui
+- [ ] Asset-Typ spezifische Analyse-Presets ~1d #feature
 
 ### Phase 10: Erweiterte Analysen
 - [ ] Korrelationsmatrix für Watchlist ~2d #analysis
@@ -55,11 +40,11 @@ Aufgabenliste im [TODO.md Format](https://github.com/todomd/todo.md) - kompatibe
 - [ ] Docker Container ~1d #devops
 - [ ] Streamlit Cloud Deployment ~1d #devops
 
-### Phase 12: Backtesting & Reporting
+### Phase 12: Historische Simulation & Reporting
 - [ ] Backtesting Engine ~5d #feature
 - [ ] Performance-Metriken (Sharpe, Drawdown) ~2d #analysis
-- [ ] Trade-Protokoll Export (CSV/PDF) ~1d #feature
-- [ ] Täglicher Performance-Report ~2d #feature
+- [ ] Analyse-Protokoll Export (CSV/PDF) ~1d #feature
+- [ ] Täglicher Analyse-Report ~2d #feature
 - [ ] Steuer-Übersicht ~2d #feature
 
 ---
@@ -83,11 +68,11 @@ _Keine Aufgaben in Review_
 - [x] SQLite Datenbank Setup #database
 - [x] yfinance Integration #data
 - [x] Technische Indikatoren (SMA, EMA, RSI, BB, MACD) #indicators
-- [x] Signal-Generierung #indicators
+- [x] Historische Mustererkennung #indicators
 - [x] ARIMA Analyse-Modul #analysis
 - [x] Monte Carlo Simulation #analysis
 - [x] Mean Reversion Analyse #analysis
-- [x] Random Forest Trendvorhersage #ml
+- [x] Random Forest Trendklassifikation #ml
 - [x] Neural Network Pattern Recognition #ml
 - [x] Sentiment-Analyse (News) #nlp
 - [x] Research Agent #nlp
@@ -114,6 +99,7 @@ _Keine Aufgaben in Review_
 - [x] Test-Suite von optionalen Abhängigkeiten entkoppelt (yfinance/cryptography) #testing
 - [x] Disclaimer-Persistenz und UI-Helfer (Formatierung, Cleanup-Retention) mit Unit-Tests abgesichert #testing
 - [x] Streamlit-Interaktionspfade für Sidebar, Chart-View und Analyse-Trigger mit Tests abgesichert #testing
+- [x] OHLCV-Validierung gegen fehlende `Close`-Spalte abgesichert #testing
 
 ---
 

@@ -157,12 +157,13 @@ _Aktuell keine Tests in Durchführung_
 
 **Umfang:**
 - Analyse-Kernlogik und Registry
+- OHLCV-Validierung bei unvollständigen Marktdaten
 - Job-Manager, Job-Queue und Executor
 - Logging-Initialisierung und Analyzer-Fehlerpfade
 - Disclaimer-Persistenz und UI-Helfer
 - Streamlit-Interaktionspfade für Sidebar, Chart und Analyse-Trigger
 
-**Ergebnis:** 105/105 Tests bestanden (`python -m pytest tests -q`).
+**Ergebnis:** 106/106 Tests bestanden (`python -m pytest tests -q`).
 
 <!--
 ### TEST-XXX: Beispiel abgeschlossener Test
@@ -198,7 +199,7 @@ _Aktuell keine Tests in Durchführung_
 | jobs/ | automatisierte Tests vorhanden | Aktiv |
 | ui/ | automatisierte Tests vorhanden | Aktiv |
 
-**Gesamtabdeckung:** 105 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
+**Gesamtabdeckung:** 106 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
 **Ziel:** 80%
 
 ---

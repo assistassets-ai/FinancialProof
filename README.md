@@ -114,8 +114,11 @@ python -m pytest tests -q
 
 Current repository status:
 
-- 105 unit and regression tests cover analysis modules, job execution,
+- 106 unit and regression tests cover analysis modules, job execution,
   logging, disclaimer persistence and Streamlit helper flows.
+- OHLCV input validation reports missing columns cleanly before running
+  missing-value checks, so incomplete market data fails with diagnostics
+  instead of a `KeyError`.
 - Analyzer failure paths return error results and write diagnostic log entries
   instead of failing silently.
 - Local runtime files are excluded from Git: `.env`, local databases,

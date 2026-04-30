@@ -8,6 +8,12 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ## [Unreleased]
 
 ### Qualität und Repository-Hygiene
+- OHLCV-Validierung gehärtet: fehlende `Close`-Spalte wird als
+  Validierungsfehler gemeldet statt einen `KeyError` auszulösen.
+- Regressionstest für unvollständige OHLCV-Daten ergänzt; lokale Test-Suite
+  jetzt 106/106 Tests grün (`python -m pytest tests -q`).
+- Roadmap und TODO geschärft: ausgesetzte Trading-/Broker-Funktionen klar von
+  aktiven Analyse- und Hardening-Aufgaben getrennt.
 - Zentrales Logging mit Console- und Rotating-File-Handler ergänzt.
 - Fehlerpfade in DataProvider, ARIMA und Sentiment-Analyse von `print()`
   auf Logger umgestellt.
