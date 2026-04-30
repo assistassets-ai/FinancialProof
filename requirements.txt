@@ -37,7 +37,7 @@ tweepy>=4.14.0
 google-api-python-client>=2.100.0
 
 # ===== Datenbank & Sicherheit =====
-cryptography>=41.0.0
+cryptography>=47.0.0
 
 # ===== Utilities =====
 python-dotenv>=1.0.0
