@@ -31,6 +31,11 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   Repository-Struktur gebracht.
 - `.gitignore` um lokale Secret-Dateien, Test-Locks, Release-Artefakte und
   interne Steuerdateien erweitert.
+- Windows-Launcher ergänzt: `build_exe.bat` baut eine schlanke
+  `FinancialProof.exe`, die die lokale Python-/Streamlit-Installation nutzt
+  und fehlende Runtime-Abhängigkeiten vor dem Start meldet.
+- README, `START.bat` und Build-Hinweise auf Python 3.9+ und lokale,
+  ignorierte Launcher-Artefakte abgestimmt.
 
 ### Rechtliche Korrekturen (Rechtsaudit Stufe 2, § 32 KWG / § 2 Abs. 9 WpHG)
 - **Terminologie neutralisiert:** UI-Labels „Kauf-/Verkaufssignal" durch

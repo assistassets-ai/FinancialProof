@@ -100,6 +100,22 @@ A browser-based tool for statistical pattern analysis on financial market data.
    http://localhost:8501
    ```
 
+### Windows launcher EXE
+
+Für lokale Desktop-Nutzung kann zusätzlich ein Windows-Launcher erzeugt werden:
+
+```bat
+build_exe.bat
+```
+
+Der Build erzeugt `FinancialProof.exe`. Diese EXE bündelt bewusst nur den
+Launcher und startet die lokale Python-/Streamlit-Umgebung im Projektordner.
+Vor dem Start prüft der Launcher, ob `app.py`, Python und Streamlit verfügbar
+sind, und zeigt sonst eine lokale Fehlermeldung an. Build-Artefakte wie
+`build/`, `dist/`, `*.spec` und `FinancialProof.exe` bleiben durch `.gitignore`
+außerhalb der versionierten Quellen. Der Launcher enthält keine Projektdaten,
+keine API-Keys und keine Python-Abhängigkeiten.
+
 On first launch, you will be asked to acknowledge the legal disclaimer
 (not-financial-advice acknowledgement). The app will not proceed until
 all four checkboxes are confirmed.

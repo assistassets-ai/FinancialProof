@@ -12,11 +12,14 @@ echo.
 REM Zum Skript-Verzeichnis wechseln
 cd /d "%~dp0"
 
+set PYTHONIOENCODING=utf-8
+set PYTHONUTF8=1
+
 REM Prüfen ob Python installiert ist
 python --version >nul 2>&1
 if errorlevel 1 (
     echo [FEHLER] Python ist nicht installiert oder nicht im PATH.
-    echo          Bitte installiere Python 3.8+ von https://python.org
+    echo          Bitte installiere Python 3.9+ von https://python.org
     echo.
     pause
     exit /b 1
