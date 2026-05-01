@@ -1,6 +1,7 @@
 """
 Tests fuer DataProvider-Modul (yfinance gemockt)
 """
+import logging
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -90,13 +91,15 @@ class TestGetTickerInfo:
         assert isinstance(result, dict)
         assert result.get("shortName") == "Apple Inc."
 
-    def test_returns_empty_dict_on_exception(self):
+    def test_returns_empty_dict_on_exception(self, caplog):
         """get_ticker_info gibt leeres Dict zurueck bei Exception."""
         with patch("yfinance.Ticker", side_effect=Exception("Timeout")):
             from core.data_provider import DataProvider
             DataProvider.get_ticker_info.cache_clear()
-            result = DataProvider.get_ticker_info("AAPL")
+            with caplog.at_level(logging.WARNING, logger="core.data_provider"):
+                result = DataProvider.get_ticker_info("AAPL")
         assert result == {}
+        assert "Ticker-Info fuer AAPL konnte nicht geladen werden" in caplog.text
 
     def test_returns_empty_dict_when_info_is_none(self):
         """get_ticker_info gibt leeres Dict zurueck wenn info None ist."""
@@ -137,13 +140,15 @@ class TestGetNews:
             result = DataProvider.get_news("AAPL", limit=3)
         assert len(result) == 3
 
-    def test_returns_empty_list_on_exception(self):
+    def test_returns_empty_list_on_exception(self, caplog):
         """get_news gibt leere Liste zurueck bei Exception."""
         with patch("yfinance.Ticker", side_effect=Exception("Timeout")):
             from core.data_provider import DataProvider
             DataProvider.get_news.cache_clear()
-            result = DataProvider.get_news("AAPL")
+            with caplog.at_level(logging.WARNING, logger="core.data_provider"):
+                result = DataProvider.get_news("AAPL")
         assert result == []
+        assert "News fuer AAPL konnten nicht geladen werden" in caplog.text
 
 
 class TestGetCurrentPrice:
@@ -171,6 +176,15 @@ class TestGetCurrentPrice:
             result = DataProvider.get_current_price("UNKNOWN")
         assert result is None
 
+    def test_get_current_price_logs_exception(self, caplog):
+        """get_current_price protokolliert den Fallback bei unerwarteten Fehlern."""
+        with patch("yfinance.Ticker", side_effect=Exception("Timeout")):
+            from core.data_provider import DataProvider
+            with caplog.at_level(logging.WARNING, logger="core.data_provider"):
+                result = DataProvider.get_current_price("AAPL")
+        assert result is None
+        assert "Aktueller Preis fuer AAPL konnte nicht geladen werden" in caplog.text
+
 
 class TestGetMultipleTickers:
     def test_get_multiple_tickers_with_multiindex(self):
@@ -196,6 +210,26 @@ class TestGetMultipleTickers:
         assert "AAPL" in result
         assert "MSFT" in result
         assert isinstance(result["AAPL"], pd.DataFrame)
+
+
+class TestAdditionalFallbackLogging:
+    def test_validate_ticker_logs_exception(self, caplog):
+        """validate_ticker gibt False zurueck und protokolliert API-Fehler."""
+        with patch("yfinance.download", side_effect=Exception("Network error")):
+            from core.data_provider import DataProvider
+            with caplog.at_level(logging.WARNING, logger="core.data_provider"):
+                result = DataProvider.validate_ticker("AAPL")
+        assert result is False
+        assert "Ticker-Validierung fuer AAPL fehlgeschlagen" in caplog.text
+
+    def test_get_financials_logs_exception(self, caplog):
+        """get_financials gibt ein leeres Dict zurueck und protokolliert Fehler."""
+        with patch("yfinance.Ticker", side_effect=Exception("Timeout")):
+            from core.data_provider import DataProvider
+            with caplog.at_level(logging.WARNING, logger="core.data_provider"):
+                result = DataProvider.get_financials("AAPL")
+        assert result == {}
+        assert "Finanzberichte fuer AAPL konnten nicht geladen werden" in caplog.text
 
 
 class TestDropnaEdgeCases:

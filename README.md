@@ -34,6 +34,7 @@ A browser-based tool for statistical pattern analysis on financial market data.
 - **Job Queue System**: Asynchronous analysis tasks with SQLite persistence
 - **Watchlist**: Portfolio overview with multiple assets
 - **Operational Logging**: Rotating local log file for runtime diagnostics
+- **API Rate Limiting**: Configurable token-bucket throttling for yfinance calls
 - **German User Interface**
 
 > **Note on terminology:** Earlier versions of this project used the term
@@ -87,7 +88,7 @@ A browser-based tool for statistical pattern analysis on financial market data.
 4. **Configure local environment** (optional)
    ```bash
    cp env.example .env
-   # Optional: adjust FINANCIALPROOF_LOG_LEVEL
+   # Optional: adjust FINANCIALPROOF_LOG_LEVEL and FINANCIALPROOF_RL_YF_*
    ```
 
 5. **Launch app**
@@ -130,8 +131,8 @@ python -m pytest tests -q
 
 Current repository status:
 
-- 106 unit and regression tests cover analysis modules, job execution,
-  logging, disclaimer persistence and Streamlit helper flows.
+- 134 unit and regression tests cover analysis modules, job execution,
+  logging, rate limiting, disclaimer persistence and Streamlit helper flows.
 - OHLCV input validation reports missing columns cleanly before running
   missing-value checks, so incomplete market data fails with diagnostics
   instead of a `KeyError`.
@@ -151,7 +152,9 @@ FinancialProof/
 │
 ├── core/
 │   ├── database.py          # SQLite database
-│   └── data_provider.py     # yfinance wrapper
+│   ├── data_provider.py     # yfinance wrapper
+│   ├── logging_utils.py     # Logging setup
+│   └── rate_limiter.py      # Token-bucket API throttling
 │
 ├── indicators/
 │   ├── technical.py         # Technical indicators
@@ -217,12 +220,18 @@ the Streamlit sidebar and stored locally in `data/.secrets`.
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `FINANCIALPROOF_LOG_LEVEL` | Python logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`) | `INFO` |
+| `FINANCIALPROOF_RL_YF_CAPACITY` | yfinance burst capacity for the token bucket | `30` |
+| `FINANCIALPROOF_RL_YF_REFILL` | yfinance token refill rate per second | `1.0` |
+| `FINANCIALPROOF_RL_YF_TIMEOUT` | Maximum wait time per throttled yfinance call in seconds | `30` |
 
 ### Settings in `config.py`
 
 ```python
-DEFAULT_TICKER = "AAPL"      # Default symbol
-CACHE_TTL_MARKET_DATA = 3600 # Cache duration (seconds)
+DEFAULT_TICKER = "AAPL"            # Default symbol
+CACHE_TTL_MARKET_DATA = 3600       # Cache duration (seconds)
+API_RATE_LIMIT_YFINANCE_CAPACITY = 30.0
+API_RATE_LIMIT_YFINANCE_REFILL = 1.0
+API_RATE_LIMIT_YFINANCE_TIMEOUT = 30.0
 ```
 
 ## Analysis Modules
@@ -249,6 +258,7 @@ outputs are forecasts, predictions, or trading recommendations.
 - **NLP**: transformers, TextBlob
 - **Database**: SQLite
 - **Logging**: Python logging with rotating file handler
+- **Rate limiting**: Built-in token-bucket limiter for external API calls
 
 ## Roadmap
 
@@ -305,6 +315,7 @@ Finanzmarktdaten.
 - Statistische und Machine-Learning-Analysen (historische Auswertung)
 - Hintergrund-Job-Queue
 - Interaktive Charts
+- API-Rate-Limiting für externe Datenquellen
 
 ### Installation
 

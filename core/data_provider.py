@@ -19,8 +19,23 @@ from datetime import datetime
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import config
+from core.rate_limiter import init_from_config, rate_limited_call
 
 logger = logging.getLogger(__name__)
+
+# Rate-Limiter mit Werten aus der Config initialisieren (kann von Tests
+# durch RateLimiter.configure_bucket(...) ueberschrieben werden).
+init_from_config(config)
+
+_RL_BUCKET = "yfinance"
+_RL_TIMEOUT = float(getattr(config, "API_RATE_LIMIT_YFINANCE_TIMEOUT", 30.0))
+
+
+def _rl_call(func, *args, **kwargs):
+    """Hilfsfunktion: yfinance-Aufruf mit Rate-Limiter throtteln."""
+    return rate_limited_call(
+        _RL_BUCKET, func, *args, timeout=_RL_TIMEOUT, **kwargs
+    )
 
 
 def ttl_cache(ttl_seconds: int = 300, maxsize: int = 128):
@@ -131,15 +146,16 @@ class DataProvider:
             DataFrame mit Open, High, Low, Close, Volume oder None
         """
         try:
-            df = yf.download(
+            df = _rl_call(
+                yf.download,
                 ticker,
                 period=period,
                 interval=interval,
                 progress=False,
-                auto_adjust=True
+                auto_adjust=True,
             )
 
-            if df.empty:
+            if df is None or df.empty:
                 return None
 
             # Spaltennamen normalisieren (für Multi-Ticker Fälle)
@@ -175,9 +191,10 @@ class DataProvider:
         """
         try:
             t = yf.Ticker(ticker)
-            info = t.info
+            info = _rl_call(lambda: t.info)
             return info if info else {}
-        except Exception:
+        except Exception as e:
+            logger.warning("Ticker-Info fuer %s konnte nicht geladen werden: %s", ticker, e)
             return {}
 
     @staticmethod
@@ -195,11 +212,12 @@ class DataProvider:
         """
         try:
             t = yf.Ticker(ticker)
-            news = t.news
+            news = _rl_call(lambda: t.news)
             if news:
                 return news[:limit]
             return []
-        except Exception:
+        except Exception as e:
+            logger.warning("News fuer %s konnten nicht geladen werden: %s", ticker, e)
             return []
 
     @staticmethod
@@ -215,7 +233,9 @@ class DataProvider:
         """
         try:
             t = yf.Ticker(ticker)
-            hist = t.history(period="2d")
+            hist = _rl_call(t.history, period="2d")
+            if hist is None:
+                return None
             if len(hist) >= 2:
                 current = hist['Close'].iloc[-1]
                 previous = hist['Close'].iloc[-2]
@@ -225,7 +245,8 @@ class DataProvider:
             elif len(hist) == 1:
                 return (hist['Close'].iloc[-1], 0, 0)
             return None
-        except Exception:
+        except Exception as e:
+            logger.warning("Aktueller Preis fuer %s konnte nicht geladen werden: %s", ticker, e)
             return None
 
     @staticmethod
@@ -248,14 +269,18 @@ class DataProvider:
         """
         result = {}
         try:
-            data = yf.download(
+            data = _rl_call(
+                yf.download,
                 tickers,
                 period=period,
                 interval=interval,
                 progress=False,
                 auto_adjust=True,
-                group_by='ticker'
+                group_by='ticker',
             )
+
+            if data is None:
+                return result
 
             if isinstance(data.columns, pd.MultiIndex):
                 for ticker in tickers:
@@ -289,7 +314,7 @@ class DataProvider:
             # yfinance hat keine native Suchfunktion,
             # daher verwenden wir die Ticker-Info als Workaround
             t = yf.Ticker(query.upper())
-            info = t.info
+            info = _rl_call(lambda: t.info)
 
             if info and 'symbol' in info:
                 return [{
@@ -299,7 +324,8 @@ class DataProvider:
                     'exchange': info.get('exchange', 'Unknown')
                 }]
             return []
-        except Exception:
+        except Exception as e:
+            logger.warning("Ticker-Suche fuer %s fehlgeschlagen: %s", query, e)
             return []
 
     @staticmethod
@@ -314,9 +340,12 @@ class DataProvider:
             True wenn gültig, False sonst
         """
         try:
-            data = yf.download(ticker, period="5d", progress=False)
+            data = _rl_call(yf.download, ticker, period="5d", progress=False)
+            if data is None:
+                return False
             return not data.empty
-        except Exception:
+        except Exception as e:
+            logger.warning("Ticker-Validierung fuer %s fehlgeschlagen: %s", ticker, e)
             return False
 
     @staticmethod
@@ -356,8 +385,12 @@ class DataProvider:
                 return 'crypto'
             elif quote_type == 'INDEX':
                 return 'index'
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug(
+                "Asset-Typ fuer %s konnte nicht ueber Ticker-Info ermittelt werden: %s",
+                ticker,
+                e,
+            )
 
         return 'stock'
 
@@ -374,12 +407,16 @@ class DataProvider:
         """
         try:
             t = yf.Ticker(ticker)
+            income = _rl_call(lambda: t.income_stmt)
+            balance = _rl_call(lambda: t.balance_sheet)
+            cashflow = _rl_call(lambda: t.cashflow)
             return {
-                'income': t.income_stmt,
-                'balance': t.balance_sheet,
-                'cashflow': t.cashflow
+                'income': income,
+                'balance': balance,
+                'cashflow': cashflow,
             }
-        except Exception:
+        except Exception as e:
+            logger.warning("Finanzberichte fuer %s konnten nicht geladen werden: %s", ticker, e)
             return {}
 
     @staticmethod
@@ -395,8 +432,12 @@ class DataProvider:
         """
         try:
             t = yf.Ticker(ticker)
-            return t.dividends
-        except Exception:
+            dividends = _rl_call(lambda: t.dividends)
+            if dividends is None:
+                return pd.Series()
+            return dividends
+        except Exception as e:
+            logger.warning("Dividenden fuer %s konnten nicht geladen werden: %s", ticker, e)
             return pd.Series()
 
     @staticmethod
@@ -412,9 +453,10 @@ class DataProvider:
         """
         try:
             t = yf.Ticker(ticker)
-            rec = t.recommendations
+            rec = _rl_call(lambda: t.recommendations)
             return rec if rec is not None else pd.DataFrame()
-        except Exception:
+        except Exception as e:
+            logger.warning("Analysten-Empfehlungen fuer %s konnten nicht geladen werden: %s", ticker, e)
             return pd.DataFrame()
 
 
@@ -453,6 +495,7 @@ class MarketOverview:
                         'change': change,
                         'change_pct': change_pct
                     })
-            except Exception:
+            except Exception as e:
+                logger.warning("Index-Ueberblick fuer %s konnte nicht geladen werden: %s", symbol, e)
                 continue
         return results

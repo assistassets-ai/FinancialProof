@@ -38,6 +38,10 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   ignorierte Launcher-Artefakte abgestimmt.
 - CI-Matrix und `scikit-learn`-Version auf die aktuelle Python-3.10+ Runtime
   abgestimmt, damit Dependency-Installation reproduzierbar bleibt.
+- Token-Bucket-Rate-Limiter für yfinance-Aufrufe ergänzt und in
+  DataProvider, Sentiment-Analyse und Research-Agent eingebunden.
+- README und `env.example` um Rate-Limit-Konfiguration
+  (`FINANCIALPROOF_RL_YF_*`) sowie den aktuellen Teststand 134/134 ergänzt.
 
 ### Rechtliche Korrekturen (Rechtsaudit Stufe 2, § 32 KWG / § 2 Abs. 9 WpHG)
 - **Terminologie neutralisiert:** UI-Labels „Kauf-/Verkaufssignal" durch

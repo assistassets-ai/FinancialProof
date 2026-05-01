@@ -50,6 +50,18 @@ class Config:
     CACHE_TTL_TICKER_INFO: int = 86400     # 1 Tag
     CACHE_TTL_NEWS: int = 1800             # 30 Minuten
 
+    # Rate-Limit-Settings fuer externe APIs (Token-Bucket)
+    # capacity = Burst, refill_rate = Tokens pro Sekunde, timeout = max. Warten je Aufruf
+    API_RATE_LIMIT_YFINANCE_CAPACITY: float = field(
+        default_factory=lambda: float(os.getenv("FINANCIALPROOF_RL_YF_CAPACITY", "30"))
+    )
+    API_RATE_LIMIT_YFINANCE_REFILL: float = field(
+        default_factory=lambda: float(os.getenv("FINANCIALPROOF_RL_YF_REFILL", "1.0"))
+    )
+    API_RATE_LIMIT_YFINANCE_TIMEOUT: float = field(
+        default_factory=lambda: float(os.getenv("FINANCIALPROOF_RL_YF_TIMEOUT", "30"))
+    )
+
     # Analyse-Einstellungen
     DEFAULT_SMA_PERIODS: list = field(default_factory=lambda: [20, 50, 200])
     DEFAULT_RSI_PERIOD: int = 14

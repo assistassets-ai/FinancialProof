@@ -2,6 +2,7 @@
 FinancialProof - Web Research Agent
 Sammelt Informationen aus verschiedenen Web-Quellen
 """
+import logging
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -13,6 +14,9 @@ from analysis.base import (
     AnalysisCategory, AnalysisTimeframe
 )
 from analysis.registry import AnalysisRegistry
+from core.rate_limiter import rate_limited_call
+
+logger = logging.getLogger(__name__)
 
 
 @AnalysisRegistry.register
@@ -119,12 +123,15 @@ class ResearchAgent(BaseAnalyzer):
             return result
 
         except Exception as e:
+            logger.exception("Research-Agent-Analyse fuer %s fehlgeschlagen", symbol)
             return self.create_empty_result(self.name, symbol, str(e))
 
     def _get_fundamentals(self, ticker) -> Dict:
         """Sammelt Fundamentaldaten"""
         try:
-            info = ticker.info
+            info = rate_limited_call("yfinance", lambda: ticker.info, timeout=30.0)
+            if info is None:
+                return {'error': 'rate_limit_timeout'}
 
             return {
                 'company_name': info.get('longName', 'N/A'),
@@ -155,12 +162,13 @@ class ResearchAgent(BaseAnalyzer):
                 'description': info.get('longBusinessSummary', '')[:500] if info.get('longBusinessSummary') else 'N/A'
             }
         except Exception as e:
+            logger.warning("Fundamentaldaten konnten nicht geladen werden: %s", e)
             return {'error': str(e)}
 
     def _get_recommendations(self, ticker) -> Dict:
         """Sammelt Analysten-Empfehlungen"""
         try:
-            rec = ticker.recommendations
+            rec = rate_limited_call("yfinance", lambda: ticker.recommendations, timeout=30.0)
             if rec is None or rec.empty:
                 return {'available': False}
 
@@ -197,12 +205,13 @@ class ResearchAgent(BaseAnalyzer):
                 'recent': recent.to_dict('records')[-5:] if len(recent) > 0 else []
             }
         except Exception as e:
+            logger.warning("Analysten-Empfehlungen konnten nicht geladen werden: %s", e)
             return {'available': False, 'error': str(e)}
 
     def _get_news_summary(self, ticker) -> Dict:
         """Sammelt News-Übersicht"""
         try:
-            news = ticker.news
+            news = rate_limited_call("yfinance", lambda: ticker.news, timeout=30.0)
             if not news:
                 return {'available': False}
 
@@ -223,13 +232,16 @@ class ResearchAgent(BaseAnalyzer):
                 'recent_articles': articles
             }
         except Exception as e:
+            logger.warning("News-Uebersicht konnte nicht geladen werden: %s", e)
             return {'available': False, 'error': str(e)}
 
     def _get_dividend_info(self, ticker) -> Dict:
         """Sammelt Dividenden-Informationen"""
         try:
-            info = ticker.info
-            dividends = ticker.dividends
+            info = rate_limited_call("yfinance", lambda: ticker.info, timeout=30.0)
+            dividends = rate_limited_call("yfinance", lambda: ticker.dividends, timeout=30.0)
+            if info is None:
+                info = {}
 
             return {
                 'pays_dividend': info.get('dividendYield', 0) > 0,
@@ -240,6 +252,7 @@ class ResearchAgent(BaseAnalyzer):
                 'recent_dividends': dividends.tail(4).to_dict() if dividends is not None and len(dividends) > 0 else {}
             }
         except Exception as e:
+            logger.warning("Dividenden-Informationen konnten nicht geladen werden: %s", e)
             return {'error': str(e)}
 
     def _format_large_number(self, num) -> str:
