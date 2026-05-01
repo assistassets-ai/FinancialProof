@@ -19,6 +19,9 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   auf Logger umgestellt.
 - Fehlerpfade in Random Forest, Neural Network, Monte Carlo und Mean Reversion
   protokolliert und mit Regressionstests abgesichert.
+- Verbleibende stille Fallbacks in `core.data_provider` und
+  `analysis.nlp.research_agent` protokolliert; kompatible leere
+  Rückgaben bleiben erhalten, sind aber jetzt diagnostisch sichtbar.
 - Community-Dateien aktualisiert: Code of Conduct ohne öffentliche
   E-Mail-Adresse und Test-Template mit neutraler Terminologie.
 - CI-Workflow wieder versionierbar gemacht und auf `master`/`main`-Branches
