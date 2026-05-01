@@ -46,7 +46,24 @@ _Aktuell keine Bugs in Bearbeitung_
 
 ## Behoben
 
-_Noch keine behobenen Bugs dokumentiert_
+### BUG-2026-05-01-01: Research Agent gab BUY/SELL als App-Einschätzung aus
+**Entdeckt:** 2026-05-01
+**Behoben:** 2026-05-01
+**Schweregrad:** Mittel
+**Status:** Behoben
+**Betrifft:** `analysis/nlp/research_agent.py`
+
+**Beschreibung:**
+Der Web-Recherche-Agent erzeugte im Ergebnis-Summary eine `Gesamteinschaetzung: BUY/SELL` und reichte `buy`/`sell` als App-eigene Signaltypen durch. Das widersprach der dokumentierten Nicht-Anlageberatung und der Umstellung auf rein deskriptive Muster.
+
+**Ursache:**
+Die Altlogik des Research Agents nutzte weiterhin Empfehlungslabels für die kombinierte Auswertung aus Fundamentaldaten, Kursziel-Abweichung und Analystenkonsens.
+
+**Lösung:**
+Die Ergebnislogik wurde auf deskriptive Polaritäten (`bullish`, `bearish`, `neutral`) umgestellt. Summary und UI-Beschreibung sprechen nun von historischer Musterlage statt Empfehlung.
+
+**Test:**
+`python -m pytest tests -q` -> 107/107 bestanden.
 
 <!--
 ### BUG-001: Beispiel behobener Bug
@@ -76,7 +93,7 @@ Validierung hinzugefügt, die mindestens `period + 1` Datenpunkte erfordert.
 |-----------|--------|
 | Offen | 0 |
 | In Bearbeitung | 0 |
-| Behoben (gesamt) | 0 |
+| Behoben (gesamt) | 1 |
 
 ---
 
@@ -101,4 +118,4 @@ Neuen Bug gefunden?
 
 ---
 
-*Letzte Aktualisierung: 2026-01-20*
+*Letzte Aktualisierung: 2026-05-01*

@@ -165,6 +165,17 @@ _Aktuell keine Tests in Durchführung_
 
 **Ergebnis:** 106/106 Tests bestanden (`python -m pytest tests -q`).
 
+### AUTO-2026-05-01: Research-Agent-Musterlabel
+**Durchgeführt:** 2026-05-01
+**Status:** Bestanden
+
+**Umfang:**
+- Regressionstest für den Web-Recherche-Agenten
+- Absicherung gegen App-eigene `BUY`/`SELL`-Zusammenfassungen
+- Prüfung der deskriptiven Musterpolaritäten (`bullish`, `bearish`, `neutral`)
+
+**Ergebnis:** 107/107 Tests bestanden (`python -m pytest tests -q`).
+
 <!--
 ### TEST-XXX: Beispiel abgeschlossener Test
 **Durchgeführt:** 2026-01-20
@@ -199,7 +210,7 @@ _Aktuell keine Tests in Durchführung_
 | jobs/ | automatisierte Tests vorhanden | Aktiv |
 | ui/ | automatisierte Tests vorhanden | Aktiv |
 
-**Gesamtabdeckung:** 106 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
+**Gesamtabdeckung:** 107 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
 **Ziel:** 80%
 
 ---
@@ -242,4 +253,4 @@ python -m pytest -m "slow"
 
 ---
 
-*Letzte Aktualisierung: 2026-04-30*
+*Letzte Aktualisierung: 2026-05-01*

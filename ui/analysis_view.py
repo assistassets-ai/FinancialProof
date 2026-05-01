@@ -236,7 +236,11 @@ def _render_completed_job(job):
             )
             for signal in result.signals:
                 signal_type = signal.get('type', 'hold')
-                emoji = "🟢" if signal_type == 'buy' else "🔴" if signal_type == 'sell' else "🟡"
+                emoji = (
+                    "🟢" if signal_type in ('buy', 'bullish')
+                    else "🔴" if signal_type in ('sell', 'bearish')
+                    else "🟡"
+                )
                 label = signal.get('indicator', 'Muster')
                 st.markdown(f"{emoji} **{label}**: {signal.get('description', '')}")
 
