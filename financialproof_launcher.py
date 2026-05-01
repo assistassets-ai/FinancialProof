@@ -62,7 +62,7 @@ def main() -> int:
     if not python_cmd:
         _show_error(
             "Python wurde nicht gefunden.\n"
-            "Bitte Python 3.9+ installieren und die Abhängigkeiten aus requirements.txt einrichten."
+            "Bitte Python 3.10+ installieren und die Abhängigkeiten aus requirements.txt einrichten."
         )
         return 1
 

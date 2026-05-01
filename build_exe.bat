@@ -4,7 +4,7 @@ set PYTHONIOENCODING=utf-8
 
 python --version >nul 2>&1
 if errorlevel 1 (
-    echo [FEHLER] Python wurde nicht gefunden. Bitte Python 3.9+ installieren.
+    echo [FEHLER] Python wurde nicht gefunden. Bitte Python 3.10+ installieren.
     pause
     exit /b 1
 )

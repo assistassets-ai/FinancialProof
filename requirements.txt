@@ -20,7 +20,7 @@ scipy>=1.11.0
 arch>=6.2.0
 
 # ===== Machine Learning =====
-scikit-learn>=1.8.0
+scikit-learn>=1.4.0,<1.8.0
 tensorflow>=2.14.0
 # stable-baselines3>=2.1.0  # Optional: Für Reinforcement Learning
 

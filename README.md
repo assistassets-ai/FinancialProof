@@ -57,7 +57,7 @@ A browser-based tool for statistical pattern analysis on financial market data.
 
 ### Prerequisites
 
-- Python 3.9+
+- Python 3.10+
 - pip
 
 ### Setup

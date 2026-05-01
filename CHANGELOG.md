@@ -34,8 +34,10 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Windows-Launcher ergänzt: `build_exe.bat` baut eine schlanke
   `FinancialProof.exe`, die die lokale Python-/Streamlit-Installation nutzt
   und fehlende Runtime-Abhängigkeiten vor dem Start meldet.
-- README, `START.bat` und Build-Hinweise auf Python 3.9+ und lokale,
+- README, `START.bat` und Build-Hinweise auf Python 3.10+ und lokale,
   ignorierte Launcher-Artefakte abgestimmt.
+- CI-Matrix und `scikit-learn`-Version auf die aktuelle Python-3.10+ Runtime
+  abgestimmt, damit Dependency-Installation reproduzierbar bleibt.
 
 ### Rechtliche Korrekturen (Rechtsaudit Stufe 2, § 32 KWG / § 2 Abs. 9 WpHG)
 - **Terminologie neutralisiert:** UI-Labels „Kauf-/Verkaufssignal" durch
