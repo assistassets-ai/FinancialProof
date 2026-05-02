@@ -3,7 +3,8 @@ FinancialProof - Sidebar UI Komponente
 Watchlist, Asset-Auswahl und Einstellungen
 """
 import streamlit as st
-from typing import Tuple
+from datetime import datetime
+from typing import Any, Dict, Tuple
 import sys
 from pathlib import Path
 
@@ -12,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import config, texts, api_keys
 from core.database import db, WatchlistItem
 from core.data_provider import DataProvider
+from core.rate_limiter import RateLimiter
 
 
 def render_sidebar() -> Tuple[str, str, dict]:
@@ -171,6 +173,10 @@ def _render_settings():
                 api_keys.save_api_key("youtube", youtube_key)
                 st.success("Gespeichert!")
 
+        # API-Rate-Limit-Telemetrie
+        st.markdown("---")
+        _render_rate_limit_status()
+
         # Datenbank-Reset
         st.markdown("---")
         if st.button("🗑️ Datenbank zurücksetzen", type="secondary"):
@@ -185,3 +191,60 @@ def _render_settings():
                         st.rerun()
                     except PermissionError:
                         st.error("Datenbank ist gesperrt (OneDrive-Sync oder anderer Prozess). Bitte später erneut versuchen.")
+
+
+def _render_rate_limit_status():
+    """Zeigt Telemetrie aller aktiven Rate-Limit-Buckets in der Sidebar.
+
+    Liest die Statistiken via ``RateLimiter.get_all_stats`` und blendet jeden
+    Bucket als kompakten Block ein. Dadurch werden zukuenftige Buckets
+    (z.B. Twitter/Reddit-Sentiment laut ROADMAP) automatisch sichtbar, ohne
+    dass die UI nachgezogen werden muss.
+    """
+    all_stats = RateLimiter.get_all_stats()
+    st.caption("**API-Rate-Limits**")
+    if not all_stats:
+        st.caption("Noch keine API-Aufrufe protokolliert.")
+        return
+
+    for stats in all_stats:
+        _render_bucket_stats(stats)
+
+    if st.button("Rate-Limit-Statistik zurücksetzen"):
+        RateLimiter.reset_stats()
+        st.success("Rate-Limit-Statistik zurückgesetzt")
+
+
+def _render_bucket_stats(stats: Dict[str, Any]) -> None:
+    """Rendert einen einzelnen Bucket-Telemetrie-Block."""
+    name = stats.get("name", "?")
+    st.caption(f"_{name}_")
+    st.caption(
+        "Anfragen: {requests} | verzögert: {delayed} | Timeouts: {timeouts}".format(
+            requests=stats.get("requests", 0),
+            delayed=stats.get("delayed_acquired", 0),
+            timeouts=stats.get("timeouts", 0),
+        )
+    )
+    st.caption(
+        "Token knapp: {events} | verfügbar: {tokens:.1f}/{capacity:.1f}".format(
+            events=stats.get("low_token_events", 0),
+            tokens=stats.get("available_tokens", 0.0),
+            capacity=stats.get("capacity", 0.0),
+        )
+    )
+    if stats.get("last_low_tokens_at") is not None:
+        st.caption(
+            "Letzte Knappheit: "
+            f"{_format_rate_limit_timestamp(stats['last_low_tokens_at'])}"
+        )
+    if stats.get("last_timeout_at") is not None:
+        st.caption(
+            "Letzter Timeout: "
+            f"{_format_rate_limit_timestamp(stats['last_timeout_at'])}"
+        )
+
+
+def _format_rate_limit_timestamp(timestamp: float) -> str:
+    """Formatiert Unix-Zeitstempel fuer die kompakte Sidebar-Anzeige."""
+    return datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")

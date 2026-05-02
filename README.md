@@ -34,7 +34,7 @@ A browser-based tool for statistical pattern analysis on financial market data.
 - **Job Queue System**: Asynchronous analysis tasks with SQLite persistence
 - **Watchlist**: Portfolio overview with multiple assets
 - **Operational Logging**: Rotating local log file for runtime diagnostics
-- **API Rate Limiting**: Configurable token-bucket throttling for yfinance calls
+- **API Rate Limiting + Telemetry**: Configurable token-bucket throttling and runtime stats for yfinance calls
 - **German User Interface**
 
 > **Note on terminology:** Earlier versions of this project used the term
@@ -131,8 +131,8 @@ python -m pytest tests -q
 
 Current repository status:
 
-- 134 unit and regression tests cover analysis modules, job execution,
-  logging, rate limiting, disclaimer persistence and Streamlit helper flows.
+- 143 unit and regression tests cover analysis modules, job execution,
+  logging, rate limiting/telemetry, disclaimer persistence and Streamlit helper flows.
 - OHLCV input validation reports missing columns cleanly before running
   missing-value checks, so incomplete market data fails with diagnostics
   instead of a `KeyError`.
@@ -154,7 +154,7 @@ FinancialProof/
 │   ├── database.py          # SQLite database
 │   ├── data_provider.py     # yfinance wrapper
 │   ├── logging_utils.py     # Logging setup
-│   └── rate_limiter.py      # Token-bucket API throttling
+│   └── rate_limiter.py      # Token-bucket API throttling + telemetry
 │
 ├── indicators/
 │   ├── technical.py         # Technical indicators
@@ -216,6 +216,8 @@ Do not commit `.env`, `data/.key`, `data/.secrets`,
 
 API keys for optional Twitter/X and YouTube integrations are entered through
 the Streamlit sidebar and stored locally in `data/.secrets`.
+The sidebar settings also show yfinance rate-limit telemetry, including
+delayed calls, timeouts, token shortages and the last shortage timestamp.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -258,7 +260,7 @@ outputs are forecasts, predictions, or trading recommendations.
 - **NLP**: transformers, TextBlob
 - **Database**: SQLite
 - **Logging**: Python logging with rotating file handler
-- **Rate limiting**: Built-in token-bucket limiter for external API calls
+- **Rate limiting**: Built-in token-bucket limiter with telemetry snapshots for external API calls
 
 ## Roadmap
 
@@ -315,7 +317,7 @@ Finanzmarktdaten.
 - Statistische und Machine-Learning-Analysen (historische Auswertung)
 - Hintergrund-Job-Queue
 - Interaktive Charts
-- API-Rate-Limiting für externe Datenquellen
+- API-Rate-Limiting und Telemetrie für externe Datenquellen
 
 ### Installation
 

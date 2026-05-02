@@ -43,8 +43,16 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   abgestimmt, damit Dependency-Installation reproduzierbar bleibt.
 - Token-Bucket-Rate-Limiter für yfinance-Aufrufe ergänzt und in
   DataProvider, Sentiment-Analyse und Research-Agent eingebunden.
+- Rate-Limit-Telemetrie ergänzt: Token-Buckets zählen Anfragen, verzögerte
+  Bezüge, Timeouts, Token-Knappheit und Wartezeiten; die Sidebar zeigt den
+  yfinance-Status mit Reset-Funktion.
 - README und `env.example` um Rate-Limit-Konfiguration
-  (`FINANCIALPROOF_RL_YF_*`) sowie den aktuellen Teststand 134/134 ergänzt.
+  (`FINANCIALPROOF_RL_YF_*`) sowie den aktuellen Teststand 143/143 ergänzt.
+- Rate-Limit-Sidebar generalisiert: Telemetrie wird über
+  `RateLimiter.get_all_stats()` für alle aktiven Buckets angezeigt
+  (zukunftssicher für weitere API-Quellen wie Twitter/Reddit-Sentiment),
+  Reset-Knopf setzt jetzt alle Bucket-Statistiken global zurück.
+  Lokaler Stand: 145/145 Tests grün (`python -m pytest tests -q`).
 
 ### Rechtliche Korrekturen (Rechtsaudit Stufe 2, § 32 KWG / § 2 Abs. 9 WpHG)
 - **Terminologie neutralisiert:** UI-Labels „Kauf-/Verkaufssignal" durch

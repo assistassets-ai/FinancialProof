@@ -390,6 +390,95 @@ def test_render_settings_reports_permission_error_on_database_reset(monkeypatch)
     ]
 
 
+def test_rate_limit_status_shows_stats_and_can_reset(monkeypatch):
+    fake_st = FakeStreamlit()
+    fake_st.button_presses["Rate-Limit-Statistik zurücksetzen"] = True
+    reset_calls = []
+
+    monkeypatch.setattr(sidebar, "st", fake_st)
+    monkeypatch.setattr(
+        sidebar.RateLimiter,
+        "get_all_stats",
+        lambda: [
+            {
+                "name": "yfinance",
+                "requests": 7,
+                "delayed_acquired": 2,
+                "timeouts": 1,
+                "low_token_events": 3,
+                "available_tokens": 4.5,
+                "capacity": 10.0,
+                "last_low_tokens_at": 1_700_000_000.0,
+                "last_timeout_at": None,
+            }
+        ],
+    )
+    monkeypatch.setattr(sidebar.RateLimiter, "reset_stats", lambda: reset_calls.append("all"))
+
+    sidebar._render_rate_limit_status()
+
+    assert any("Anfragen: 7" in caption for caption in fake_st.captions)
+    assert any("Token knapp: 3" in caption for caption in fake_st.captions)
+    assert any("Letzte Knappheit:" in caption for caption in fake_st.captions)
+    assert any(caption == "_yfinance_" for caption in fake_st.captions)
+    assert reset_calls == ["all"]
+    assert fake_st.success_messages == ["Rate-Limit-Statistik zurückgesetzt"]
+
+
+def test_rate_limit_status_lists_multiple_buckets(monkeypatch):
+    fake_st = FakeStreamlit()
+
+    monkeypatch.setattr(sidebar, "st", fake_st)
+    monkeypatch.setattr(
+        sidebar.RateLimiter,
+        "get_all_stats",
+        lambda: [
+            {
+                "name": "yfinance",
+                "requests": 3,
+                "delayed_acquired": 0,
+                "timeouts": 0,
+                "low_token_events": 0,
+                "available_tokens": 9.0,
+                "capacity": 10.0,
+                "last_low_tokens_at": None,
+                "last_timeout_at": None,
+            },
+            {
+                "name": "twitter",
+                "requests": 5,
+                "delayed_acquired": 1,
+                "timeouts": 2,
+                "low_token_events": 4,
+                "available_tokens": 0.5,
+                "capacity": 5.0,
+                "last_low_tokens_at": 1_700_000_500.0,
+                "last_timeout_at": 1_700_000_900.0,
+            },
+        ],
+    )
+
+    sidebar._render_rate_limit_status()
+
+    assert any(caption == "_yfinance_" for caption in fake_st.captions)
+    assert any(caption == "_twitter_" for caption in fake_st.captions)
+    assert any("Anfragen: 3" in caption for caption in fake_st.captions)
+    assert any("Anfragen: 5" in caption for caption in fake_st.captions)
+    assert any("Letzter Timeout:" in caption for caption in fake_st.captions)
+
+
+def test_rate_limit_status_handles_empty_registry(monkeypatch):
+    fake_st = FakeStreamlit()
+
+    monkeypatch.setattr(sidebar, "st", fake_st)
+    monkeypatch.setattr(sidebar.RateLimiter, "get_all_stats", lambda: [])
+
+    sidebar._render_rate_limit_status()
+
+    assert any("Noch keine API-Aufrufe" in caption for caption in fake_st.captions)
+    assert fake_st.success_messages == []
+
+
 def test_render_chart_view_handles_empty_dataframe(monkeypatch):
     fake_st = FakeStreamlit()
     monkeypatch.setattr(chart_view, "st", fake_st)

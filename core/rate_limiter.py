@@ -10,6 +10,7 @@ Bestandteile:
 - ``RateLimiter``: Komfort-Schicht mit dynamisch erzeugten benannten Buckets.
 - ``rate_limited``: Dekorator zum Drosseln einzelner Funktionen.
 - ``rate_limited_call``: Manuelles Throttling fuer Methoden-Aufrufe.
+- Telemetrie-Snapshots fuer erfolgreiche, wartende und abgebrochene Aufrufe.
 
 Standardgrenzen koennen via ``config.py`` (``API_RATE_LIMIT_*``) ueberschrieben
 werden. Tests koennen ueber ``RateLimiter.reset()`` einen sauberen Zustand
@@ -20,9 +21,9 @@ from __future__ import annotations
 import logging
 import threading
 import time
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from functools import wraps
-from typing import Callable, Dict, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 
 logger = logging.getLogger(__name__)
@@ -42,6 +43,27 @@ class BucketConfig:
             raise ValueError("refill_rate must be positive")
 
 
+@dataclass
+class RateLimitStats:
+    """Laufzeit-Telemetrie fuer einen Token-Bucket."""
+
+    requests: int = 0
+    acquired: int = 0
+    immediate_acquired: int = 0
+    delayed_acquired: int = 0
+    timeouts: int = 0
+    nonblocking_denials: int = 0
+    low_token_events: int = 0
+    tokens_consumed: float = 0.0
+    total_wait_seconds: float = 0.0
+    max_wait_seconds: float = 0.0
+    last_wait_seconds: float = 0.0
+    last_acquired_at: Optional[float] = None
+    last_low_tokens_at: Optional[float] = None
+    last_timeout_at: Optional[float] = None
+    last_denied_at: Optional[float] = None
+
+
 class TokenBucket:
     """Thread-sicherer Token-Bucket.
 
@@ -51,6 +73,8 @@ class TokenBucket:
         time_func: Quelle fuer Zeitwerte. Wird in Tests ueberschrieben,
             um deterministisch zu testen.
         sleep_func: Wartefunktion. Wird in Tests ebenfalls ersetzt.
+        event_time_func: Zeitquelle fuer Diagnose-Zeitstempel. Standard ist
+            ``time.time`` fuer menschenlesbare Runtime-Auswertung.
     """
 
     def __init__(
@@ -59,6 +83,7 @@ class TokenBucket:
         refill_rate: float,
         time_func: Callable[[], float] = time.monotonic,
         sleep_func: Callable[[float], None] = time.sleep,
+        event_time_func: Callable[[], float] = time.time,
     ) -> None:
         if capacity <= 0:
             raise ValueError("capacity must be positive")
@@ -71,6 +96,8 @@ class TokenBucket:
         self._lock = threading.Lock()
         self._time = time_func
         self._sleep = sleep_func
+        self._event_time = event_time_func
+        self._stats = RateLimitStats()
 
     def _refill(self) -> None:
         now = self._time()
@@ -88,10 +115,15 @@ class TokenBucket:
         if tokens <= 0:
             raise ValueError("tokens must be positive")
         with self._lock:
+            self._stats.requests += 1
             self._refill()
             if self._tokens >= tokens:
                 self._tokens -= tokens
+                self._record_acquired_locked(tokens=tokens, wait_seconds=0.0)
                 return True
+            self._record_low_tokens_locked()
+            self._stats.nonblocking_denials += 1
+            self._stats.last_denied_at = self._event_time()
             return False
 
     def acquire(self, tokens: float = 1.0, timeout: Optional[float] = None) -> bool:
@@ -110,19 +142,34 @@ class TokenBucket:
             raise ValueError("tokens cannot exceed bucket capacity")
 
         start = self._time()
+        request_counted = False
+        waited_for_tokens = False
         while True:
             with self._lock:
+                if not request_counted:
+                    self._stats.requests += 1
+                    request_counted = True
                 self._refill()
                 if self._tokens >= tokens:
                     self._tokens -= tokens
+                    wait_seconds = self._time() - start if waited_for_tokens else 0.0
+                    self._record_acquired_locked(
+                        tokens=tokens,
+                        wait_seconds=wait_seconds,
+                    )
                     return True
                 missing = tokens - self._tokens
                 wait_time = missing / self.refill_rate
+                if not waited_for_tokens:
+                    self._record_low_tokens_locked()
+                    waited_for_tokens = True
 
             if timeout is not None:
                 elapsed = self._time() - start
                 remaining = timeout - elapsed
                 if remaining <= 0:
+                    with self._lock:
+                        self._record_timeout_locked(elapsed)
                     return False
                 wait_time = min(wait_time, remaining)
 
@@ -134,6 +181,52 @@ class TokenBucket:
         with self._lock:
             self._refill()
             return self._tokens
+
+    def stats_snapshot(self) -> Dict[str, Any]:
+        """Gibt einen thread-sicheren Telemetrie-Snapshot zurueck."""
+        with self._lock:
+            self._refill()
+            snapshot = asdict(self._stats)
+            snapshot.update(
+                {
+                    "capacity": self.capacity,
+                    "refill_rate": self.refill_rate,
+                    "available_tokens": self._tokens,
+                }
+            )
+            return snapshot
+
+    def reset_stats(self) -> None:
+        """Setzt Telemetrie zurueck, ohne Token-Stand oder Limits zu aendern."""
+        with self._lock:
+            self._stats = RateLimitStats()
+
+    def _record_acquired_locked(self, tokens: float, wait_seconds: float) -> None:
+        self._stats.acquired += 1
+        self._stats.tokens_consumed += tokens
+        self._stats.last_acquired_at = self._event_time()
+        if wait_seconds > 0:
+            self._stats.delayed_acquired += 1
+            self._record_wait_locked(wait_seconds)
+        else:
+            self._stats.immediate_acquired += 1
+
+    def _record_low_tokens_locked(self) -> None:
+        self._stats.low_token_events += 1
+        self._stats.last_low_tokens_at = self._event_time()
+
+    def _record_timeout_locked(self, wait_seconds: float) -> None:
+        self._stats.timeouts += 1
+        self._stats.last_timeout_at = self._event_time()
+        self._record_wait_locked(max(0.0, wait_seconds))
+
+    def _record_wait_locked(self, wait_seconds: float) -> None:
+        self._stats.last_wait_seconds = wait_seconds
+        self._stats.total_wait_seconds += wait_seconds
+        self._stats.max_wait_seconds = max(
+            self._stats.max_wait_seconds,
+            wait_seconds,
+        )
 
 
 class RateLimiter:
@@ -191,6 +284,42 @@ class RateLimiter:
     ) -> bool:
         """Erwirbt Tokens am benannten Bucket (ggf. mit Warten)."""
         return cls.get_bucket(name).acquire(tokens=tokens, timeout=timeout)
+
+    @classmethod
+    def get_stats(cls, name: str) -> Dict[str, Any]:
+        """Liefert Telemetrie fuer einen benannten Bucket.
+
+        Der Aufruf legt unbekannte Buckets wie ``get_bucket`` mit der
+        Default-Konfiguration an. Dadurch koennen Monitoring-Oberflaechen
+        denselben API-Pfad nutzen, ohne Sonderfaelle fuer leere Registry zu
+        behandeln.
+        """
+        stats = cls.get_bucket(name).stats_snapshot()
+        stats["name"] = name
+        return stats
+
+    @classmethod
+    def get_all_stats(cls) -> List[Dict[str, Any]]:
+        """Liefert Telemetrie-Snapshots aller aktuell angelegten Buckets."""
+        with cls._registry_lock:
+            names = sorted(cls._buckets)
+        return [cls.get_stats(name) for name in names]
+
+    @classmethod
+    def reset_stats(cls, name: Optional[str] = None) -> None:
+        """Setzt Telemetrie zurueck.
+
+        Args:
+            name: Optionaler Bucket-Name. Ohne Name werden alle vorhandenen
+                Bucket-Statistiken zurueckgesetzt.
+        """
+        if name is not None:
+            cls.get_bucket(name).reset_stats()
+            return
+        with cls._registry_lock:
+            buckets = list(cls._buckets.values())
+        for bucket in buckets:
+            bucket.reset_stats()
 
     @classmethod
     def reset(cls) -> None:
@@ -296,6 +425,7 @@ def init_from_config(cfg) -> None:
 
 __all__ = [
     "BucketConfig",
+    "RateLimitStats",
     "TokenBucket",
     "RateLimiter",
     "rate_limited",

@@ -22,6 +22,7 @@ Die Basis-Anwendung ist vollständig implementiert:
 - ✅ Logging-Hardening und 134 automatisierte Tests
 - ✅ OHLCV-Validierung meldet fehlende Pflichtspalten ohne `KeyError`
 - ✅ Rate Limiting (Token-Bucket) für yfinance-Aufrufe in DataProvider, Sentiment- und Research-Agent
+- ✅ Rate-Limit-Telemetrie für alle Buckets (Sidebar-Anzeige, automatisch erweiterbar für künftige API-Quellen)
 
 ---
 

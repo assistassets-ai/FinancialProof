@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from core.rate_limiter import (  # noqa: E402
     BucketConfig,
     RateLimiter,
+    RateLimitStats,
     TokenBucket,
     rate_limited,
     rate_limited_call,
@@ -59,6 +60,15 @@ class TestBucketConfig:
     def test_invalid_refill(self):
         with pytest.raises(ValueError):
             BucketConfig(capacity=10.0, refill_rate=0)
+
+
+class TestRateLimitStats:
+    def test_stats_default_values(self):
+        stats = RateLimitStats()
+        assert stats.requests == 0
+        assert stats.acquired == 0
+        assert stats.timeouts == 0
+        assert stats.last_low_tokens_at is None
 
 
 class TestTokenBucket:
@@ -155,6 +165,82 @@ class TestTokenBucket:
         assert all(results)
         assert len(results) == 50
 
+    def test_stats_record_immediate_consumption(self):
+        bucket = TokenBucket(capacity=3, refill_rate=1.0)
+        assert bucket.try_consume(1) is True
+
+        stats = bucket.stats_snapshot()
+
+        assert stats["requests"] == 1
+        assert stats["acquired"] == 1
+        assert stats["immediate_acquired"] == 1
+        assert stats["delayed_acquired"] == 0
+        assert stats["timeouts"] == 0
+        assert stats["tokens_consumed"] == pytest.approx(1.0)
+        assert stats["available_tokens"] == pytest.approx(2.0)
+
+    def test_stats_record_wait_when_tokens_are_low(self):
+        clock = FakeClock()
+        bucket = TokenBucket(
+            capacity=1,
+            refill_rate=2.0,
+            time_func=clock.time,
+            sleep_func=clock.sleep,
+            event_time_func=clock.time,
+        )
+
+        assert bucket.acquire(1) is True
+        assert bucket.acquire(1, timeout=2.0) is True
+
+        stats = bucket.stats_snapshot()
+
+        assert stats["requests"] == 2
+        assert stats["acquired"] == 2
+        assert stats["immediate_acquired"] == 1
+        assert stats["delayed_acquired"] == 1
+        assert stats["low_token_events"] == 1
+        assert stats["timeouts"] == 0
+        assert stats["total_wait_seconds"] == pytest.approx(0.5)
+        assert stats["max_wait_seconds"] == pytest.approx(0.5)
+        assert stats["last_wait_seconds"] == pytest.approx(0.5)
+        assert stats["last_low_tokens_at"] == pytest.approx(0.0)
+        assert stats["last_acquired_at"] == pytest.approx(0.5)
+
+    def test_stats_record_timeout_when_tokens_stay_unavailable(self):
+        clock = FakeClock()
+        bucket = TokenBucket(
+            capacity=1,
+            refill_rate=0.5,
+            time_func=clock.time,
+            sleep_func=clock.sleep,
+            event_time_func=clock.time,
+        )
+
+        assert bucket.acquire(1) is True
+        assert bucket.acquire(1, timeout=0.5) is False
+
+        stats = bucket.stats_snapshot()
+
+        assert stats["requests"] == 2
+        assert stats["acquired"] == 1
+        assert stats["timeouts"] == 1
+        assert stats["low_token_events"] == 1
+        assert stats["total_wait_seconds"] == pytest.approx(0.5)
+        assert stats["max_wait_seconds"] == pytest.approx(0.5)
+        assert stats["last_timeout_at"] == pytest.approx(0.5)
+
+    def test_reset_stats_keeps_bucket_tokens(self):
+        bucket = TokenBucket(capacity=2, refill_rate=1.0)
+        assert bucket.try_consume(1) is True
+        assert bucket.available_tokens() == pytest.approx(1.0)
+
+        bucket.reset_stats()
+        stats = bucket.stats_snapshot()
+
+        assert stats["requests"] == 0
+        assert stats["acquired"] == 0
+        assert stats["available_tokens"] == pytest.approx(1.0)
+
 
 class TestRateLimiterRegistry:
     def test_get_bucket_creates_default(self):
@@ -183,6 +269,37 @@ class TestRateLimiterRegistry:
         # Nach reset wird automatisch ein neuer Default-Bucket angelegt.
         bucket = RateLimiter.get_bucket("x")
         assert bucket.capacity == 60.0
+
+    def test_get_stats_returns_named_bucket_snapshot(self):
+        RateLimiter.configure_bucket("metrics", capacity=2, refill_rate=1.0)
+        assert RateLimiter.acquire("metrics") is True
+
+        stats = RateLimiter.get_stats("metrics")
+
+        assert stats["name"] == "metrics"
+        assert stats["capacity"] == 2
+        assert stats["requests"] == 1
+        assert stats["acquired"] == 1
+
+    def test_get_all_stats_lists_existing_buckets(self):
+        RateLimiter.configure_bucket("a", capacity=2, refill_rate=1.0)
+        RateLimiter.configure_bucket("b", capacity=3, refill_rate=1.0)
+        RateLimiter.acquire("a")
+
+        stats = RateLimiter.get_all_stats()
+
+        assert {item["name"] for item in stats} == {"a", "b"}
+        assert next(item for item in stats if item["name"] == "a")["requests"] == 1
+
+    def test_reset_stats_clears_bucket_telemetry(self):
+        RateLimiter.configure_bucket("x", capacity=2, refill_rate=1.0)
+        RateLimiter.acquire("x")
+
+        RateLimiter.reset_stats("x")
+        stats = RateLimiter.get_stats("x")
+
+        assert stats["requests"] == 0
+        assert stats["acquired"] == 0
 
 
 class TestRateLimitedDecorator:

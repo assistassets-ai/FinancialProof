@@ -109,7 +109,7 @@ _Keine Aufgaben in Review_
 - [x] Analyzer-Fehlerlogging für Random Forest, Neural Network, Monte Carlo und Mean Reversion mit Regressionstests absichern ~1d #quality
 - [ ] Error Handling verbessern ~2d #quality
 - [x] Logging-System einführen ~1d #quality
-- [ ] API Rate Limiting implementieren ~1d #quality
+- [x] API Rate Limiting inklusive Telemetrie implementieren ~1d #quality
 - [x] Docstrings vervollständigen ~2d #docs
 - [ ] Type Hints überall hinzufügen ~2d #quality
 
