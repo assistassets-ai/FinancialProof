@@ -2,7 +2,7 @@
 # Installieren mit: pip install -r requirements.txt
 
 # ===== Web Framework =====
-streamlit>=1.56.0
+streamlit>=1.57.0
 
 # ===== Datenquellen =====
 yfinance>=1.3.0
