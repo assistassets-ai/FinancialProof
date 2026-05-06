@@ -187,6 +187,15 @@ class TestGetCurrentPrice:
 
 
 class TestGetMultipleTickers:
+    def test_get_multiple_tickers_empty_tickers_returns_empty_dict(self):
+        """get_multiple_tickers gibt bei leerer Tickerliste sofort ein leeres Dict zurueck."""
+        with patch("yfinance.download") as mocked_download:
+            from core.data_provider import DataProvider
+            DataProvider.get_multiple_tickers.cache_clear()
+            result = DataProvider.get_multiple_tickers([])
+        assert result == {}
+        mocked_download.assert_not_called()
+
     def test_get_multiple_tickers_with_multiindex(self):
         """get_multiple_tickers parst MultiIndex-DataFrame und gibt {ticker: df} zurueck."""
         dates = pd.date_range("2024-01-01", periods=5, freq="D")

@@ -265,10 +265,13 @@ class DataProvider:
             interval: Intervall
 
         Returns:
-            Dictionary {ticker: DataFrame}
+        Dictionary {ticker: DataFrame}
         """
         result = {}
         try:
+            if not tickers:
+                return result
+
             data = _rl_call(
                 yf.download,
                 tickers,

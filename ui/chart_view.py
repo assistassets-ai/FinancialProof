@@ -291,7 +291,7 @@ def _render_main_chart(
         ]
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 
 def _render_signal_summary(signal_summary: dict):

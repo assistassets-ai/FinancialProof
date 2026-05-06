@@ -19,7 +19,7 @@ Die Basis-Anwendung ist vollständig implementiert:
 - ✅ Regelbasierte automatische Methodenauswahl
 - ✅ Deutsche Benutzeroberfläche
 - ✅ Erststart-Acknowledgement (§ 32 KWG / § 2 Abs. 9 WpHG)
-- ✅ Logging-Hardening und 134 automatisierte Tests
+- ✅ Logging-Hardening und 149 automatisierte Tests
 - ✅ OHLCV-Validierung meldet fehlende Pflichtspalten ohne `KeyError`
 - ✅ Rate Limiting (Token-Bucket) für yfinance-Aufrufe in DataProvider, Sentiment- und Research-Agent
 - ✅ Rate-Limit-Telemetrie für alle Buckets (Sidebar-Anzeige, automatisch erweiterbar für künftige API-Quellen)
@@ -375,7 +375,7 @@ backtesting/
 ### Kurzfristig (Nächste Version)
 1. **Error Handling härten** - verbleibende Module auf klare Fehlerpfade und Logging prüfen
 2. ✅ **API Rate Limiting** - Token-Bucket-Limiter (`core/rate_limiter.py`) drosselt yfinance-Aufrufe in DataProvider, Sentiment- und Research-Agent (2026-05-01)
-3. **Dokumentation ergänzen** - API-/CLI-nahe Beispiele und Betriebshinweise ausbauen
+3. **Dokumentation ergänzen** - API-/CLI-nahe Beispiele und Betriebshinweise ausgebaut (2026-05-06)
 4. **Trading-/Broker-Funktionen ausgesetzt lassen** - erst nach regulatorischer Klärung
 
 ### Mittelfristig
@@ -395,7 +395,7 @@ backtesting/
 - [ ] Error Handling verbessern
 - [x] Logging-System einführen
 - [x] API Rate Limiting (Token-Bucket, konfigurierbar via `config.py` und `FINANCIALPROOF_RL_*`-ENV-Variablen)
-- [ ] Dokumentation (Docstrings, README)
+- [x] Dokumentation (Docstrings, README) (2026-05-06)
 
 ---
 

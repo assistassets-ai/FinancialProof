@@ -479,6 +479,40 @@ def test_rate_limit_status_handles_empty_registry(monkeypatch):
     assert fake_st.success_messages == []
 
 
+def test_rate_limit_status_reflects_data_provider_yfinance_calls(monkeypatch):
+    fake_st = FakeStreamlit()
+    data_provider = importlib.import_module("core.data_provider")
+    DataProvider = data_provider.DataProvider
+
+    class FakeTicker:
+        def __init__(self, symbol):
+            self.symbol = symbol
+            self.info = {"symbol": symbol, "longName": "Apple Inc."}
+
+    monkeypatch.setattr(data_provider.yf, "download", lambda *args, **kwargs: _sample_price_frame())
+    monkeypatch.setattr(data_provider.yf, "Ticker", FakeTicker)
+    monkeypatch.setattr(sidebar, "st", fake_st)
+
+    DataProvider.get_market_data.cache_clear()
+    DataProvider.get_ticker_info.cache_clear()
+    try:
+        market_data = DataProvider.get_market_data("AAPL", period="5d")
+        info = DataProvider.get_ticker_info("AAPL")
+
+        assert market_data is not None
+        assert len(market_data) == 3
+        assert info["longName"] == "Apple Inc."
+
+        sidebar._render_rate_limit_status()
+
+        assert any(caption == "_yfinance_" for caption in fake_st.captions)
+        assert any("Anfragen: 2" in caption for caption in fake_st.captions)
+        assert any("Timeouts: 0" in caption for caption in fake_st.captions)
+    finally:
+        DataProvider.get_market_data.cache_clear()
+        DataProvider.get_ticker_info.cache_clear()
+
+
 def test_render_chart_view_handles_empty_dataframe(monkeypatch):
     fake_st = FakeStreamlit()
     monkeypatch.setattr(chart_view, "st", fake_st)

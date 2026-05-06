@@ -269,8 +269,16 @@ class MethodSelector:
         Returns:
             Liste der empfohlenen Methoden
         """
+        available_methods = list(available_methods or [])
+
+        if data is None or data.empty:
+            return available_methods[:1] if available_methods else []
+
         if self._ml_selector is not None:
             return self._ml_selector.predict(data, available_methods)
+
+        if "Close" not in data.columns:
+            return available_methods[:1] if available_methods else []
 
         # Regelbasierte Auswahl
         methods = []

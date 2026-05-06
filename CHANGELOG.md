@@ -32,6 +32,8 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   erweitert.
 - `env.example`, README-Konfiguration und Screenshot-Pfade auf die aktuelle
   Repository-Struktur gebracht.
+- README mit operativen Anleitungen erweitert: Streamlit-/Launcher-Startwege,
+  Log- und Wartungsanweisungen, Rate-Limit-Telemetrie-Troubleshooting.
 - `.gitignore` um lokale Secret-Dateien, Test-Locks, Release-Artefakte und
   interne Steuerdateien erweitert.
 - Windows-Launcher ergänzt: `build_exe.bat` baut eine schlanke
@@ -53,6 +55,12 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   (zukunftssicher für weitere API-Quellen wie Twitter/Reddit-Sentiment),
   Reset-Knopf setzt jetzt alle Bucket-Statistiken global zurück.
   Lokaler Stand: 145/145 Tests grün (`python -m pytest tests -q`).
+- Rate-Limit-Sidebar in der Streamlit-Laufumgebung geprüft und aktualisiert:
+  Settings werden nach den datenbezogenen yfinance-Aufrufen gerendert, sodass
+  der `yfinance`-Bucket direkt im selben App-Run sichtbar ist. Regressionstest
+  ergänzt; lokaler Stand: 149/149 Tests grün (`python -m pytest tests -q`).
+- Streamlit-UI auf die aktuelle Breiten-API umgestellt:
+  `use_container_width=True` wurde durch `width="stretch"` ersetzt.
 
 ### Rechtliche Korrekturen (Rechtsaudit Stufe 2, § 32 KWG / § 2 Abs. 9 WpHG)
 - **Terminologie neutralisiert:** UI-Labels „Kauf-/Verkaufssignal" durch
