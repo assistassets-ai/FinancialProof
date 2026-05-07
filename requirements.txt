@@ -25,7 +25,7 @@ tensorflow>=2.14.0
 # stable-baselines3>=2.1.0  # Optional: Für Reinforcement Learning
 
 # ===== NLP & Sentiment =====
-transformers>=4.35.0
+transformers>=5.7.0
 torch>=2.0.0
 # textblob>=0.17.1  # Optional: Einfache Sentiment-Analyse
 # nltk>=3.8.1  # Optional: Natural Language Toolkit
