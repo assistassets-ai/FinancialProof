@@ -228,6 +228,20 @@ class BaseAnalyzer(ABC):
         return excess_returns / volatility
 
     @staticmethod
+    def get_forecast_start_date(index: pd.Index) -> pd.Timestamp:
+        """Ermittelt einen robusten Startzeitpunkt fuer Forecast-Charts.
+
+        Datetime-Indexe verwenden den letzten vorhandenen Zeitstempel.
+        Andere Index-Typen fallen auf den naechsten Business Day ab heute
+        zurueck, damit synthetische Testdaten mit RangeIndex nicht abstuerzen.
+        """
+        if len(index) > 0 and pd.api.types.is_datetime64_any_dtype(index):
+            base_date = pd.Timestamp(index[-1])
+        else:
+            base_date = pd.Timestamp.now().normalize()
+        return base_date + pd.offsets.BDay(1)
+
+    @staticmethod
     def create_empty_result(
         analysis_type: str,
         symbol: str,

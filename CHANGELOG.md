@@ -61,6 +61,18 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   ergänzt; lokaler Stand: 149/149 Tests grün (`python -m pytest tests -q`).
 - Streamlit-UI auf die aktuelle Breiten-API umgestellt:
   `use_container_width=True` wurde durch `width="stretch"` ersetzt.
+- `APIKeyManager` ignoriert beschädigte oder nicht objektförmige
+  `data/.secrets`-Dateien jetzt robust und kann sie beim nächsten Speichern
+  sauber neu schreiben.
+- ARIMA- und Monte-Carlo-Chartdaten funktionieren auch mit `RangeIndex`-
+  Test- oder Importdaten; Forecast-Startdaten werden zentral indexrobust
+  bestimmt.
+- ARIMA-Ergebnisse verwenden nur noch deskriptive Musterlabels
+  (`bullish`/`bearish`/`neutral`) statt Kauf-/Verkaufsterminologie.
+- RSI behandelt reine Aufwärts-, Abwärts- und Flat-Serien korrekt als
+  Extrem- beziehungsweise Neutralwerte.
+- Repository-Hygiene ergänzt: `.gitattributes` fixiert Text- und
+  Binärdatei-Behandlung für konsistente Checkouts.
 
 ### Rechtliche Korrekturen (Rechtsaudit Stufe 2, § 32 KWG / § 2 Abs. 9 WpHG)
 - **Terminologie neutralisiert:** UI-Labels „Kauf-/Verkaufssignal" durch

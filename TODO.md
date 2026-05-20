@@ -51,7 +51,7 @@ die regulatorische Einordnung unter KWG/WpHG/MiFID II geklärt ist.
 
 ## In Progress
 
-- [ ] App testen und Bugs fixen #testing
+_Aktuell keine Aufgaben in Bearbeitung_
 
 ---
 
@@ -63,6 +63,11 @@ _Keine Aufgaben in Review_
 
 ## Done ✓
 
+- [x] App testen und Bugs fixen #testing -- DONE 2026-05-16
+  - Secrets-JSON robust geladen
+  - ARIMA- und Monte-Carlo-Forecasts mit RangeIndex abgesichert
+  - RSI-Extremwerte korrekt behandelt
+  - ARIMA-Signaltypen auf deskriptive Muster umgestellt
 ### v1.0.0 - Basis-Features
 - [x] Streamlit Web-App Grundgerüst #core
 - [x] SQLite Datenbank Setup #database
@@ -107,7 +112,7 @@ _Keine Aufgaben in Review_
 
 - [x] Interaktions-/E2E-Tests für verbleibende Streamlit-Views und Integrationspfade schreiben ~3d #testing
 - [x] Analyzer-Fehlerlogging für Random Forest, Neural Network, Monte Carlo und Mean Reversion mit Regressionstests absichern ~1d #quality
-- [ ] Error Handling verbessern ~2d #quality
+- [x] Error Handling verbessern ~2d #quality -- DONE 2026-05-13 (APIKeyManager fängt korruptes `data/.secrets` robust ab)
 - [x] Logging-System einführen ~1d #quality
 - [x] API Rate Limiting inklusive Telemetrie implementieren ~1d #quality
 - [x] Docstrings vervollständigen ~2d #docs

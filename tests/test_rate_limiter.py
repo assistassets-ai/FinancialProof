@@ -166,7 +166,14 @@ class TestTokenBucket:
         assert len(results) == 50
 
     def test_stats_record_immediate_consumption(self):
-        bucket = TokenBucket(capacity=3, refill_rate=1.0)
+        clock = FakeClock()
+        bucket = TokenBucket(
+            capacity=3,
+            refill_rate=1.0,
+            time_func=clock.time,
+            sleep_func=clock.sleep,
+            event_time_func=clock.time,
+        )
         assert bucket.try_consume(1) is True
 
         stats = bucket.stats_snapshot()
@@ -230,7 +237,14 @@ class TestTokenBucket:
         assert stats["last_timeout_at"] == pytest.approx(0.5)
 
     def test_reset_stats_keeps_bucket_tokens(self):
-        bucket = TokenBucket(capacity=2, refill_rate=1.0)
+        clock = FakeClock()
+        bucket = TokenBucket(
+            capacity=2,
+            refill_rate=1.0,
+            time_func=clock.time,
+            sleep_func=clock.sleep,
+            event_time_func=clock.time,
+        )
         assert bucket.try_consume(1) is True
         assert bucket.available_tokens() == pytest.approx(1.0)
 

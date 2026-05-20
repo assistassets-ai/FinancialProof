@@ -189,6 +189,29 @@ _Aktuell keine Tests in Durchführung_
 
 **Ergebnis:** 149/149 Tests bestanden (`python -m pytest tests -q`).
 
+### AUTO-2026-05-13: Korruptes Secrets-File und Recovery
+**Durchgeführt:** 2026-05-13
+**Status:** Bestanden
+
+**Umfang:**
+- Regressionstest für eine beschädigte `data/.secrets`-Datei
+- Prüfung, dass `APIKeyManager` ungültiges JSON robust ignoriert
+- Prüfung, dass `save_api_key()` die Datei danach sauber neu schreibt
+
+**Ergebnis:** 154/154 Tests bestanden (`python -m pytest tests -q`).
+
+### AUTO-2026-05-16: Bugsearch-Regressionen nachgezogen
+**Durchgeführt:** 2026-05-16
+**Status:** Bestanden
+
+**Umfang:**
+- Korruptes `data/.secrets` wird weiterhin robust ignoriert
+- ARIMA- und Monte-Carlo-Forecasts funktionieren auch mit `RangeIndex`
+- RSI liefert bei reinen Aufwärts-, Abwärts- und Flat-Serien die erwarteten Extremwerte
+- ARIMA nutzt nur noch deskriptive Musterlabels statt Kauf-/Verkaufsterminologie
+
+**Ergebnis:** 157/157 Tests bestanden (`python -m pytest tests -q`).
+
 <!--
 ### TEST-XXX: Beispiel abgeschlossener Test
 **Durchgeführt:** 2026-01-20
@@ -223,7 +246,7 @@ _Aktuell keine Tests in Durchführung_
 | jobs/ | automatisierte Tests vorhanden | Aktiv |
 | ui/ | automatisierte Tests vorhanden | Aktiv |
 
-**Gesamtabdeckung:** 149 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
+**Gesamtabdeckung:** 157 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
 **Ziel:** 80%
 
 ---
@@ -266,4 +289,4 @@ python -m pytest -m "slow"
 
 ---
 
-*Letzte Aktualisierung: 2026-05-06*
+*Letzte Aktualisierung: 2026-05-16*
