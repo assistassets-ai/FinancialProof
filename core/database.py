@@ -5,7 +5,7 @@ SQLite-Datenbank für Watchlist, Jobs und Analyse-Ergebnisse
 import sqlite3
 import json
 from datetime import datetime
-from typing import Optional, List, Dict
+from typing import Any, Optional, List, Dict
 from contextlib import contextmanager
 from dataclasses import dataclass
 from enum import Enum
@@ -64,6 +64,29 @@ class AnalysisResult:
     signals: Optional[List[Dict]] = None
     confidence: Optional[float] = None
     created_at: Optional[datetime] = None
+
+
+@dataclass
+class StrategyPreset:
+    """Ein Analyse-Preset fuer historische Musterbewertungen."""
+    id: Optional[int] = None
+    name: str = ""
+    asset_type: str = "STOCK"
+    rules: Optional[Dict[str, Any]] = None
+    is_active: bool = False
+    created_at: Optional[datetime] = None
+
+
+@dataclass
+class AnalysisRun:
+    """Eine protokollierte Auswertung eines Analyse-Presets."""
+    id: Optional[int] = None
+    symbol: str = ""
+    strategy_id: Optional[int] = None
+    job_id: Optional[int] = None
+    pattern_class: str = "neutral"
+    notes: Optional[str] = None
+    evaluated_at: Optional[datetime] = None
 
 
 class DatabaseManager:
@@ -137,7 +160,29 @@ class DatabaseManager:
             # Indices für Performance
             "CREATE INDEX IF NOT EXISTS idx_jobs_symbol ON jobs(symbol)",
             "CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status)",
+            """CREATE TABLE IF NOT EXISTS strategies (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT UNIQUE NOT NULL,
+                asset_type TEXT NOT NULL,
+                rules_json TEXT NOT NULL,
+                is_active INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )""",
+            """CREATE TABLE IF NOT EXISTS analysis_runs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                symbol TEXT NOT NULL,
+                strategy_id INTEGER,
+                job_id INTEGER,
+                pattern_class TEXT NOT NULL,
+                notes TEXT,
+                evaluated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (strategy_id) REFERENCES strategies(id) ON DELETE SET NULL,
+                FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE SET NULL
+            )""",
             "CREATE INDEX IF NOT EXISTS idx_results_job ON results(job_id)",
+            "CREATE INDEX IF NOT EXISTS idx_strategies_asset_type ON strategies(asset_type)",
+            "CREATE INDEX IF NOT EXISTS idx_analysis_runs_symbol ON analysis_runs(symbol)",
+            "CREATE INDEX IF NOT EXISTS idx_analysis_runs_strategy_id ON analysis_runs(strategy_id)",
         ]
 
         with self.get_connection() as conn:
@@ -379,6 +424,185 @@ class DatabaseManager:
             signals=signals,
             confidence=row['confidence'],
             created_at=row['created_at']
+        )
+
+    # ===== STRATEGIE OPERATIONEN =====
+
+    def save_strategy(self, strategy: StrategyPreset) -> int:
+        """Speichert oder aktualisiert ein Analyse-Preset."""
+        asset_type = strategy.asset_type.upper()
+        rules_json = json.dumps(
+            strategy.rules or {},
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+
+        with self.get_connection() as conn:
+            if strategy.is_active:
+                conn.execute(
+                    "UPDATE strategies SET is_active = 0 WHERE asset_type = ? AND name <> ?",
+                    (asset_type, strategy.name),
+                )
+
+            conn.execute(
+                """INSERT INTO strategies (name, asset_type, rules_json, is_active)
+                   VALUES (?, ?, ?, ?)
+                   ON CONFLICT(name) DO UPDATE SET
+                       asset_type = excluded.asset_type,
+                       rules_json = excluded.rules_json,
+                       is_active = excluded.is_active""",
+                (strategy.name, asset_type, rules_json, int(strategy.is_active)),
+            )
+
+            row = conn.execute(
+                "SELECT id FROM strategies WHERE name = ?",
+                (strategy.name,),
+            ).fetchone()
+            return int(row["id"])
+
+    def get_strategy(self, strategy_id: int) -> Optional[StrategyPreset]:
+        """Holt ein Analyse-Preset anhand der ID."""
+        with self.get_connection() as conn:
+            row = conn.execute(
+                "SELECT * FROM strategies WHERE id = ?",
+                (strategy_id,),
+            ).fetchone()
+            return self._row_to_strategy(row) if row else None
+
+    def get_strategy_by_name(self, name: str) -> Optional[StrategyPreset]:
+        """Holt ein Analyse-Preset anhand des Namens."""
+        with self.get_connection() as conn:
+            row = conn.execute(
+                "SELECT * FROM strategies WHERE name = ?",
+                (name,),
+            ).fetchone()
+            return self._row_to_strategy(row) if row else None
+
+    def list_strategies(
+        self,
+        asset_type: Optional[str] = None,
+        active_only: bool = False,
+    ) -> List[StrategyPreset]:
+        """Listet Analyse-Presets optional gefiltert."""
+        query = "SELECT * FROM strategies WHERE 1=1"
+        params: List[Any] = []
+
+        if asset_type:
+            query += " AND asset_type = ?"
+            params.append(asset_type.upper())
+        if active_only:
+            query += " AND is_active = 1"
+
+        query += " ORDER BY asset_type, name"
+
+        with self.get_connection() as conn:
+            rows = conn.execute(query, params).fetchall()
+            return [self._row_to_strategy(row) for row in rows]
+
+    def get_active_strategy(self, asset_type: str) -> Optional[StrategyPreset]:
+        """Holt das aktive Analyse-Preset fuer einen Asset-Typ."""
+        with self.get_connection() as conn:
+            row = conn.execute(
+                """SELECT * FROM strategies
+                   WHERE asset_type = ? AND is_active = 1
+                   ORDER BY created_at DESC
+                   LIMIT 1""",
+                (asset_type.upper(),),
+            ).fetchone()
+            return self._row_to_strategy(row) if row else None
+
+    def set_active_strategy(self, strategy_id: int) -> Optional[StrategyPreset]:
+        """Aktiviert ein Analyse-Preset und deaktiviert andere desselben Asset-Typs."""
+        preset = self.get_strategy(strategy_id)
+        if preset is None:
+            return None
+
+        with self.get_connection() as conn:
+            conn.execute(
+                "UPDATE strategies SET is_active = 0 WHERE asset_type = ?",
+                (preset.asset_type.upper(),),
+            )
+            conn.execute(
+                "UPDATE strategies SET is_active = 1 WHERE id = ?",
+                (strategy_id,),
+            )
+
+        return self.get_strategy(strategy_id)
+
+    def delete_strategy(self, strategy_id: int):
+        """Loescht ein Analyse-Preset."""
+        with self.get_connection() as conn:
+            conn.execute("DELETE FROM strategies WHERE id = ?", (strategy_id,))
+
+    def _row_to_strategy(self, row) -> StrategyPreset:
+        """Konvertiert eine DB-Zeile in ein Analyse-Preset."""
+        try:
+            rules = json.loads(row["rules_json"]) if row["rules_json"] else {}
+        except json.JSONDecodeError:
+            rules = {}
+
+        return StrategyPreset(
+            id=row["id"],
+            name=row["name"],
+            asset_type=row["asset_type"],
+            rules=rules,
+            is_active=bool(row["is_active"]),
+            created_at=row["created_at"],
+        )
+
+    # ===== ANALYSE-RUN OPERATIONEN =====
+
+    def save_analysis_run(self, run: AnalysisRun) -> int:
+        """Speichert eine protokollierte Preset-Auswertung."""
+        with self.get_connection() as conn:
+            cursor = conn.execute(
+                """INSERT INTO analysis_runs
+                   (symbol, strategy_id, job_id, pattern_class, notes)
+                   VALUES (?, ?, ?, ?, ?)""",
+                (
+                    run.symbol.upper(),
+                    run.strategy_id,
+                    run.job_id,
+                    run.pattern_class,
+                    run.notes,
+                ),
+            )
+            return cursor.lastrowid
+
+    def get_analysis_runs(
+        self,
+        symbol: Optional[str] = None,
+        strategy_id: Optional[int] = None,
+        limit: int = 20,
+    ) -> List[AnalysisRun]:
+        """Holt protokollierte Preset-Auswertungen."""
+        query = "SELECT * FROM analysis_runs WHERE 1=1"
+        params: List[Any] = []
+
+        if symbol:
+            query += " AND symbol = ?"
+            params.append(symbol.upper())
+        if strategy_id is not None:
+            query += " AND strategy_id = ?"
+            params.append(strategy_id)
+
+        query += " ORDER BY evaluated_at DESC LIMIT ?"
+        params.append(limit)
+
+        with self.get_connection() as conn:
+            rows = conn.execute(query, params).fetchall()
+            return [self._row_to_analysis_run(row) for row in rows]
+
+    def _row_to_analysis_run(self, row) -> AnalysisRun:
+        """Konvertiert eine DB-Zeile in eine protokollierte Preset-Auswertung."""
+        return AnalysisRun(
+            id=row["id"],
+            symbol=row["symbol"],
+            strategy_id=row["strategy_id"],
+            job_id=row["job_id"],
+            pattern_class=row["pattern_class"],
+            notes=row["notes"],
+            evaluated_at=row["evaluated_at"],
         )
 
     # ===== STATISTIKEN =====

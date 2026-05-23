@@ -171,6 +171,22 @@ class TestMethodSelector:
 
         assert result == ["custom_method"]
 
+    def test_select_methods_handles_empty_data_without_crash(self):
+        data = pd.DataFrame()
+        selector = MethodSelector()
+
+        result = selector.select_methods(data, ["sentiment", "arima"])
+
+        assert result == ["sentiment"]
+
+    def test_select_methods_handles_missing_close_column(self):
+        data = pd.DataFrame({"Open": [1, 2, 3], "CloseLike": [1, 2, 3]})
+        selector = MethodSelector()
+
+        result = selector.select_methods(data, ["sentiment", "arima"])
+
+        assert result == ["sentiment"]
+
 
 class TestAnalysisRegistry:
     def test_register_duplicate_name_raises_value_error(self):
