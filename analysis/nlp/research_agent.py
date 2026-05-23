@@ -2,6 +2,7 @@
 FinancialProof - Web Research Agent
 Sammelt Informationen aus verschiedenen Web-Quellen
 """
+import logging
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -13,6 +14,9 @@ from analysis.base import (
     AnalysisCategory, AnalysisTimeframe
 )
 from analysis.registry import AnalysisRegistry
+from core.rate_limiter import rate_limited_call
+
+logger = logging.getLogger(__name__)
 
 
 @AnalysisRegistry.register
@@ -119,12 +123,15 @@ class ResearchAgent(BaseAnalyzer):
             return result
 
         except Exception as e:
+            logger.exception("Research-Agent-Analyse fuer %s fehlgeschlagen", symbol)
             return self.create_empty_result(self.name, symbol, str(e))
 
     def _get_fundamentals(self, ticker) -> Dict:
         """Sammelt Fundamentaldaten"""
         try:
-            info = ticker.info
+            info = rate_limited_call("yfinance", lambda: ticker.info, timeout=30.0)
+            if info is None:
+                return {'error': 'rate_limit_timeout'}
 
             return {
                 'company_name': info.get('longName', 'N/A'),
@@ -155,12 +162,13 @@ class ResearchAgent(BaseAnalyzer):
                 'description': info.get('longBusinessSummary', '')[:500] if info.get('longBusinessSummary') else 'N/A'
             }
         except Exception as e:
+            logger.warning("Fundamentaldaten konnten nicht geladen werden: %s", e)
             return {'error': str(e)}
 
     def _get_recommendations(self, ticker) -> Dict:
         """Sammelt Analysten-Empfehlungen"""
         try:
-            rec = ticker.recommendations
+            rec = rate_limited_call("yfinance", lambda: ticker.recommendations, timeout=30.0)
             if rec is None or rec.empty:
                 return {'available': False}
 
@@ -197,12 +205,13 @@ class ResearchAgent(BaseAnalyzer):
                 'recent': recent.to_dict('records')[-5:] if len(recent) > 0 else []
             }
         except Exception as e:
+            logger.warning("Analysten-Empfehlungen konnten nicht geladen werden: %s", e)
             return {'available': False, 'error': str(e)}
 
     def _get_news_summary(self, ticker) -> Dict:
         """Sammelt News-Übersicht"""
         try:
-            news = ticker.news
+            news = rate_limited_call("yfinance", lambda: ticker.news, timeout=30.0)
             if not news:
                 return {'available': False}
 
@@ -223,13 +232,16 @@ class ResearchAgent(BaseAnalyzer):
                 'recent_articles': articles
             }
         except Exception as e:
+            logger.warning("News-Uebersicht konnte nicht geladen werden: %s", e)
             return {'available': False, 'error': str(e)}
 
     def _get_dividend_info(self, ticker) -> Dict:
         """Sammelt Dividenden-Informationen"""
         try:
-            info = ticker.info
-            dividends = ticker.dividends
+            info = rate_limited_call("yfinance", lambda: ticker.info, timeout=30.0)
+            dividends = rate_limited_call("yfinance", lambda: ticker.dividends, timeout=30.0)
+            if info is None:
+                info = {}
 
             return {
                 'pays_dividend': info.get('dividendYield', 0) > 0,
@@ -240,6 +252,7 @@ class ResearchAgent(BaseAnalyzer):
                 'recent_dividends': dividends.tail(4).to_dict() if dividends is not None and len(dividends) > 0 else {}
             }
         except Exception as e:
+            logger.warning("Dividenden-Informationen konnten nicht geladen werden: %s", e)
             return {'error': str(e)}
 
     def _format_large_number(self, num) -> str:
@@ -260,6 +273,28 @@ class ResearchAgent(BaseAnalyzer):
         except Exception:
             return str(num)
 
+    @staticmethod
+    def _pattern_label(pattern: str) -> str:
+        """Formatiert interne Musterpolaritäten für die UI-Ausgabe."""
+        labels = {
+            'bullish': 'überwiegend bullisch',
+            'bearish': 'überwiegend bärisch',
+            'neutral': 'neutral/gemischt',
+            'unknown': 'unklar',
+        }
+        return labels.get(pattern, 'unklar')
+
+    @staticmethod
+    def _recommendation_to_pattern(consensus: str) -> str:
+        """Übersetzt Analystenlabels in deskriptive Musterpolaritäten."""
+        mapping = {
+            'buy': 'bullish',
+            'sell': 'bearish',
+            'hold': 'neutral',
+            'unknown': 'unknown',
+        }
+        return mapping.get(str(consensus).lower(), 'unknown')
+
     def _build_result(
         self,
         symbol: str,
@@ -267,47 +302,59 @@ class ResearchAgent(BaseAnalyzer):
         sections: List
     ) -> AnalysisResult:
         """Baut das Recherche-Ergebnis zusammen"""
-        # Gesamt-Bewertung aus verschiedenen Quellen
+        # Historische Musterpolarität aus verschiedenen Quellen
         signals = []
-        recommendations = []
 
         # Fundamental-basierte Bewertung
         fundamentals = research_data.get('fundamentals', {})
         if fundamentals.get('pe_ratio') and fundamentals.get('pe_ratio') != 'N/A':
             pe = fundamentals['pe_ratio']
             if pe < 15:
-                signals.append(('fundamental', 'buy', 'Niedriges KGV'))
+                signals.append(('fundamental', 'bullish', 'Niedriges KGV'))
             elif pe > 30:
-                signals.append(('fundamental', 'sell', 'Hohes KGV'))
+                signals.append(('fundamental', 'bearish', 'Hohes KGV'))
 
-        # Target Price Bewertung
+        # Target-Price-Abweichung als deskriptives Muster
         current = fundamentals.get('current_price', 0)
         target = fundamentals.get('target_price', 0)
         if current and target and current != 'N/A' and target != 'N/A':
             upside = ((target - current) / current) * 100
             if upside > 15:
-                signals.append(('analyst', 'buy', f'Kursziel +{upside:.1f}%'))
+                signals.append((
+                    'analyst',
+                    'bullish',
+                    f'Kursziel-Abweichung +{upside:.1f}%'
+                ))
             elif upside < -10:
-                signals.append(('analyst', 'sell', f'Kursziel {upside:.1f}%'))
+                signals.append((
+                    'analyst',
+                    'bearish',
+                    f'Kursziel-Abweichung {upside:.1f}%'
+                ))
 
         # Analysten-Empfehlungen
         rec_data = research_data.get('recommendations', {})
         if rec_data.get('available') and rec_data.get('consensus'):
-            consensus = rec_data['consensus']
-            signals.append(('consensus', consensus, f'Analysten-Konsens: {consensus}'))
+            consensus = self._recommendation_to_pattern(rec_data['consensus'])
+            if consensus != 'unknown':
+                signals.append((
+                    'consensus',
+                    consensus,
+                    f'Analysten-Konsens: {self._pattern_label(consensus)}'
+                ))
 
-        # Gesamtempfehlung
-        buy_signals = sum(1 for s in signals if s[1] == 'buy')
-        sell_signals = sum(1 for s in signals if s[1] == 'sell')
+        # Gesamtmuster
+        bullish_signals = sum(1 for s in signals if s[1] == 'bullish')
+        bearish_signals = sum(1 for s in signals if s[1] == 'bearish')
 
-        if buy_signals > sell_signals:
-            overall_recommendation = 'buy'
-            confidence = 0.5 + (buy_signals - sell_signals) * 0.1
-        elif sell_signals > buy_signals:
-            overall_recommendation = 'sell'
-            confidence = 0.5 + (sell_signals - buy_signals) * 0.1
+        if bullish_signals > bearish_signals:
+            overall_pattern = 'bullish'
+            confidence = 0.5 + (bullish_signals - bearish_signals) * 0.1
+        elif bearish_signals > bullish_signals:
+            overall_pattern = 'bearish'
+            confidence = 0.5 + (bearish_signals - bullish_signals) * 0.1
         else:
-            overall_recommendation = 'hold'
+            overall_pattern = 'neutral'
             confidence = 0.5
 
         confidence = min(0.8, confidence)
@@ -320,8 +367,8 @@ class ResearchAgent(BaseAnalyzer):
         summary = (
             f"Recherche-Bericht für {company} ({symbol}). "
             f"Sektor: {sector}. Marktkapitalisierung: {market_cap}. "
-            f"Gesamteinschätzung: {overall_recommendation.upper()}. "
-            f"Basierend auf {len(signals)} Signalen."
+            f"Historische Musterlage: {self._pattern_label(overall_pattern)}. "
+            f"Basierend auf {len(signals)} deskriptiven Quellen."
         )
 
         return AnalysisResult(
@@ -342,10 +389,13 @@ class ResearchAgent(BaseAnalyzer):
                 ]
             },
             signals=[{
-                'type': overall_recommendation,
+                'type': overall_pattern,
                 'indicator': 'Research Agent',
-                'description': f'Kombinierte Analyse: {len(signals)} Signale',
+                'description': (
+                    f'Kombinierte Musterlage: '
+                    f'{self._pattern_label(overall_pattern)}'
+                ),
                 'confidence': confidence
             }],
-            recommendation=overall_recommendation
+            recommendation=overall_pattern
         )
