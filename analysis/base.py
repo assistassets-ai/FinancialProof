@@ -228,6 +228,20 @@ class BaseAnalyzer(ABC):
         return excess_returns / volatility
 
     @staticmethod
+    def get_forecast_start_date(index: pd.Index) -> pd.Timestamp:
+        """Ermittelt einen robusten Startzeitpunkt fuer Forecast-Charts.
+
+        Datetime-Indexe verwenden den letzten vorhandenen Zeitstempel.
+        Andere Index-Typen fallen auf den naechsten Business Day ab heute
+        zurueck, damit synthetische Testdaten mit RangeIndex nicht abstuerzen.
+        """
+        if len(index) > 0 and pd.api.types.is_datetime64_any_dtype(index):
+            base_date = pd.Timestamp(index[-1])
+        else:
+            base_date = pd.Timestamp.now().normalize()
+        return base_date + pd.offsets.BDay(1)
+
+    @staticmethod
     def create_empty_result(
         analysis_type: str,
         symbol: str,
@@ -269,8 +283,16 @@ class MethodSelector:
         Returns:
             Liste der empfohlenen Methoden
         """
+        available_methods = list(available_methods or [])
+
+        if data is None or data.empty:
+            return available_methods[:1] if available_methods else []
+
         if self._ml_selector is not None:
             return self._ml_selector.predict(data, available_methods)
+
+        if "Close" not in data.columns:
+            return available_methods[:1] if available_methods else []
 
         # Regelbasierte Auswahl
         methods = []

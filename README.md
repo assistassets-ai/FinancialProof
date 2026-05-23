@@ -32,8 +32,10 @@ A browser-based tool for statistical pattern analysis on financial market data.
   - Sentiment analysis (news texts)
   - Web Research Agent
 - **Job Queue System**: Asynchronous analysis tasks with SQLite persistence
+- **Analysis Presets**: Asset-type specific descriptive rule presets with SQLite persistence and historical evaluation logs
 - **Watchlist**: Portfolio overview with multiple assets
 - **Operational Logging**: Rotating local log file for runtime diagnostics
+- **API Rate Limiting + Telemetry**: Configurable token-bucket throttling and runtime stats for yfinance calls
 - **German User Interface**
 
 > **Note on terminology:** Earlier versions of this project used the term
@@ -57,7 +59,7 @@ A browser-based tool for statistical pattern analysis on financial market data.
 
 ### Prerequisites
 
-- Python 3.9+
+- Python 3.10+
 - pip
 
 ### Setup
@@ -87,7 +89,7 @@ A browser-based tool for statistical pattern analysis on financial market data.
 4. **Configure local environment** (optional)
    ```bash
    cp env.example .env
-   # Optional: adjust FINANCIALPROOF_LOG_LEVEL
+   # Optional: adjust FINANCIALPROOF_LOG_LEVEL and FINANCIALPROOF_RL_YF_*
    ```
 
 5. **Launch app**
@@ -99,6 +101,22 @@ A browser-based tool for statistical pattern analysis on financial market data.
    ```
    http://localhost:8501
    ```
+
+### Windows launcher EXE
+
+Für lokale Desktop-Nutzung kann zusätzlich ein Windows-Launcher erzeugt werden:
+
+```bat
+build_exe.bat
+```
+
+Der Build erzeugt `FinancialProof.exe`. Diese EXE bündelt bewusst nur den
+Launcher und startet die lokale Python-/Streamlit-Umgebung im Projektordner.
+Vor dem Start prüft der Launcher, ob `app.py`, Python und Streamlit verfügbar
+sind, und zeigt sonst eine lokale Fehlermeldung an. Build-Artefakte wie
+`build/`, `dist/`, `*.spec` und `FinancialProof.exe` bleiben durch `.gitignore`
+außerhalb der versionierten Quellen. Der Launcher enthält keine Projektdaten,
+keine API-Keys und keine Python-Abhängigkeiten.
 
 On first launch, you will be asked to acknowledge the legal disclaimer
 (not-financial-advice acknowledgement). The app will not proceed until
@@ -114,8 +132,8 @@ python -m pytest tests -q
 
 Current repository status:
 
-- 106 unit and regression tests cover analysis modules, job execution,
-  logging, disclaimer persistence and Streamlit helper flows.
+- 163 unit and regression tests cover analysis modules, job execution,
+  logging, rate limiting/telemetry, strategy presets, disclaimer persistence and Streamlit helper flows.
 - OHLCV input validation reports missing columns cleanly before running
   missing-value checks, so incomplete market data fails with diagnostics
   instead of a `KeyError`.
@@ -135,7 +153,9 @@ FinancialProof/
 │
 ├── core/
 │   ├── database.py          # SQLite database
-│   └── data_provider.py     # yfinance wrapper
+│   ├── data_provider.py     # yfinance wrapper
+│   ├── logging_utils.py     # Logging setup
+│   └── rate_limiter.py      # Token-bucket API throttling + telemetry
 │
 ├── indicators/
 │   ├── technical.py         # Technical indicators
@@ -197,17 +217,63 @@ Do not commit `.env`, `data/.key`, `data/.secrets`,
 
 API keys for optional Twitter/X and YouTube integrations are entered through
 the Streamlit sidebar and stored locally in `data/.secrets`.
+The sidebar settings also show yfinance rate-limit telemetry, including
+delayed calls, timeouts, token shortages and the last shortage timestamp.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `FINANCIALPROOF_LOG_LEVEL` | Python logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`) | `INFO` |
+| `FINANCIALPROOF_RL_YF_CAPACITY` | yfinance burst capacity for the token bucket | `30` |
+| `FINANCIALPROOF_RL_YF_REFILL` | yfinance token refill rate per second | `1.0` |
+| `FINANCIALPROOF_RL_YF_TIMEOUT` | Maximum wait time per throttled yfinance call in seconds | `30` |
 
 ### Settings in `config.py`
 
 ```python
-DEFAULT_TICKER = "AAPL"      # Default symbol
-CACHE_TTL_MARKET_DATA = 3600 # Cache duration (seconds)
+DEFAULT_TICKER = "AAPL"            # Default symbol
+CACHE_TTL_MARKET_DATA = 3600       # Cache duration (seconds)
+API_RATE_LIMIT_YFINANCE_CAPACITY = 30.0
+API_RATE_LIMIT_YFINANCE_REFILL = 1.0
+API_RATE_LIMIT_YFINANCE_TIMEOUT = 30.0
 ```
+
+### CLI/Launcher Operations
+
+FinancialProof does not expose a dedicated business CLI yet. Daily operation is
+Streamlit-based; use the following commands for reproducible startup and
+operational scenarios:
+
+```bash
+# Start application for local development
+python -m streamlit run app.py
+
+# Bind only to localhost and custom port (useful for testing)
+python -m streamlit run app.py --server.address 127.0.0.1 --server.port 8501
+
+# Disable file watcher for scripted/CI-style sessions
+python -m streamlit run app.py --server.fileWatcherType none
+```
+
+Windows launcher scripts:
+
+- `START.bat` checks Python, creates `.env` (from `env.example`) if missing, and
+  starts Streamlit via a local virtual environment.
+- `financialproof_launcher.py` and `build_exe.bat` support packaged entry paths.
+
+### Operations and Maintenance
+
+- Set `PYTHONIOENCODING=utf-8` in local shells or launcher scripts when you see
+  character-encoding issues while running local tools.
+- Runtime logs are written to `data/financialproof.log`; during incidents set
+  `FINANCIALPROOF_LOG_LEVEL=DEBUG`.
+- To reset transient local state, stop the app and clear:
+  - `data/financial.db` (jobs, queue history, watchlist cache)
+  - `data/.disclaimer_acceptance.json` (disclaimer confirmation hash)
+  - `data/.secrets` (stored API keys)
+- For connectivity issues with APIs, open the sidebar Settings panel and review the
+  rate-limit telemetry block (`total`, `delayed`, `timeouts`, `last shortage`).
+- If startup shows no data, remove stale lock/artefact files listed in `.gitignore`
+  and restart cleanly.
 
 ## Analysis Modules
 
@@ -233,6 +299,7 @@ outputs are forecasts, predictions, or trading recommendations.
 - **NLP**: transformers, TextBlob
 - **Database**: SQLite
 - **Logging**: Python logging with rotating file handler
+- **Rate limiting**: Built-in token-bucket limiter with telemetry snapshots for external API calls
 
 ## Roadmap
 
@@ -289,6 +356,7 @@ Finanzmarktdaten.
 - Statistische und Machine-Learning-Analysen (historische Auswertung)
 - Hintergrund-Job-Queue
 - Interaktive Charts
+- API-Rate-Limiting und Telemetrie für externe Datenquellen
 
 ### Installation
 

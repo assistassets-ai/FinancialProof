@@ -1,12 +1,13 @@
 """
 Tests fuer Konfigurationsmodul
 """
+import json
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from config import Config, UIText
+from config import APIKeyManager, Config, UIText
 
 
 class TestConfig:
@@ -39,6 +40,23 @@ class TestConfig:
         cfg = Config()
 
         assert cfg.LOG_LEVEL == "WARNING"
+
+    def test_corrupted_secrets_file_is_ignored(self, tmp_path):
+        cfg = Config(BASE_DIR=tmp_path)
+        manager = APIKeyManager(cfg)
+        cfg.SECRETS_PATH.write_text("{broken json", encoding="utf-8")
+
+        assert manager.get_api_key("twitter") is None
+
+    def test_save_api_key_recovers_from_corrupted_secrets_file(self, tmp_path):
+        cfg = Config(BASE_DIR=tmp_path)
+        manager = APIKeyManager(cfg)
+        cfg.SECRETS_PATH.write_text("[]", encoding="utf-8")
+
+        manager.save_api_key("twitter", "token-123")
+
+        assert manager.get_api_key("twitter") == "token-123"
+        assert json.loads(cfg.SECRETS_PATH.read_text(encoding="utf-8"))["twitter"]
 
 
 class TestUIText:

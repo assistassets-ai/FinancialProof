@@ -8,6 +8,12 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ## [Unreleased]
 
 ### Qualität und Repository-Hygiene
+- Analyse-Preset-Kern ergänzt: SQLite-Schema für `strategies` und
+  `analysis_runs`, `core.strategy_manager` für Parser/CRUD/Aktivierung pro
+  Asset-Typ sowie `core.strategy` für deskriptive Musterbewertungen.
+- Regressionstests für Preset-Schema, Parser, Asset-Typ-Fallbacks,
+  Aktivierungslogik und Analyse-Run-Protokoll ergänzt; lokaler Stand jetzt
+  163/163 Tests grün (`python -m pytest tests -q`).
 - OHLCV-Validierung gehärtet: fehlende `Close`-Spalte wird als
   Validierungsfehler gemeldet statt einen `KeyError` auszulösen.
 - Regressionstest für unvollständige OHLCV-Daten ergänzt; lokale Test-Suite
@@ -19,6 +25,9 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   auf Logger umgestellt.
 - Fehlerpfade in Random Forest, Neural Network, Monte Carlo und Mean Reversion
   protokolliert und mit Regressionstests abgesichert.
+- Verbleibende stille Fallbacks in `core.data_provider` und
+  `analysis.nlp.research_agent` protokolliert; kompatible leere
+  Rückgaben bleiben erhalten, sind aber jetzt diagnostisch sichtbar.
 - Community-Dateien aktualisiert: Code of Conduct ohne öffentliche
   E-Mail-Adresse und Test-Template mit neutraler Terminologie.
 - CI-Workflow wieder versionierbar gemacht und auf `master`/`main`-Branches
@@ -29,8 +38,47 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   erweitert.
 - `env.example`, README-Konfiguration und Screenshot-Pfade auf die aktuelle
   Repository-Struktur gebracht.
+- README mit operativen Anleitungen erweitert: Streamlit-/Launcher-Startwege,
+  Log- und Wartungsanweisungen, Rate-Limit-Telemetrie-Troubleshooting.
 - `.gitignore` um lokale Secret-Dateien, Test-Locks, Release-Artefakte und
   interne Steuerdateien erweitert.
+- Windows-Launcher ergänzt: `build_exe.bat` baut eine schlanke
+  `FinancialProof.exe`, die die lokale Python-/Streamlit-Installation nutzt
+  und fehlende Runtime-Abhängigkeiten vor dem Start meldet.
+- README, `START.bat` und Build-Hinweise auf Python 3.10+ und lokale,
+  ignorierte Launcher-Artefakte abgestimmt.
+- CI-Matrix und `scikit-learn`-Version auf die aktuelle Python-3.10+ Runtime
+  abgestimmt, damit Dependency-Installation reproduzierbar bleibt.
+- Token-Bucket-Rate-Limiter für yfinance-Aufrufe ergänzt und in
+  DataProvider, Sentiment-Analyse und Research-Agent eingebunden.
+- Rate-Limit-Telemetrie ergänzt: Token-Buckets zählen Anfragen, verzögerte
+  Bezüge, Timeouts, Token-Knappheit und Wartezeiten; die Sidebar zeigt den
+  yfinance-Status mit Reset-Funktion.
+- README und `env.example` um Rate-Limit-Konfiguration
+  (`FINANCIALPROOF_RL_YF_*`) sowie den aktuellen Teststand 143/143 ergänzt.
+- Rate-Limit-Sidebar generalisiert: Telemetrie wird über
+  `RateLimiter.get_all_stats()` für alle aktiven Buckets angezeigt
+  (zukunftssicher für weitere API-Quellen wie Twitter/Reddit-Sentiment),
+  Reset-Knopf setzt jetzt alle Bucket-Statistiken global zurück.
+  Lokaler Stand: 145/145 Tests grün (`python -m pytest tests -q`).
+- Rate-Limit-Sidebar in der Streamlit-Laufumgebung geprüft und aktualisiert:
+  Settings werden nach den datenbezogenen yfinance-Aufrufen gerendert, sodass
+  der `yfinance`-Bucket direkt im selben App-Run sichtbar ist. Regressionstest
+  ergänzt; lokaler Stand: 149/149 Tests grün (`python -m pytest tests -q`).
+- Streamlit-UI auf die aktuelle Breiten-API umgestellt:
+  `use_container_width=True` wurde durch `width="stretch"` ersetzt.
+- `APIKeyManager` ignoriert beschädigte oder nicht objektförmige
+  `data/.secrets`-Dateien jetzt robust und kann sie beim nächsten Speichern
+  sauber neu schreiben.
+- ARIMA- und Monte-Carlo-Chartdaten funktionieren auch mit `RangeIndex`-
+  Test- oder Importdaten; Forecast-Startdaten werden zentral indexrobust
+  bestimmt.
+- ARIMA-Ergebnisse verwenden nur noch deskriptive Musterlabels
+  (`bullish`/`bearish`/`neutral`) statt Kauf-/Verkaufsterminologie.
+- RSI behandelt reine Aufwärts-, Abwärts- und Flat-Serien korrekt als
+  Extrem- beziehungsweise Neutralwerte.
+- Repository-Hygiene ergänzt: `.gitattributes` fixiert Text- und
+  Binärdatei-Behandlung für konsistente Checkouts.
 
 ### Rechtliche Korrekturen (Rechtsaudit Stufe 2, § 32 KWG / § 2 Abs. 9 WpHG)
 - **Terminologie neutralisiert:** UI-Labels „Kauf-/Verkaufssignal" durch

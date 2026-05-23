@@ -5,7 +5,7 @@ Risiko-Analyse mit Value at Risk (VaR) und Szenario-Simulationen
 import logging
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, Any, List
 from dataclasses import dataclass
 
@@ -243,9 +243,9 @@ class MonteCarloAnalyzer(BaseAnalyzer):
         percentile_paths = np.percentile(sim_result.paths, percentiles, axis=0)
 
         # Chart-Daten
-        last_date = historical.index[-1]
+        forecast_start = self.get_forecast_start_date(historical.index)
         forecast_dates = pd.date_range(
-            start=last_date + timedelta(days=1),
+            start=forecast_start,
             periods=days,
             freq='B'
         )
