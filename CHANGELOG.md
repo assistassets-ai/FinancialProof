@@ -8,6 +8,12 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ## [Unreleased]
 
 ### Qualität und Repository-Hygiene
+- Analyse-Preset-Kern ergänzt: SQLite-Schema für `strategies` und
+  `analysis_runs`, `core.strategy_manager` für Parser/CRUD/Aktivierung pro
+  Asset-Typ sowie `core.strategy` für deskriptive Musterbewertungen.
+- Regressionstests für Preset-Schema, Parser, Asset-Typ-Fallbacks,
+  Aktivierungslogik und Analyse-Run-Protokoll ergänzt; lokaler Stand jetzt
+  163/163 Tests grün (`python -m pytest tests -q`).
 - OHLCV-Validierung gehärtet: fehlende `Close`-Spalte wird als
   Validierungsfehler gemeldet statt einen `KeyError` auszulösen.
 - Regressionstest für unvollständige OHLCV-Daten ergänzt; lokale Test-Suite

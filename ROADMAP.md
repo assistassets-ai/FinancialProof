@@ -19,7 +19,7 @@ Die Basis-Anwendung ist vollständig implementiert:
 - ✅ Regelbasierte automatische Methodenauswahl
 - ✅ Deutsche Benutzeroberfläche
 - ✅ Erststart-Acknowledgement (§ 32 KWG / § 2 Abs. 9 WpHG)
-- ✅ Logging-Hardening und 149 automatisierte Tests
+- ✅ Logging-Hardening, Analyse-Preset-Kern und 163 automatisierte Tests
 - ✅ OHLCV-Validierung meldet fehlende Pflichtspalten ohne `KeyError`
 - ✅ Rate Limiting (Token-Bucket) für yfinance-Aufrufe in DataProvider, Sentiment- und Research-Agent
 - ✅ Rate-Limit-Telemetrie für alle Buckets (Sidebar-Anzeige, automatisch erweiterbar für künftige API-Quellen)
@@ -86,6 +86,9 @@ Kauf-/Verkaufsempfehlung formuliert werden.
 
 ### 8.1 Datenbank-Schema Erweiterung
 
+Status 2026-05-22: `strategies` und `analysis_runs` sind in `core/database.py`
+implementiert und mit Regressionstests abgesichert.
+
 ```sql
 -- Strategien & Regeln
 CREATE TABLE strategies (
@@ -118,6 +121,9 @@ core/
 ├── strategy.py         # Strategy Engine (Regelauswertung)
 └── strategy_manager.py # CRUD für Strategien
 ```
+
+Status 2026-05-22: Kernlogik für Parser, CRUD, Aktivierung pro Asset-Typ und
+deskriptive Auswertung ist implementiert; die UI-Anbindung bleibt offen.
 
 #### Code-Beispiel: `core/strategy.py`
 ```python
@@ -261,10 +267,10 @@ def render_settings_view():
 ```
 
 #### Funktionen:
-- [ ] Analyse-Preset erstellen/bearbeiten/löschen
+- [x] Analyse-Preset erstellen/bearbeiten/löschen
 - [ ] Regeln per Slider/Input definieren
-- [ ] Asset-Typ zuweisen (Aktien, Krypto, etc.)
-- [ ] Preset aktivieren/deaktivieren
+- [x] Asset-Typ zuweisen (Aktien, Krypto, etc.)
+- [x] Preset aktivieren/deaktivieren
 - [ ] Backtesting der Strategie (historische Simulation)
 
 ---

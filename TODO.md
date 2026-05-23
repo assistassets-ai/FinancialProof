@@ -17,12 +17,12 @@ Order-Funktion, Auto-Trade-Logik oder Secret-Konfiguration implementieren, bis
 die regulatorische Einordnung unter KWG/WpHG/MiFID II geklärt ist.
 
 ### Phase 8: Analyse-Regelwerk
-- [ ] Datenbank-Schema für Analyse-Presets erweitern ~1d #database
-- [ ] Regel-Engine für historische Musterklassen ~2d #core
-- [ ] Preset-Manager CRUD ~1d #core
-- [ ] Regel-JSON Parser ~1d #core
+- [x] Datenbank-Schema für Analyse-Presets erweitern ~1d #database -- DONE 2026-05-22
+- [x] Regel-Engine für historische Musterklassen ~2d #core -- DONE 2026-05-22
+- [x] Preset-Manager CRUD ~1d #core -- DONE 2026-05-22
+- [x] Regel-JSON Parser ~1d #core -- DONE 2026-05-22
 - [ ] Analyse-Konfigurator UI ~2d #ui
-- [ ] Asset-Typ spezifische Analyse-Presets ~1d #feature
+- [x] Asset-Typ spezifische Analyse-Presets ~1d #feature -- DONE 2026-05-22
 
 ### Phase 10: Erweiterte Analysen
 - [ ] Korrelationsmatrix für Watchlist ~2d #analysis
@@ -117,6 +117,7 @@ _Keine Aufgaben in Review_
 - [x] API Rate Limiting inklusive Telemetrie implementieren ~1d #quality
 - [x] Docstrings vervollständigen ~2d #docs
 - [ ] Type Hints überall hinzufügen ~2d #quality
+- [x] Analyse-Preset-Kern (Schema, CRUD, Parser, Regel-Engine) umgesetzt ~2d #core -- DONE 2026-05-22
 
 ---
 

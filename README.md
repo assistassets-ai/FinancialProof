@@ -32,6 +32,7 @@ A browser-based tool for statistical pattern analysis on financial market data.
   - Sentiment analysis (news texts)
   - Web Research Agent
 - **Job Queue System**: Asynchronous analysis tasks with SQLite persistence
+- **Analysis Presets**: Asset-type specific descriptive rule presets with SQLite persistence and historical evaluation logs
 - **Watchlist**: Portfolio overview with multiple assets
 - **Operational Logging**: Rotating local log file for runtime diagnostics
 - **API Rate Limiting + Telemetry**: Configurable token-bucket throttling and runtime stats for yfinance calls
@@ -131,8 +132,8 @@ python -m pytest tests -q
 
 Current repository status:
 
-- 157 unit and regression tests cover analysis modules, job execution,
-  logging, rate limiting/telemetry, disclaimer persistence and Streamlit helper flows.
+- 163 unit and regression tests cover analysis modules, job execution,
+  logging, rate limiting/telemetry, strategy presets, disclaimer persistence and Streamlit helper flows.
 - OHLCV input validation reports missing columns cleanly before running
   missing-value checks, so incomplete market data fails with diagnostics
   instead of a `KeyError`.
