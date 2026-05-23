@@ -36,12 +36,13 @@ def render_sidebar() -> Tuple[str, str, dict]:
     # Indikator-Einstellungen
     indicators = _render_indicator_settings()
 
-    st.sidebar.markdown("---")
-
-    # Einstellungen
-    _render_settings()
-
     return symbol, period, indicators
+
+
+def render_sidebar_settings() -> None:
+    """Rendert die Sidebar-Einstellungen nach datenbezogenen API-Aufrufen."""
+    st.sidebar.markdown("---")
+    _render_settings()
 
 
 def _render_asset_selection() -> Tuple[str, str]:
@@ -95,7 +96,7 @@ def _render_watchlist(current_symbol: str):
                 else:
                     label = f"{item.symbol}"
 
-                if st.button(label, key=f"wl_{item.symbol}", use_container_width=True):
+                if st.button(label, key=f"wl_{item.symbol}", width="stretch"):
                     st.session_state['selected_symbol'] = item.symbol
                     st.rerun()
 
@@ -108,7 +109,7 @@ def _render_watchlist(current_symbol: str):
 
     # Hinzufügen-Button
     if current_symbol and not db.is_in_watchlist(current_symbol):
-        if st.sidebar.button(f"➕ {current_symbol} hinzufügen", use_container_width=True):
+        if st.sidebar.button(f"➕ {current_symbol} hinzufügen", width="stretch"):
             info = DataProvider.get_ticker_info(current_symbol)
             item = WatchlistItem(
                 symbol=current_symbol,

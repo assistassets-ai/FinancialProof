@@ -159,7 +159,7 @@ def _render_acknowledgement_screen(current_text: str, current_hash: str) -> None
     with col_reject:
         rejected = st.button(
             texts.DISCLAIMER_BTN_REJECT,
-            use_container_width=True,
+            width="stretch",
             key="_disclaimer_reject",
         )
     with col_accept:
@@ -167,7 +167,7 @@ def _render_acknowledgement_screen(current_text: str, current_hash: str) -> None
             texts.DISCLAIMER_BTN_ACCEPT,
             type="primary",
             disabled=not all_checked,
-            use_container_width=True,
+            width="stretch",
             key="_disclaimer_accept",
         )
 

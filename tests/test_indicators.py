@@ -64,6 +64,18 @@ class TestRSI:
         result = TechnicalIndicators.rsi(sample_ohlcv["Close"], 14)
         assert len(result) == len(sample_ohlcv)
 
+    @pytest.mark.parametrize(
+        "close, expected_last",
+        [
+            (pd.Series(np.arange(1.0, 21.0)), 100.0),
+            (pd.Series(np.arange(20.0, 0.0, -1.0)), 0.0),
+            (pd.Series([5.0] * 20), 50.0),
+        ],
+    )
+    def test_rsi_extremes_handle_trend_and_flat_series(self, close, expected_last):
+        result = TechnicalIndicators.rsi(close, 14)
+        assert result.iloc[-1] == pytest.approx(expected_last)
+
 
 class TestBollingerBands:
     def test_bollinger_keys(self, sample_ohlcv):
