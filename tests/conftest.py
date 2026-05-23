@@ -3,8 +3,12 @@ Test-Setup fuer optionale Drittanbieter-Abhaengigkeiten.
 """
 import sys
 import types
+from pathlib import Path
 
 import pandas as pd
+import pytest
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 def _install_yfinance_stub():
@@ -69,3 +73,25 @@ def _install_cryptography_stub():
 
 _install_yfinance_stub()
 _install_cryptography_stub()
+
+
+@pytest.fixture(autouse=True)
+def _generous_rate_limiter():
+    """Setzt den Rate-Limiter pro Test auf grosszuegige Limits zurueck.
+
+    Verhindert, dass Tests sich durch Token-Verbrauch gegenseitig stoeren.
+    Tests, die Token-Knappheit explizit testen (test_rate_limiter.py),
+    konfigurieren ihre Buckets selbst und ueberschreiben damit diese Werte.
+    """
+    try:
+        from core.rate_limiter import RateLimiter
+    except ImportError:
+        yield
+        return
+
+    RateLimiter.reset()
+    RateLimiter.set_default_config(capacity=10000.0, refill_rate=10000.0)
+    RateLimiter.configure_bucket("yfinance", capacity=10000.0, refill_rate=10000.0)
+    yield
+    RateLimiter.reset()
+    RateLimiter.set_default_config(capacity=10000.0, refill_rate=10000.0)
