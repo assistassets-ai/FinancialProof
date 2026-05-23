@@ -13,7 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from config import texts
 from core.logging_utils import configure_logging
 from core.data_provider import DataProvider
-from ui.sidebar import render_sidebar
+from ui.sidebar import render_sidebar, render_sidebar_settings
 from ui.chart_view import render_chart_view
 from ui.analysis_view import render_analysis_view
 from ui.job_queue import render_job_queue
@@ -75,6 +75,7 @@ def main():
 
     # Hauptbereich
     if not symbol:
+        render_sidebar_settings()
         st.title(texts.APP_TITLE)
         st.info("Bitte gib ein Symbol in der Sidebar ein (z.B. AAPL, MSFT, BTC-USD)")
         return
@@ -83,6 +84,8 @@ def main():
     with st.spinner(texts.MSG_LOADING):
         data = DataProvider.get_market_data(symbol, period=period)
         info = DataProvider.get_ticker_info(symbol)
+
+    render_sidebar_settings()
 
     if data is None or data.empty:
         st.error(texts.MSG_NO_DATA)

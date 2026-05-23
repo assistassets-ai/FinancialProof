@@ -3,6 +3,7 @@ FinancialProof - Konfigurationsmodul
 Zentrale Konfiguration für Pfade, API-Keys und App-Einstellungen
 """
 import os
+import logging
 from pathlib import Path
 from typing import Optional
 from dataclasses import dataclass, field
@@ -16,6 +17,7 @@ except ImportError:  # pragma: no cover - optional dependency fallback
 
 
 BASE_DIR = Path(__file__).parent
+logger = logging.getLogger(__name__)
 
 if load_dotenv is not None:
     load_dotenv(BASE_DIR / ".env")
@@ -49,6 +51,18 @@ class Config:
     CACHE_TTL_MARKET_DATA: int = 3600      # 1 Stunde
     CACHE_TTL_TICKER_INFO: int = 86400     # 1 Tag
     CACHE_TTL_NEWS: int = 1800             # 30 Minuten
+
+    # Rate-Limit-Settings fuer externe APIs (Token-Bucket)
+    # capacity = Burst, refill_rate = Tokens pro Sekunde, timeout = max. Warten je Aufruf
+    API_RATE_LIMIT_YFINANCE_CAPACITY: float = field(
+        default_factory=lambda: float(os.getenv("FINANCIALPROOF_RL_YF_CAPACITY", "30"))
+    )
+    API_RATE_LIMIT_YFINANCE_REFILL: float = field(
+        default_factory=lambda: float(os.getenv("FINANCIALPROOF_RL_YF_REFILL", "1.0"))
+    )
+    API_RATE_LIMIT_YFINANCE_TIMEOUT: float = field(
+        default_factory=lambda: float(os.getenv("FINANCIALPROOF_RL_YF_TIMEOUT", "30"))
+    )
 
     # Analyse-Einstellungen
     DEFAULT_SMA_PERIODS: list = field(default_factory=lambda: [20, 50, 200])
@@ -121,8 +135,19 @@ class APIKeyManager:
     def _load_secrets(self) -> dict:
         """Lädt die Secrets-Datei"""
         if self._secrets_file.exists():
-            with open(self._secrets_file, "r") as f:
-                return json.load(f)
+            try:
+                with open(self._secrets_file, "r", encoding="utf-8") as f:
+                    secrets = json.load(f)
+                if not isinstance(secrets, dict):
+                    raise ValueError("Secrets-Datei muss ein JSON-Objekt enthalten")
+                return secrets
+            except (OSError, json.JSONDecodeError, ValueError) as exc:
+                logger.warning(
+                    "Secrets-Datei %s konnte nicht geladen werden: %s",
+                    self._secrets_file,
+                    exc,
+                )
+                return {}
         return {}
 
     def _save_secrets(self, secrets: dict):

@@ -19,8 +19,10 @@ Die Basis-Anwendung ist vollständig implementiert:
 - ✅ Regelbasierte automatische Methodenauswahl
 - ✅ Deutsche Benutzeroberfläche
 - ✅ Erststart-Acknowledgement (§ 32 KWG / § 2 Abs. 9 WpHG)
-- ✅ Logging-Hardening und 106 automatisierte Tests
+- ✅ Logging-Hardening, Analyse-Preset-Kern und 163 automatisierte Tests
 - ✅ OHLCV-Validierung meldet fehlende Pflichtspalten ohne `KeyError`
+- ✅ Rate Limiting (Token-Bucket) für yfinance-Aufrufe in DataProvider, Sentiment- und Research-Agent
+- ✅ Rate-Limit-Telemetrie für alle Buckets (Sidebar-Anzeige, automatisch erweiterbar für künftige API-Quellen)
 
 ---
 
@@ -84,6 +86,9 @@ Kauf-/Verkaufsempfehlung formuliert werden.
 
 ### 8.1 Datenbank-Schema Erweiterung
 
+Status 2026-05-22: `strategies` und `analysis_runs` sind in `core/database.py`
+implementiert und mit Regressionstests abgesichert.
+
 ```sql
 -- Strategien & Regeln
 CREATE TABLE strategies (
@@ -116,6 +121,9 @@ core/
 ├── strategy.py         # Strategy Engine (Regelauswertung)
 └── strategy_manager.py # CRUD für Strategien
 ```
+
+Status 2026-05-22: Kernlogik für Parser, CRUD, Aktivierung pro Asset-Typ und
+deskriptive Auswertung ist implementiert; die UI-Anbindung bleibt offen.
 
 #### Code-Beispiel: `core/strategy.py`
 ```python
@@ -259,10 +267,10 @@ def render_settings_view():
 ```
 
 #### Funktionen:
-- [ ] Analyse-Preset erstellen/bearbeiten/löschen
+- [x] Analyse-Preset erstellen/bearbeiten/löschen
 - [ ] Regeln per Slider/Input definieren
-- [ ] Asset-Typ zuweisen (Aktien, Krypto, etc.)
-- [ ] Preset aktivieren/deaktivieren
+- [x] Asset-Typ zuweisen (Aktien, Krypto, etc.)
+- [x] Preset aktivieren/deaktivieren
 - [ ] Backtesting der Strategie (historische Simulation)
 
 ---
@@ -372,8 +380,8 @@ backtesting/
 
 ### Kurzfristig (Nächste Version)
 1. **Error Handling härten** - verbleibende Module auf klare Fehlerpfade und Logging prüfen
-2. **API Rate Limiting** - externe Datenquellen kontrolliert und nachvollziehbar abfragen
-3. **Dokumentation ergänzen** - API-/CLI-nahe Beispiele und Betriebshinweise ausbauen
+2. ✅ **API Rate Limiting** - Token-Bucket-Limiter (`core/rate_limiter.py`) drosselt yfinance-Aufrufe in DataProvider, Sentiment- und Research-Agent (2026-05-01)
+3. **Dokumentation ergänzen** - API-/CLI-nahe Beispiele und Betriebshinweise ausgebaut (2026-05-06)
 4. **Trading-/Broker-Funktionen ausgesetzt lassen** - erst nach regulatorischer Klärung
 
 ### Mittelfristig
@@ -392,8 +400,8 @@ backtesting/
 - [x] Analyse-, Job-, Logging- und UI-Helfer-Tests erweitert
 - [ ] Error Handling verbessern
 - [x] Logging-System einführen
-- [ ] API Rate Limiting
-- [ ] Dokumentation (Docstrings, README)
+- [x] API Rate Limiting (Token-Bucket, konfigurierbar via `config.py` und `FINANCIALPROOF_RL_*`-ENV-Variablen)
+- [x] Dokumentation (Docstrings, README) (2026-05-06)
 
 ---
 

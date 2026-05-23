@@ -17,12 +17,12 @@ Order-Funktion, Auto-Trade-Logik oder Secret-Konfiguration implementieren, bis
 die regulatorische Einordnung unter KWG/WpHG/MiFID II geklärt ist.
 
 ### Phase 8: Analyse-Regelwerk
-- [ ] Datenbank-Schema für Analyse-Presets erweitern ~1d #database
-- [ ] Regel-Engine für historische Musterklassen ~2d #core
-- [ ] Preset-Manager CRUD ~1d #core
-- [ ] Regel-JSON Parser ~1d #core
+- [x] Datenbank-Schema für Analyse-Presets erweitern ~1d #database -- DONE 2026-05-22
+- [x] Regel-Engine für historische Musterklassen ~2d #core -- DONE 2026-05-22
+- [x] Preset-Manager CRUD ~1d #core -- DONE 2026-05-22
+- [x] Regel-JSON Parser ~1d #core -- DONE 2026-05-22
 - [ ] Analyse-Konfigurator UI ~2d #ui
-- [ ] Asset-Typ spezifische Analyse-Presets ~1d #feature
+- [x] Asset-Typ spezifische Analyse-Presets ~1d #feature -- DONE 2026-05-22
 
 ### Phase 10: Erweiterte Analysen
 - [ ] Korrelationsmatrix für Watchlist ~2d #analysis
@@ -51,7 +51,7 @@ die regulatorische Einordnung unter KWG/WpHG/MiFID II geklärt ist.
 
 ## In Progress
 
-- [ ] App testen und Bugs fixen #testing
+_Aktuell keine Aufgaben in Bearbeitung_
 
 ---
 
@@ -63,6 +63,11 @@ _Keine Aufgaben in Review_
 
 ## Done ✓
 
+- [x] App testen und Bugs fixen #testing -- DONE 2026-05-16
+  - Secrets-JSON robust geladen
+  - ARIMA- und Monte-Carlo-Forecasts mit RangeIndex abgesichert
+  - RSI-Extremwerte korrekt behandelt
+  - ARIMA-Signaltypen auf deskriptive Muster umgestellt
 ### v1.0.0 - Basis-Features
 - [x] Streamlit Web-App Grundgerüst #core
 - [x] SQLite Datenbank Setup #database
@@ -107,11 +112,12 @@ _Keine Aufgaben in Review_
 
 - [x] Interaktions-/E2E-Tests für verbleibende Streamlit-Views und Integrationspfade schreiben ~3d #testing
 - [x] Analyzer-Fehlerlogging für Random Forest, Neural Network, Monte Carlo und Mean Reversion mit Regressionstests absichern ~1d #quality
-- [ ] Error Handling verbessern ~2d #quality
+- [x] Error Handling verbessern ~2d #quality -- DONE 2026-05-13 (APIKeyManager fängt korruptes `data/.secrets` robust ab)
 - [x] Logging-System einführen ~1d #quality
-- [ ] API Rate Limiting implementieren ~1d #quality
+- [x] API Rate Limiting inklusive Telemetrie implementieren ~1d #quality
 - [x] Docstrings vervollständigen ~2d #docs
 - [ ] Type Hints überall hinzufügen ~2d #quality
+- [x] Analyse-Preset-Kern (Schema, CRUD, Parser, Regel-Engine) umgesetzt ~2d #core -- DONE 2026-05-22
 
 ---
 

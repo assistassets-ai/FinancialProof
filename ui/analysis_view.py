@@ -73,7 +73,7 @@ def _render_analysis_controls(symbol: str, data: pd.DataFrame):
     # Automatische Auswahl
     st.subheader("🤖 Automatische Methoden-Auswahl")
 
-    if st.button("Geeignete Methoden automatisch auswählen", use_container_width=True):
+    if st.button("Geeignete Methoden automatisch auswählen", width="stretch"):
         with st.spinner("Analysiere Marktdaten..."):
             selection = auto_selector.select_and_execute(symbol, data)
 
@@ -87,7 +87,7 @@ def _render_analysis_controls(symbol: str, data: pd.DataFrame):
                 st.error(selection['error'])
 
     # Alle Analysen starten
-    if st.button("Alle Analysen starten", type="secondary", use_container_width=True):
+    if st.button("Alle Analysen starten", type="secondary", width="stretch"):
         all_analyzers = list_analyzers()
         for info in all_analyzers:
             job_id = JobManager.create_job(symbol, info['name'])
@@ -236,7 +236,11 @@ def _render_completed_job(job):
             )
             for signal in result.signals:
                 signal_type = signal.get('type', 'hold')
-                emoji = "🟢" if signal_type == 'buy' else "🔴" if signal_type == 'sell' else "🟡"
+                emoji = (
+                    "🟢" if signal_type in ('buy', 'bullish')
+                    else "🔴" if signal_type in ('sell', 'bearish')
+                    else "🟡"
+                )
                 label = signal.get('indicator', 'Muster')
                 st.markdown(f"{emoji} **{label}**: {signal.get('description', '')}")
 

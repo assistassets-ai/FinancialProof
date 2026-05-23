@@ -4,7 +4,7 @@ Prognosen basierend auf AutoRegressive Integrated Moving Average
 """
 import logging
 import warnings
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, Any, List, Tuple
 
 import pandas as pd
@@ -290,17 +290,31 @@ class ARIMAAnalyzer(BaseAnalyzer):
         # Trend bestimmen
         if change_pct > 5:
             trend = "bullish"
-            recommendation = "buy"
+            recommendation = "bullish"
         elif change_pct < -5:
             trend = "bearish"
-            recommendation = "sell"
+            recommendation = "bearish"
         else:
             trend = "neutral"
-            recommendation = "hold"
+            recommendation = "neutral"
 
         # Konfidenz basierend auf Modellgüte
-        spread = (conf_int[-1, 1] - conf_int[-1, 0]) / current_price
-        confidence = max(0.3, min(0.9, 1 - spread))
+        try:
+            if (
+                conf_int.ndim != 2
+                or conf_int.shape[0] == 0
+                or conf_int.shape[1] < 2
+                or current_price == 0
+                or pd.isna(current_price)
+            ):
+                confidence = 0.3
+            else:
+                spread = (conf_int[-1, 1] - conf_int[-1, 0]) / abs(current_price)
+                confidence = max(0.3, min(0.9, 1 - spread))
+                if not np.isfinite(confidence):
+                    confidence = 0.3
+        except (TypeError, ValueError, IndexError):
+            confidence = 0.3
 
         # ARIMA Order
         order = getattr(model, '_best_order', (1, 0, 1))
@@ -312,9 +326,9 @@ class ARIMAAnalyzer(BaseAnalyzer):
         )
 
         # Forecast-Daten für Visualisierung
-        last_date = historical.index[-1]
+        forecast_start = self.get_forecast_start_date(historical.index)
         forecast_dates = pd.date_range(
-            start=last_date + timedelta(days=1),
+            start=forecast_start,
             periods=len(forecast),
             freq='B'  # Business days
         )

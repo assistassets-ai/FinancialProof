@@ -165,6 +165,53 @@ _Aktuell keine Tests in Durchführung_
 
 **Ergebnis:** 106/106 Tests bestanden (`python -m pytest tests -q`).
 
+### AUTO-2026-05-01: Research-Agent-Musterlabel
+**Durchgeführt:** 2026-05-01
+**Status:** Bestanden
+
+**Umfang:**
+- Regressionstest für den Web-Recherche-Agenten
+- Absicherung gegen App-eigene `BUY`/`SELL`-Zusammenfassungen
+- Prüfung der deskriptiven Musterpolaritäten (`bullish`, `bearish`, `neutral`)
+
+**Ergebnis:** 107/107 Tests bestanden (`python -m pytest tests -q`).
+
+### AUTO-2026-05-06: Rate-Limit-Sidebar in Streamlit
+**Durchgeführt:** 2026-05-06
+**Status:** Bestanden
+
+**Umfang:**
+- Streamlit-AppTest mit Disclaimer-Acknowledgement und AAPL-Datenlauf
+- Prüfung, dass der Sidebar-Settings-Block den `yfinance`-Bucket direkt mit
+  aktuellen Request-Zahlen anzeigt
+- Regressionstest für DataProvider-yfinance-Aufrufe bis zur Sidebar-Telemetrie
+- Prüfung, dass keine `use_container_width`-Altoptionen im Python-Code bleiben
+
+**Ergebnis:** 149/149 Tests bestanden (`python -m pytest tests -q`).
+
+### AUTO-2026-05-13: Korruptes Secrets-File und Recovery
+**Durchgeführt:** 2026-05-13
+**Status:** Bestanden
+
+**Umfang:**
+- Regressionstest für eine beschädigte `data/.secrets`-Datei
+- Prüfung, dass `APIKeyManager` ungültiges JSON robust ignoriert
+- Prüfung, dass `save_api_key()` die Datei danach sauber neu schreibt
+
+**Ergebnis:** 154/154 Tests bestanden (`python -m pytest tests -q`).
+
+### AUTO-2026-05-16: Bugsearch-Regressionen nachgezogen
+**Durchgeführt:** 2026-05-16
+**Status:** Bestanden
+
+**Umfang:**
+- Korruptes `data/.secrets` wird weiterhin robust ignoriert
+- ARIMA- und Monte-Carlo-Forecasts funktionieren auch mit `RangeIndex`
+- RSI liefert bei reinen Aufwärts-, Abwärts- und Flat-Serien die erwarteten Extremwerte
+- ARIMA nutzt nur noch deskriptive Musterlabels statt Kauf-/Verkaufsterminologie
+
+**Ergebnis:** 157/157 Tests bestanden (`python -m pytest tests -q`).
+
 <!--
 ### TEST-XXX: Beispiel abgeschlossener Test
 **Durchgeführt:** 2026-01-20
@@ -199,7 +246,7 @@ _Aktuell keine Tests in Durchführung_
 | jobs/ | automatisierte Tests vorhanden | Aktiv |
 | ui/ | automatisierte Tests vorhanden | Aktiv |
 
-**Gesamtabdeckung:** 106 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
+**Gesamtabdeckung:** 157 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
 **Ziel:** 80%
 
 ---
@@ -242,4 +289,4 @@ python -m pytest -m "slow"
 
 ---
 
-*Letzte Aktualisierung: 2026-04-30*
+*Letzte Aktualisierung: 2026-05-16*

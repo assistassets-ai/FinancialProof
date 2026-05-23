@@ -15,6 +15,7 @@ from analysis.base import (
     AnalysisCategory, AnalysisTimeframe
 )
 from analysis.registry import AnalysisRegistry
+from core.rate_limiter import rate_limited_call
 
 logger = logging.getLogger(__name__)
 
@@ -135,7 +136,7 @@ class SentimentAnalyzer(BaseAnalyzer):
         try:
             import yfinance as yf
             ticker = yf.Ticker(symbol)
-            news = ticker.news
+            news = rate_limited_call("yfinance", lambda: ticker.news, timeout=30.0)
 
             if not news:
                 return []
