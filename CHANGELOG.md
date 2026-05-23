@@ -8,6 +8,12 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ## [Unreleased]
 
 ### Qualität und Repository-Hygiene
+- Analyse-Preset-Kern ergänzt: SQLite-Schema für `strategies` und
+  `analysis_runs`, `core.strategy_manager` für Parser/CRUD/Aktivierung pro
+  Asset-Typ sowie `core.strategy` für deskriptive Musterbewertungen.
+- Regressionstests für Preset-Schema, Parser, Asset-Typ-Fallbacks,
+  Aktivierungslogik und Analyse-Run-Protokoll ergänzt; lokaler Stand jetzt
+  163/163 Tests grün (`python -m pytest tests -q`).
 - OHLCV-Validierung gehärtet: fehlende `Close`-Spalte wird als
   Validierungsfehler gemeldet statt einen `KeyError` auszulösen.
 - Regressionstest für unvollständige OHLCV-Daten ergänzt; lokale Test-Suite
@@ -32,6 +38,8 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   erweitert.
 - `env.example`, README-Konfiguration und Screenshot-Pfade auf die aktuelle
   Repository-Struktur gebracht.
+- README mit operativen Anleitungen erweitert: Streamlit-/Launcher-Startwege,
+  Log- und Wartungsanweisungen, Rate-Limit-Telemetrie-Troubleshooting.
 - `.gitignore` um lokale Secret-Dateien, Test-Locks, Release-Artefakte und
   interne Steuerdateien erweitert.
 - Windows-Launcher ergänzt: `build_exe.bat` baut eine schlanke
@@ -53,6 +61,24 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   (zukunftssicher für weitere API-Quellen wie Twitter/Reddit-Sentiment),
   Reset-Knopf setzt jetzt alle Bucket-Statistiken global zurück.
   Lokaler Stand: 145/145 Tests grün (`python -m pytest tests -q`).
+- Rate-Limit-Sidebar in der Streamlit-Laufumgebung geprüft und aktualisiert:
+  Settings werden nach den datenbezogenen yfinance-Aufrufen gerendert, sodass
+  der `yfinance`-Bucket direkt im selben App-Run sichtbar ist. Regressionstest
+  ergänzt; lokaler Stand: 149/149 Tests grün (`python -m pytest tests -q`).
+- Streamlit-UI auf die aktuelle Breiten-API umgestellt:
+  `use_container_width=True` wurde durch `width="stretch"` ersetzt.
+- `APIKeyManager` ignoriert beschädigte oder nicht objektförmige
+  `data/.secrets`-Dateien jetzt robust und kann sie beim nächsten Speichern
+  sauber neu schreiben.
+- ARIMA- und Monte-Carlo-Chartdaten funktionieren auch mit `RangeIndex`-
+  Test- oder Importdaten; Forecast-Startdaten werden zentral indexrobust
+  bestimmt.
+- ARIMA-Ergebnisse verwenden nur noch deskriptive Musterlabels
+  (`bullish`/`bearish`/`neutral`) statt Kauf-/Verkaufsterminologie.
+- RSI behandelt reine Aufwärts-, Abwärts- und Flat-Serien korrekt als
+  Extrem- beziehungsweise Neutralwerte.
+- Repository-Hygiene ergänzt: `.gitattributes` fixiert Text- und
+  Binärdatei-Behandlung für konsistente Checkouts.
 
 ### Rechtliche Korrekturen (Rechtsaudit Stufe 2, § 32 KWG / § 2 Abs. 9 WpHG)
 - **Terminologie neutralisiert:** UI-Labels „Kauf-/Verkaufssignal" durch

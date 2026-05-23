@@ -71,7 +71,7 @@ def _render_job_statistics():
     with col1:
         pending_count = stats.get('pending', 0)
         if pending_count > 0:
-            if st.button(f"▶️ Alle {pending_count} ausführen", use_container_width=True):
+            if st.button(f"▶️ Alle {pending_count} ausführen", width="stretch"):
                 with st.spinner(f"Führe {pending_count} Analysen aus..."):
                     import asyncio
                     import concurrent.futures
@@ -93,11 +93,11 @@ def _render_job_statistics():
 
     with col2:
         if stats.get('completed', 0) > 0 or stats.get('failed', 0) > 0:
-            if st.button("🧹 Alte Jobs bereinigen", use_container_width=True):
+            if st.button("🧹 Alte Jobs bereinigen", width="stretch"):
                 _cleanup_old_jobs()
 
     with col3:
-        if st.button("🔄 Aktualisieren", use_container_width=True):
+        if st.button("🔄 Aktualisieren", width="stretch"):
             st.rerun()
 
 
@@ -132,7 +132,7 @@ def _render_job_list(status_filter: JobStatus = None):
     df = pd.DataFrame(job_data)
     st.dataframe(
         df,
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         column_config={
             'ID': st.column_config.NumberColumn(width="small"),
