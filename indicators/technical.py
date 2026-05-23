@@ -214,13 +214,25 @@ class TechnicalIndicators:
         avg_gain = gain.rolling(window=period, min_periods=1).mean()
         avg_loss = loss.rolling(window=period, min_periods=1).mean()
 
-        # Verhältnis
-        rs = avg_gain / avg_loss.replace(0, np.nan)
+        # Division durch 0 sauber behandeln:
+        # - nur Gewinne -> RSI 100
+        # - nur Verluste -> RSI 0
+        # - weder Gewinne noch Verluste -> neutral 50
+        rsi = pd.Series(50.0, index=data.index, dtype=float)
+        bullish = (avg_loss == 0) & (avg_gain > 0)
+        bearish = (avg_gain == 0) & (avg_loss > 0)
+        neutral = (avg_gain == 0) & (avg_loss == 0)
+        normal = ~(bullish | bearish | neutral)
 
-        # RSI berechnen
-        rsi = 100 - (100 / (1 + rs))
+        if normal.any():
+            rs = avg_gain.loc[normal] / avg_loss.loc[normal]
+            rsi.loc[normal] = 100 - (100 / (1 + rs))
 
-        return rsi.fillna(50)  # Bei Division durch 0 -> neutral
+        rsi.loc[bullish] = 100.0
+        rsi.loc[bearish] = 0.0
+        rsi.loc[neutral] = 50.0
+
+        return rsi.fillna(50)
 
     @staticmethod
     def stochastic(

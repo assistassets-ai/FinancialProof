@@ -32,6 +32,7 @@ A browser-based tool for statistical pattern analysis on financial market data.
   - Sentiment analysis (news texts)
   - Web Research Agent
 - **Job Queue System**: Asynchronous analysis tasks with SQLite persistence
+- **Analysis Presets**: Asset-type specific descriptive rule presets with SQLite persistence and historical evaluation logs
 - **Watchlist**: Portfolio overview with multiple assets
 - **Operational Logging**: Rotating local log file for runtime diagnostics
 - **API Rate Limiting + Telemetry**: Configurable token-bucket throttling and runtime stats for yfinance calls
@@ -131,8 +132,8 @@ python -m pytest tests -q
 
 Current repository status:
 
-- 143 unit and regression tests cover analysis modules, job execution,
-  logging, rate limiting/telemetry, disclaimer persistence and Streamlit helper flows.
+- 163 unit and regression tests cover analysis modules, job execution,
+  logging, rate limiting/telemetry, strategy presets, disclaimer persistence and Streamlit helper flows.
 - OHLCV input validation reports missing columns cleanly before running
   missing-value checks, so incomplete market data fails with diagnostics
   instead of a `KeyError`.
@@ -235,6 +236,44 @@ API_RATE_LIMIT_YFINANCE_CAPACITY = 30.0
 API_RATE_LIMIT_YFINANCE_REFILL = 1.0
 API_RATE_LIMIT_YFINANCE_TIMEOUT = 30.0
 ```
+
+### CLI/Launcher Operations
+
+FinancialProof does not expose a dedicated business CLI yet. Daily operation is
+Streamlit-based; use the following commands for reproducible startup and
+operational scenarios:
+
+```bash
+# Start application for local development
+python -m streamlit run app.py
+
+# Bind only to localhost and custom port (useful for testing)
+python -m streamlit run app.py --server.address 127.0.0.1 --server.port 8501
+
+# Disable file watcher for scripted/CI-style sessions
+python -m streamlit run app.py --server.fileWatcherType none
+```
+
+Windows launcher scripts:
+
+- `START.bat` checks Python, creates `.env` (from `env.example`) if missing, and
+  starts Streamlit via a local virtual environment.
+- `financialproof_launcher.py` and `build_exe.bat` support packaged entry paths.
+
+### Operations and Maintenance
+
+- Set `PYTHONIOENCODING=utf-8` in local shells or launcher scripts when you see
+  character-encoding issues while running local tools.
+- Runtime logs are written to `data/financialproof.log`; during incidents set
+  `FINANCIALPROOF_LOG_LEVEL=DEBUG`.
+- To reset transient local state, stop the app and clear:
+  - `data/financial.db` (jobs, queue history, watchlist cache)
+  - `data/.disclaimer_acceptance.json` (disclaimer confirmation hash)
+  - `data/.secrets` (stored API keys)
+- For connectivity issues with APIs, open the sidebar Settings panel and review the
+  rate-limit telemetry block (`total`, `delayed`, `timeouts`, `last shortage`).
+- If startup shows no data, remove stale lock/artefact files listed in `.gitignore`
+  and restart cleanly.
 
 ## Analysis Modules
 
