@@ -8,6 +8,13 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ## [Unreleased]
 
 ### Qualität und Repository-Hygiene
+- Portierungsplanung ergänzt: `PORTIERUNGSPLAN.md` legt Desktop/localhost als
+  Vollversion fest, macOS/Linux als Smoke-Ziele und Mobile/Web als späteren
+  PWA-Companion ohne Brokerage, Orders oder öffentliche Uploadplattform.
+- Geplantes Austauschformat `financialproof-workspace-v1.json` in
+  `EXPORTFORMAT.md` dokumentiert; `web_companion/README.md` beschreibt den
+  späteren PWA-Companion als read-only Importansicht für Watchlists und
+  Analyse-Snapshots.
 - Analyse-Preset-Kern ergänzt: SQLite-Schema für `strategies` und
   `analysis_runs`, `core.strategy_manager` für Parser/CRUD/Aktivierung pro
   Asset-Typ sowie `core.strategy` für deskriptive Musterbewertungen.

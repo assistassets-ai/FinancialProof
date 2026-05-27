@@ -47,6 +47,13 @@ die regulatorische Einordnung unter KWG/WpHG/MiFID II geklärt ist.
 - [ ] Täglicher Analyse-Report ~2d #feature
 - [ ] Steuer-Übersicht ~2d #feature
 
+### Phase 13: Plattform und Portierung
+- [ ] Exportformat `financialproof-workspace-v1.json` implementieren ~2d #feature
+- [ ] Importvalidierung für `financialproof-workspace-v1.json` ergänzen ~1d #quality
+- [ ] PWA-Companion für Watchlist und Analyse-Snapshots planen/aufbauen ~3d #feature
+- [ ] macOS- und Linux-Start-Smoke dokumentieren ~1d #testing
+- [ ] Windows-Store-Eignung erst nach Legal-/Disclaimer-/Datenschutzprüfung erneut bewerten ~1d #devops
+
 ---
 
 ## In Progress

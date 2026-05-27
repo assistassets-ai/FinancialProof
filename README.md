@@ -122,6 +122,16 @@ On first launch, you will be asked to acknowledge the legal disclaimer
 (not-financial-advice acknowledgement). The app will not proceed until
 all four checkboxes are confirmed.
 
+### Plattformstrategie
+
+Die aktuelle Vollversion bleibt eine lokale Streamlit-Anwendung. Der
+Portierungsplan in [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) priorisiert
+macOS-/Linux-Smokes aus derselben Codebasis und einen späteren
+Web/PWA-Companion für mobile Watchlist- und Analyse-Snapshot-Ansichten. Das
+geplante Austauschformat ist in [EXPORTFORMAT.md](EXPORTFORMAT.md)
+dokumentiert. Native Android-/iOS-Apps und ein Windows-Store-Release sind erst
+nach belegter Nachfrage und erneuter Rechts-/Datenschutzprüfung vorgesehen.
+
 ## Development and Tests
 
 Run the local test suite before submitting changes:
