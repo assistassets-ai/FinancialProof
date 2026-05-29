@@ -8,6 +8,10 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ## [Unreleased]
 
 ### Qualität und Repository-Hygiene
+- Discoverability- und Repo-Metadatenpflege: README-Einstieg auf
+  local-first Streamlit, historische Musteranalyse, No-advice-Scope und
+  passende Suchbegriffe geschärft; neues `llms.txt` als maschinenlesbarer
+  Projektkontext ergänzt; TESTLOG auf den aktuellen 163-Teststand gebracht.
 - Portierungsplanung ergänzt: `PORTIERUNGSPLAN.md` legt Desktop/localhost als
   Vollversion fest, macOS/Linux als Smoke-Ziele und Mobile/Web als späteren
   PWA-Companion ohne Brokerage, Orders oder öffentliche Uploadplattform.

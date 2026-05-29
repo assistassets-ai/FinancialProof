@@ -1,0 +1,48 @@
+# FinancialProof
+
+FinancialProof is a local-first Streamlit application for historical
+statistical pattern analysis on financial market data.
+
+Canonical repository:
+https://github.com/assistassets-ai/FinancialProof
+
+Primary entry points:
+- `README.md` for setup, legal framing, operations and project structure.
+- `app.py` for the Streamlit application.
+- `core/` for database, data-provider, logging, strategy and rate-limit logic.
+- `analysis/` for ARIMA, Monte Carlo, mean-reversion, ML and NLP modules.
+- `indicators/` for technical indicators and historical pattern detection.
+- `ui/` for Streamlit views and disclaimer acknowledgement.
+- `PORTIERUNGSPLAN.md` and `EXPORTFORMAT.md` for platform and export plans.
+
+Safety and compliance context:
+- This is not financial advice, tax advice, legal advice, investment advice or
+  a trading recommendation.
+- Outputs describe historical market data and statistical patterns only.
+- No brokerage integration, order routing or automated trading is in scope.
+- Runtime databases, `.env`, API keys, `.secrets`, disclaimer acknowledgements,
+  logs, caches and build artifacts must stay local and uncommitted.
+
+Current technical profile:
+- Python 3.10+
+- Streamlit frontend
+- SQLite local persistence
+- yfinance market-data access
+- Plotly charts
+- pandas, numpy, scipy and statsmodels for statistical processing
+- scikit-learn, TensorFlow and transformers for optional ML/NLP modules
+- 163 automated unit and regression tests documented in `TESTLOG.md`
+
+Recommended automation checks:
+- `python -m pytest tests -q`
+- `python -m py_compile app.py config.py financialproof_launcher.py`
+- `git diff --check`
+
+Public positioning:
+- local-first finance analysis
+- Streamlit stock analysis
+- historical technical indicators
+- yfinance dashboard
+- no-trading research tool
+- SQLite watchlist
+- statistical market-pattern analysis

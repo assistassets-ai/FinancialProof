@@ -17,7 +17,14 @@
 > Unentgeltliche Open-Source-Schenkung. Haftung auf Vorsatz und grobe
 > Fahrlässigkeit beschränkt (§ 521 BGB). Nutzung auf eigenes Risiko.
 
-A browser-based tool for statistical pattern analysis on financial market data.
+A local-first Streamlit tool for statistical pattern analysis on financial
+market data. FinancialProof runs on your machine, stores runtime state locally
+in SQLite, and frames every result as a historical, descriptive analysis rather
+than financial advice or a trading recommendation.
+
+Use it when you want to inspect historical indicators, compare analysis
+modules, keep a local watchlist, and document technical market patterns without
+connecting a brokerage account or sending private API keys to a hosted service.
 
 ## Features
 
@@ -37,6 +44,10 @@ A browser-based tool for statistical pattern analysis on financial market data.
 - **Operational Logging**: Rotating local log file for runtime diagnostics
 - **API Rate Limiting + Telemetry**: Configurable token-bucket throttling and runtime stats for yfinance calls
 - **German User Interface**
+
+**Discovery keywords:** local-first finance analysis, Streamlit stock analysis,
+historical technical indicators, yfinance dashboard, no-trading research tool,
+SQLite watchlist, statistical market-pattern analysis.
 
 > **Note on terminology:** Earlier versions of this project used the term
 > "buy/sell signals". This has been replaced by "technical indicators" and

@@ -212,6 +212,18 @@ _Aktuell keine Tests in Durchführung_
 
 **Ergebnis:** 157/157 Tests bestanden (`python -m pytest tests -q`).
 
+### AUTO-2026-05-22: Analyse-Presets und Repository-Hygiene
+**Durchgeführt:** 2026-05-22
+**Status:** Bestanden
+
+**Umfang:**
+- SQLite-Schema für Analyse-Presets und Analyse-Run-Protokolle
+- Parser, CRUD, Aktivierung pro Asset-Typ und Fallback-Verhalten
+- Deskriptive Musterbewertung ohne Kauf-/Verkaufsempfehlungen
+- `.gitattributes`, Runtime-Artefakt-Ignores und Root-Doku-Abgleich
+
+**Ergebnis:** 163/163 Tests bestanden (`python -m pytest tests -q`).
+
 <!--
 ### TEST-XXX: Beispiel abgeschlossener Test
 **Durchgeführt:** 2026-01-20
@@ -246,7 +258,7 @@ _Aktuell keine Tests in Durchführung_
 | jobs/ | automatisierte Tests vorhanden | Aktiv |
 | ui/ | automatisierte Tests vorhanden | Aktiv |
 
-**Gesamtabdeckung:** 157 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
+**Gesamtabdeckung:** 163 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
 **Ziel:** 80%
 
 ---
