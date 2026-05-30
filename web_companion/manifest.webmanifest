@@ -1,0 +1,11 @@
+{
+  "name": "FinancialProof Companion",
+  "short_name": "FP Companion",
+  "description": "Lokaler Web/PWA-Reader für redigierte FinancialProof-Workspaces.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4efe5",
+  "theme_color": "#b54a1e",
+  "lang": "de-DE",
+  "icons": []
+}

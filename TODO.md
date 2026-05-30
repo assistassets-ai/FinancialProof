@@ -50,7 +50,10 @@ die regulatorische Einordnung unter KWG/WpHG/MiFID II geklärt ist.
 ### Phase 13: Plattform und Portierung
 - [ ] Exportformat `financialproof-workspace-v1.json` implementieren ~2d #feature
 - [ ] Importvalidierung für `financialproof-workspace-v1.json` ergänzen ~1d #quality
-- [ ] PWA-Companion für Watchlist und Analyse-Snapshots planen/aufbauen ~3d #feature
+- [x] PWA-Companion für Watchlist und Analyse-Snapshots planen/aufbauen ~3d #feature -- DONE 2026-05-30
+  - `web_companion/` ist jetzt als statischer Offline-Reader umgesetzt.
+  - Lokaler Datei-/Text-Import, Demo-Modus, Suche, Filter und Disclaimer-Box sind vorhanden.
+  - Letzter geladener Workspace wird lokal für Offline-Starts gespeichert.
 - [ ] macOS- und Linux-Start-Smoke dokumentieren ~1d #testing
 - [ ] Windows-Store-Eignung erst nach Legal-/Disclaimer-/Datenschutzprüfung erneut bewerten ~1d #devops
 

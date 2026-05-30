@@ -1,6 +1,6 @@
 # Portierungsplan - FinancialProof
 
-Stand: 2026-05-27
+Stand: 2026-05-30
 
 ## Kurzentscheidung
 
@@ -61,7 +61,7 @@ Disclaimer- und Nicht-Anlageberatungs-Framing beibehalten.
 
 ### PWA-Companion
 
-- Geplanter Ordner: `web_companion/`.
+- Ordner: `web_companion/`.
 - Fokus: Import von `financialproof-workspace-v1.json`, mobile Lesbarkeit,
   Offline-Ansicht und Teilen von Analyseprotokollen.
 - Kein Abruf von Marktdaten, keine Server-Persistenz, keine Konto- oder
@@ -83,10 +83,10 @@ Disclaimer- und Nicht-Anlageberatungs-Framing beibehalten.
 
 ### P2 - PWA-Companion
 
-- Statische PWA unter `web_companion/` aufbauen.
-- JSON-Datei lokal im Browser importieren, ohne Upload zu einem Server.
-- Watchlist, historische Analyse-Snapshots und Disclaimer sichtbar machen.
-- Mobile Smokes für Android Chrome und iOS Safari dokumentieren.
+- Statische PWA unter `web_companion/` aufbauen. (erledigt 2026-05-30)
+- JSON-Datei lokal im Browser importieren, ohne Upload zu einem Server. (erledigt 2026-05-30)
+- Watchlist, historische Analyse-Snapshots und Disclaimer sichtbar machen. (erledigt 2026-05-30)
+- Mobile Smokes für Android Chrome und iOS Safari dokumentieren. (offen)
 
 ### P3 - Desktop-Plattform-Smokes
 
@@ -107,3 +107,19 @@ Disclaimer- und Nicht-Anlageberatungs-Framing beibehalten.
 
 Die aktiven Aufgaben stehen in `TODO.md` unter "Phase 13: Plattform und
 Portierung".
+
+## Umgesetzt am 2026-05-30
+
+`web_companion/` ist jetzt ein statischer Offline-Reader für
+`financialproof-workspace-v1.json`:
+
+- Datei- und Text-Import für lokale JSON-Snapshots
+- Demo-Modus via Button oder `?demo=1`
+- Übersicht für Watchlist, Analyse-Presets und Analyse-Snapshots
+- Suche und Filter nach Asset-Typ bzw. Musterklasse
+- sichtbarer Disclaimer-/Warnblock
+- Service Worker und lokale Wiederherstellung des zuletzt geladenen Workspaces
+
+Der Companion bleibt read-only. Der Desktop-Export aus `EXPORTFORMAT.md` ist
+weiterhin der nächste notwendige Anschluss, damit echte App-Daten ohne Demo
+oder manuell erzeugte JSON-Dateien genutzt werden können.

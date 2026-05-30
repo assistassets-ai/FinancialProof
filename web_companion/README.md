@@ -1,19 +1,21 @@
 # FinancialProof Web/PWA Companion
 
-Stand: 2026-05-27
+Stand: 2026-05-30
 
-Dieser Ordner ist der Platzhalter für einen späteren statischen
-Web/PWA-Companion. Noch gibt es keine implementierte PWA.
+Der Companion ist jetzt als statischer Offline-Reader umgesetzt. Er liest
+lokale `financialproof-workspace-v1.json`-Dateien direkt im Browser, speichert
+den zuletzt geladenen Workspace für Offline-Starts in `localStorage` und hält
+den rechtlichen Rahmen sichtbar im UI.
 
-## Zweck
+## Enthaltene Funktionen
 
-Der Companion soll mobile Nutzung ermöglichen, ohne die Desktop-Vollanalyse
-auf Android oder iOS zu klonen:
-
-- `financialproof-workspace-v1.json` lokal im Browser importieren
-- Watchlist und Analyse-Snapshots mobil lesen
-- Warn- und Disclaimer-Texte sichtbar halten
-- Offline-Ansicht nach Import unterstützen
+- Datei-Import für `financialproof-workspace-v1.json`
+- Text/Paste-Import für lokale JSON-Snapshots
+- Demo-Workspace über Button oder `?demo=1`
+- Übersicht für Watchlist, Analyse-Presets und Analyse-Snapshots
+- Suche sowie Filter nach Asset-Typ und Musterklasse
+- Sichtbare Warn- und Disclaimer-Box
+- Service Worker für lokale Offline-Smokes
 
 ## Grenzen
 
@@ -22,8 +24,28 @@ auf Android oder iOS zu klonen:
 - Keine Live-Marktdaten im ersten Schritt
 - Keine Broker-/Orderfunktionen
 - Keine Anlageempfehlungen oder Prognoseclaims
+- Kein Desktop-Roundtrip zurück in die Streamlit-App
 
-## Nächster Umsetzungsschritt
+## Lokaler Start
 
-Vor UI-Arbeit muss der Desktop-Export aus `EXPORTFORMAT.md` implementiert und
-mit Tests abgesichert werden.
+Ein einfacher statischer Server reicht:
+
+```bash
+python -m http.server 8766
+```
+
+Dann `http://127.0.0.1:8766/web_companion/?demo=1` im Browser öffnen.
+
+## Tests
+
+```bash
+node --test web_companion/tests/workspace.test.mjs
+node --check web_companion/app.mjs
+node --check web_companion/library.mjs
+```
+
+## Offener nächster Schritt
+
+Der Desktop-Export aus `EXPORTFORMAT.md` ist weiterhin offen. Erst damit kann
+die Vollversion echte lokale Arbeitsstände ohne Demo-Daten an den Companion
+übergeben.
