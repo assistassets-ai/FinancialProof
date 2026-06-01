@@ -14,6 +14,7 @@ from config import config, texts, api_keys
 from core.database import db, WatchlistItem
 from core.data_provider import DataProvider
 from core.rate_limiter import RateLimiter
+from core.workspace_export import build_workspace_export_json
 
 
 def render_sidebar() -> Tuple[str, str, dict]:
@@ -177,6 +178,29 @@ def _render_settings():
         # API-Rate-Limit-Telemetrie
         st.markdown("---")
         _render_rate_limit_status()
+
+        # Companion-Export
+        st.markdown("---")
+        st.caption("**Companion-Export**")
+        st.caption(
+            "Redigierter Workspace fuer den lokalen Web/PWA-Companion. "
+            "Keine API-Keys, keine Live-Marktdaten, keine Brokerdaten."
+        )
+        try:
+            workspace_json = build_workspace_export_json()
+        except Exception as exc:  # pragma: no cover - defensive Streamlit fallback
+            st.error(f"Companion-Export konnte nicht erstellt werden: {exc}")
+        else:
+            if hasattr(st, "download_button"):
+                st.download_button(
+                    "Workspace exportieren (JSON)",
+                    data=workspace_json,
+                    file_name="financialproof-workspace-v1.json",
+                    mime="application/json",
+                    width="stretch",
+                )
+            else:  # pragma: no cover - Test-Doubles ohne Download-Widget
+                st.caption("Companion-Export ist im echten Streamlit als Download verfuegbar.")
 
         # Datenbank-Reset
         st.markdown("---")

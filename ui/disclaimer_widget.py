@@ -67,6 +67,21 @@ def _compute_hash(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+def get_current_disclaimer_metadata() -> dict:
+    """Gibt die aktuelle Disclaimer-Metadaten-Huelle fuer Exporte zurueck."""
+    current_text = _build_disclaimer_text()
+    current_hash = _compute_hash(current_text)
+    return {
+        "disclaimer_hash": current_hash,
+        "disclaimer_version": texts.DISCLAIMER_VERSION,
+        "not_financial_advice": True,
+        "warnings": [
+            "Keine Anlageberatung; nur historische Auswertung.",
+            "Keine Live-Marktdaten, Orders oder Broker-Funktionen im Companion.",
+        ],
+    }
+
+
 def _load_acceptance() -> Optional[dict]:
     if not _ACCEPTANCE_FILE.is_file():
         return None
@@ -237,4 +252,5 @@ def ensure_acknowledged() -> None:
 
 __all__ = [
     "ensure_acknowledged",
+    "get_current_disclaimer_metadata",
 ]

@@ -8,10 +8,18 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ## [Unreleased]
 
 ### Qualität und Repository-Hygiene
+- Web/PWA-Brücke für echte App-Daten geschlossen: neuer redigierter
+  Workspace-Export `financialproof-workspace-v1.json` sammelt Watchlist,
+  Analyse-Presets, abgeschlossene Analyse-Snapshots und Disclaimer-Metadaten
+  ohne API-Keys, `.secrets`, SQLite-Datei oder Brokerdaten.
+- Sidebar-Einstellungen enthalten jetzt unter `Companion-Export` einen direkten
+  JSON-Download für den lokalen Web/PWA-Companion.
+- Neue Regressionstests `tests/test_workspace_export.py`; Gesamtsuite jetzt
+  165/165 Tests grün (`python -m pytest tests -q`).
 - Discoverability- und Repo-Metadatenpflege: README-Einstieg auf
   local-first Streamlit, historische Musteranalyse, No-advice-Scope und
   passende Suchbegriffe geschärft; neues `llms.txt` als maschinenlesbarer
-  Projektkontext ergänzt; TESTLOG auf den aktuellen 163-Teststand gebracht.
+  Projektkontext ergänzt; TESTLOG auf den aktuellen 165-Teststand gebracht.
 - Portierungsplanung ergänzt: `PORTIERUNGSPLAN.md` legt Desktop/localhost als
   Vollversion fest, macOS/Linux als Smoke-Ziele und Mobile/Web als späteren
   PWA-Companion ohne Brokerage, Orders oder öffentliche Uploadplattform.
@@ -24,7 +32,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   Asset-Typ sowie `core.strategy` für deskriptive Musterbewertungen.
 - Regressionstests für Preset-Schema, Parser, Asset-Typ-Fallbacks,
   Aktivierungslogik und Analyse-Run-Protokoll ergänzt; lokaler Stand jetzt
-  163/163 Tests grün (`python -m pytest tests -q`).
+  165/165 Tests grün (`python -m pytest tests -q`).
 - OHLCV-Validierung gehärtet: fehlende `Close`-Spalte wird als
   Validierungsfehler gemeldet statt einen `KeyError` auszulösen.
 - Regressionstest für unvollständige OHLCV-Daten ergänzt; lokale Test-Suite

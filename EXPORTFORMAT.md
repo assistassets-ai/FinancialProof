@@ -1,16 +1,20 @@
 # Exportformat - FinancialProof Workspace
 
-Stand: 2026-05-27
+Stand: 2026-06-01
 
-Dieses Dokument beschreibt das geplante Austauschformat
-`financialproof-workspace-v1.json`. Es ist noch nicht implementiert und dient
-als stabile Vorgabe für Export/Import und den späteren PWA-Companion.
+Dieses Dokument beschreibt das umgesetzte Austauschformat
+`financialproof-workspace-v1.json`. Es dient als stabiler Vertrag zwischen der
+lokalen Streamlit-Vollversion und dem read-only Web/PWA-Companion.
 
 ## Ziel
 
 Das Format soll lokale Arbeitsstände zwischen Desktop-Vollversion und
 PWA-Companion übertragen, ohne Secrets oder regulierungsrelevante
 Broker-/Orderdaten mitzunehmen.
+
+Aktueller Exportpfad in der App:
+
+- `Einstellungen -> Companion-Export -> Workspace exportieren (JSON)`
 
 ## Sicherheitsregeln
 
@@ -34,6 +38,7 @@ Broker-/Orderdaten mitzunehmen.
   },
   "legal": {
     "disclaimer_hash": "sha256-of-current-disclaimer",
+    "disclaimer_version": "1.0",
     "not_financial_advice": true
   },
   "watchlist": [
@@ -93,3 +98,16 @@ Der Companion soll zunächst nur lesen:
 
 Die PWA soll im ersten Schritt keine neuen Marktdaten laden und keine
 Analysejobs starten.
+
+## Umsetzungsstand
+
+- Exportiert werden aktuell:
+  - `watchlist`
+  - `analysis_presets`
+  - `analysis_snapshots` aus abgeschlossenen Jobs
+  - `legal` mit Disclaimer-Hash/-Version und Companion-Warnhinweisen
+- Nicht exportiert werden:
+  - API-Keys, `.secrets`, `.env`, Datenbankdatei, Logs
+  - Broker-/Orderdaten
+  - Live-Marktdatenfeeds oder aktive Job-Warteschlangen
+- Die Importvalidierung für Rückkanäle bleibt ein separater nächster Schritt.

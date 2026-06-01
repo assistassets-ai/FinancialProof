@@ -140,7 +140,9 @@ Portierungsplan in [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) priorisiert
 macOS-/Linux-Smokes aus derselben Codebasis und einen späteren
 Web/PWA-Companion für mobile Watchlist- und Analyse-Snapshot-Ansichten. Das
 geplante Austauschformat ist in [EXPORTFORMAT.md](EXPORTFORMAT.md)
-dokumentiert. Native Android-/iOS-Apps und ein Windows-Store-Release sind erst
+dokumentiert und kann jetzt direkt in der App als
+`financialproof-workspace-v1.json` exportiert werden. Native Android-/iOS-Apps
+und ein Windows-Store-Release sind erst
 nach belegter Nachfrage und erneuter Rechts-/Datenschutzprüfung vorgesehen.
 
 ## Development and Tests
@@ -153,7 +155,7 @@ python -m pytest tests -q
 
 Current repository status:
 
-- 163 unit and regression tests cover analysis modules, job execution,
+- 165 unit and regression tests cover analysis modules, job execution,
   logging, rate limiting/telemetry, strategy presets, disclaimer persistence and Streamlit helper flows.
 - OHLCV input validation reports missing columns cleanly before running
   missing-value checks, so incomplete market data fails with diagnostics
@@ -240,6 +242,9 @@ API keys for optional Twitter/X and YouTube integrations are entered through
 the Streamlit sidebar and stored locally in `data/.secrets`.
 The sidebar settings also show yfinance rate-limit telemetry, including
 delayed calls, timeouts, token shortages and the last shortage timestamp.
+Zusätzlich kann dort jetzt ein redigierter Companion-Export als
+`financialproof-workspace-v1.json` für den lokalen Web/PWA-Reader
+heruntergeladen werden.
 
 | Variable | Description | Default |
 |----------|-------------|---------|

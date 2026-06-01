@@ -44,8 +44,12 @@ node --check web_companion/app.mjs
 node --check web_companion/library.mjs
 ```
 
-## Offener nächster Schritt
+## Nächster Schritt
 
-Der Desktop-Export aus `EXPORTFORMAT.md` ist weiterhin offen. Erst damit kann
-die Vollversion echte lokale Arbeitsstände ohne Demo-Daten an den Companion
+Der Desktop-Export ist seit 2026-06-01 umgesetzt. Die Vollversion kann jetzt
+über `Einstellungen -> Companion-Export -> Workspace exportieren (JSON)` echte
+lokale Arbeitsstände als `financialproof-workspace-v1.json` an den Companion
 übergeben.
+
+Als nächster Schritt bleibt die Importvalidierung für alte oder beschädigte
+Workspace-Dateien offen.
