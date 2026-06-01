@@ -48,7 +48,12 @@ die regulatorische Einordnung unter KWG/WpHG/MiFID II geklärt ist.
 - [ ] Steuer-Übersicht ~2d #feature
 
 ### Phase 13: Plattform und Portierung
-- [ ] Exportformat `financialproof-workspace-v1.json` implementieren ~2d #feature
+- [x] Exportformat `financialproof-workspace-v1.json` implementieren ~2d #feature -- DONE 2026-06-01
+  - Neuer redigierter Workspace-Export sammelt Watchlist, Analyse-Presets,
+    abgeschlossene Analyse-Snapshots und Disclaimer-Metadaten ohne API-Keys,
+    `.secrets`, SQLite-Datei oder Brokerdaten.
+  - In der App unter `Einstellungen -> Companion-Export -> Workspace exportieren (JSON)`.
+  - Regressionstests: `tests/test_workspace_export.py`; Gesamtsuite jetzt 165/165 grün.
 - [ ] Importvalidierung für `financialproof-workspace-v1.json` ergänzen ~1d #quality
 - [x] PWA-Companion für Watchlist und Analyse-Snapshots planen/aufbauen ~3d #feature -- DONE 2026-05-30
   - `web_companion/` ist jetzt als statischer Offline-Reader umgesetzt.

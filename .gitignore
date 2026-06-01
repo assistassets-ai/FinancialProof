@@ -1,4 +1,4 @@
-# ===== Python =====
+﻿# ===== Python =====
 __pycache__/
 *.py[cod]
 *$py.class
@@ -195,3 +195,8 @@ tmpclaude-*
 
 # Claude Code local settings
 .claude/
+# ---- Interne Steuerungsdateien ----
+DECISIONS.md
+PORTIERUNGSPLAN.md
+TODO.md
+DONE.md

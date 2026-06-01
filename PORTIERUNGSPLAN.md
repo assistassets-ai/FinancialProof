@@ -53,6 +53,8 @@ Disclaimer- und Nicht-Anlageberatungs-Framing beibehalten.
 ### Austauschformat
 
 - Geplantes Schema: `financialproof-workspace-v1.json`.
+- Umgesetzt am 2026-06-01: redigierter Desktop-Export über
+  `Einstellungen -> Companion-Export -> Workspace exportieren (JSON)`.
 - Enthält Watchlist, Analyse-Presets, Analyse-Snapshots, Disclaimer-Version
   und Export-Metadaten.
 - Enthält keine API-Keys, keine `.secrets`, keine lokalen Datenbankdateien,
@@ -77,7 +79,7 @@ Disclaimer- und Nicht-Anlageberatungs-Framing beibehalten.
 
 ### P1 - Export/Import der lokalen Arbeitsfläche
 
-- Exportfunktion für `financialproof-workspace-v1.json` implementieren.
+- Exportfunktion für `financialproof-workspace-v1.json` implementieren. (erledigt 2026-06-01)
 - Importfunktion defensiv validieren und alte/ungültige Schemas sauber melden.
 - Tests für secret-freien Export, Schema-Version und Roundtrip ergänzen.
 
@@ -121,5 +123,7 @@ Portierung".
 - Service Worker und lokale Wiederherstellung des zuletzt geladenen Workspaces
 
 Der Companion bleibt read-only. Der Desktop-Export aus `EXPORTFORMAT.md` ist
-weiterhin der nächste notwendige Anschluss, damit echte App-Daten ohne Demo
-oder manuell erzeugte JSON-Dateien genutzt werden können.
+jetzt der produktive Anschluss, damit echte App-Daten ohne Demo oder manuell
+erzeugte JSON-Dateien genutzt werden können. Offen bleibt als nächster
+Web/PWA-nahe Schritt die Importvalidierung für alte oder beschädigte
+Workspace-Dateien.
