@@ -80,7 +80,7 @@ Disclaimer- und Nicht-Anlageberatungs-Framing beibehalten.
 ### P1 - Export/Import der lokalen Arbeitsfläche
 
 - Exportfunktion für `financialproof-workspace-v1.json` implementieren. (erledigt 2026-06-01)
-- Importfunktion defensiv validieren und alte/ungültige Schemas sauber melden.
+- Importfunktion defensiv validieren und alte/ungültige Schemas sauber melden. (erledigt 2026-06-03)
 - Tests für secret-freien Export, Schema-Version und Roundtrip ergänzen.
 
 ### P2 - PWA-Companion
@@ -124,6 +124,7 @@ Portierung".
 
 Der Companion bleibt read-only. Der Desktop-Export aus `EXPORTFORMAT.md` ist
 jetzt der produktive Anschluss, damit echte App-Daten ohne Demo oder manuell
-erzeugte JSON-Dateien genutzt werden können. Offen bleibt als nächster
-Web/PWA-nahe Schritt die Importvalidierung für alte oder beschädigte
-Workspace-Dateien.
+erzeugte JSON-Dateien genutzt werden können. Seit 2026-06-03 validiert der
+Companion Top-Level-Listen, Pflichtfelder, Legal-Flags und endliche
+Confidence-Werte sichtbar beim Import. Offen bleiben als nächste
+Web/PWA-nahe Schritte vor allem mobile Android-/iOS-Smokes.

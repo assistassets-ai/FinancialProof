@@ -24,6 +24,9 @@ Aktueller Exportpfad in der App:
 - Analyse-Texte müssen als historische, deskriptive Auswertung markiert sein.
 - Import muss unbekannte Felder tolerieren, aber unbekannte Schema-Versionen
   sichtbar ablehnen.
+- Pflichtsammlungen (`watchlist`, `analysis_presets`, `analysis_snapshots`) müssen
+  als Arrays vorliegen; Pflichtschlüssel wie `symbol` und `name` dürfen nicht leer
+  sein. Snapshot-`confidence` muss eine endliche Zahl bleiben.
 
 ## Schema-Skizze
 
@@ -106,8 +109,15 @@ Analysejobs starten.
   - `analysis_presets`
   - `analysis_snapshots` aus abgeschlossenen Jobs
   - `legal` mit Disclaimer-Hash/-Version und Companion-Warnhinweisen
+- Der Web/PWA-Companion validiert beim Import jetzt zusätzlich:
+  - Schema-Version
+  - Top-Level-Typen der Pflichtsammlungen
+  - leere `symbol`-/`name`-Pflichtfelder
+  - `legal.not_financial_advice !== false`
+  - endliche `confidence`-Werte pro Snapshot
 - Nicht exportiert werden:
   - API-Keys, `.secrets`, `.env`, Datenbankdatei, Logs
   - Broker-/Orderdaten
   - Live-Marktdatenfeeds oder aktive Job-Warteschlangen
-- Die Importvalidierung für Rückkanäle bleibt ein separater nächster Schritt.
+- Unbekannte Zusatzfelder bleiben zulässig, damit spätere Exporterweiterungen
+  den read-only Companion nicht unnötig brechen.

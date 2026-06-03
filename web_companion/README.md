@@ -15,6 +15,8 @@ den rechtlichen Rahmen sichtbar im UI.
 - Übersicht für Watchlist, Analyse-Presets und Analyse-Snapshots
 - Suche sowie Filter nach Asset-Typ und Musterklasse
 - Sichtbare Warn- und Disclaimer-Box
+- Sichtbare Importvalidierung für Schema-Version, Pflichtlisten, Pflichtfelder,
+  Legal-Flags und endliche Confidence-Werte
 - Service Worker für lokale Offline-Smokes
 
 ## Grenzen
@@ -25,6 +27,8 @@ den rechtlichen Rahmen sichtbar im UI.
 - Keine Broker-/Orderfunktionen
 - Keine Anlageempfehlungen oder Prognoseclaims
 - Kein Desktop-Roundtrip zurück in die Streamlit-App
+- Unbekannte Zusatzfelder in gültigen Exporten bleiben bewusst erlaubt, damit
+  spätere Desktop-Erweiterungen den Reader nicht unnötig brechen.
 
 ## Lokaler Start
 
@@ -51,5 +55,5 @@ Der Desktop-Export ist seit 2026-06-01 umgesetzt. Die Vollversion kann jetzt
 lokale Arbeitsstände als `financialproof-workspace-v1.json` an den Companion
 übergeben.
 
-Als nächster Schritt bleibt die Importvalidierung für alte oder beschädigte
-Workspace-Dateien offen.
+Als nächste Schritte bleiben vor allem mobile Android-/iOS-Smokes für den
+bestehenden PWA-Pfad offen.

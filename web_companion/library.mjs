@@ -119,11 +119,25 @@ function assertObject(value, label) {
   }
 }
 
+function assertArray(value, label) {
+  if (!Array.isArray(value)) {
+    throw new Error(`${label} muss eine Liste sein`);
+  }
+}
+
 function cleanText(value, fallback = "") {
   if (value === null || value === undefined) {
     return fallback;
   }
   return String(value).trim() || fallback;
+}
+
+function requireText(value, label) {
+  const text = cleanText(value);
+  if (!text) {
+    throw new Error(`${label} darf nicht leer sein`);
+  }
+  return text;
 }
 
 function toIsoOrEmpty(value) {
@@ -139,7 +153,11 @@ function normalizeAssetType(value) {
   return cleanText(value, "stock").toUpperCase();
 }
 
-function normalizeWarnings(rawWarnings, fallback) {
+function normalizeWarnings(rawWarnings, fallback, label = "warnings") {
+  if (rawWarnings !== undefined && rawWarnings !== null && !Array.isArray(rawWarnings)) {
+    throw new Error(`${label} muss eine Liste sein`);
+  }
+
   const values = Array.isArray(rawWarnings) ? rawWarnings : [];
   const normalized = values
     .map((entry) => cleanText(entry))
@@ -150,10 +168,11 @@ function normalizeWarnings(rawWarnings, fallback) {
   return normalized;
 }
 
-function normalizeIndicators(rawIndicators) {
-  if (!rawIndicators || typeof rawIndicators !== "object" || Array.isArray(rawIndicators)) {
+function normalizeIndicators(rawIndicators, label = "indicators") {
+  if (rawIndicators === undefined || rawIndicators === null) {
     return {};
   }
+  assertObject(rawIndicators, label);
 
   const pairs = Object.entries(rawIndicators)
     .filter(([key]) => cleanText(key))
@@ -162,20 +181,21 @@ function normalizeIndicators(rawIndicators) {
   return Object.fromEntries(pairs);
 }
 
-function normalizePresetRules(rawRules) {
-  if (!rawRules || typeof rawRules !== "object" || Array.isArray(rawRules)) {
+function normalizePresetRules(rawRules, label = "rules") {
+  if (rawRules === undefined || rawRules === null) {
     return {
       pattern_rules: {},
       risk_notes: {},
     };
   }
+  assertObject(rawRules, label);
 
-  const patternRules = rawRules.pattern_rules && typeof rawRules.pattern_rules === "object"
-    ? rawRules.pattern_rules
-    : {};
-  const riskNotes = rawRules.risk_notes && typeof rawRules.risk_notes === "object"
-    ? rawRules.risk_notes
-    : {};
+  const patternRules = rawRules.pattern_rules === undefined || rawRules.pattern_rules === null
+    ? {}
+    : (assertObject(rawRules.pattern_rules, `${label}.pattern_rules`), rawRules.pattern_rules);
+  const riskNotes = rawRules.risk_notes === undefined || rawRules.risk_notes === null
+    ? {}
+    : (assertObject(rawRules.risk_notes, `${label}.risk_notes`), rawRules.risk_notes);
 
   return {
     pattern_rules: {
@@ -191,6 +211,18 @@ function normalizePresetRules(rawRules) {
       volatility_warning_percent: riskNotes.volatility_warning_percent ?? null,
     },
   };
+}
+
+function normalizeConfidence(value, label) {
+  if (value === undefined || value === null || value === "") {
+    return 0;
+  }
+
+  const numericValue = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numericValue)) {
+    throw new Error(`${label} muss eine endliche Zahl sein`);
+  }
+  return numericValue;
 }
 
 export function createDemoWorkspace() {
@@ -224,6 +256,13 @@ export function normalizeWorkspace(workspace) {
 
   assertObject(workspace.app, "app");
   assertObject(workspace.legal, "legal");
+  assertArray(workspace.watchlist, "watchlist");
+  assertArray(workspace.analysis_presets, "analysis_presets");
+  assertArray(workspace.analysis_snapshots, "analysis_snapshots");
+
+  if (workspace.legal.not_financial_advice === false) {
+    throw new Error("legal.not_financial_advice muss true sein");
+  }
 
   const normalized = {
     schema: SCHEMA_NAME,
@@ -240,51 +279,54 @@ export function normalizeWorkspace(workspace) {
       warnings: normalizeWarnings(
         workspace.legal.warnings,
         "Keine Anlageberatung; nur historische Auswertung.",
+        "legal.warnings",
       ),
     },
-    watchlist: Array.isArray(workspace.watchlist)
-      ? workspace.watchlist.map((item) => {
+    watchlist: workspace.watchlist
+      .map((item, index) => {
           assertObject(item, "watchlist-Eintrag");
           return {
-            symbol: cleanText(item.symbol).toUpperCase(),
+            symbol: requireText(item.symbol, `watchlist[${index}].symbol`).toUpperCase(),
             asset_type: normalizeAssetType(item.asset_type),
-            display_name: cleanText(item.display_name || item.name, "Ohne Namen"),
+            display_name: cleanText(item.display_name || item.name, cleanText(item.symbol, "Ohne Namen")),
             notes: cleanText(item.notes),
             created_at: toIsoOrEmpty(item.created_at),
           };
-        }).filter((item) => item.symbol)
-      : [],
-    analysis_presets: Array.isArray(workspace.analysis_presets)
-      ? workspace.analysis_presets.map((preset) => {
+        }),
+    analysis_presets: workspace.analysis_presets
+      .map((preset, index) => {
           assertObject(preset, "Preset");
           return {
-            name: cleanText(preset.name, "Unbenanntes Preset"),
+            name: requireText(preset.name, `analysis_presets[${index}].name`),
             asset_type: normalizeAssetType(preset.asset_type),
             is_active: Boolean(preset.is_active),
-            rules: normalizePresetRules(preset.rules),
+            rules: normalizePresetRules(preset.rules, `analysis_presets[${index}].rules`),
           };
-        })
-      : [],
-    analysis_snapshots: Array.isArray(workspace.analysis_snapshots)
-      ? workspace.analysis_snapshots.map((snapshot) => {
+        }),
+    analysis_snapshots: workspace.analysis_snapshots
+      .map((snapshot, index) => {
           assertObject(snapshot, "Snapshot");
           return {
-            symbol: cleanText(snapshot.symbol).toUpperCase(),
+            symbol: requireText(snapshot.symbol, `analysis_snapshots[${index}].symbol`).toUpperCase(),
             timeframe: cleanText(snapshot.timeframe, "ohne Zeitraum"),
             created_at: toIsoOrEmpty(snapshot.created_at),
             summary: cleanText(snapshot.summary, "Keine Zusammenfassung hinterlegt."),
             pattern_class: cleanText(snapshot.pattern_class, "neutral").toLowerCase(),
-            confidence: typeof snapshot.confidence === "number"
-              ? snapshot.confidence
-              : Number(snapshot.confidence ?? 0),
-            indicators: normalizeIndicators(snapshot.indicators),
+            confidence: normalizeConfidence(
+              snapshot.confidence,
+              `analysis_snapshots[${index}].confidence`,
+            ),
+            indicators: normalizeIndicators(
+              snapshot.indicators,
+              `analysis_snapshots[${index}].indicators`,
+            ),
             warnings: normalizeWarnings(
               snapshot.warnings,
               "Keine Anlageberatung; nur historische Auswertung.",
+              `analysis_snapshots[${index}].warnings`,
             ),
           };
-        }).filter((snapshot) => snapshot.symbol)
-      : [],
+        }),
   };
 
   normalized.analysis_snapshots.sort((left, right) => {

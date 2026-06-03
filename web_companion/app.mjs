@@ -251,7 +251,10 @@ function importText(rawText, sourceLabel) {
   try {
     const workspace = parseWorkspace(rawText);
     activateWorkspace(workspace, sourceLabel);
-    setFeedback(`Workspace erfolgreich geladen: ${workspace.watchlist.length} Watchlist-Einträge, ${workspace.analysis_snapshots.length} Snapshots.`, "success");
+    setFeedback(
+      `Workspace erfolgreich validiert und geladen: ${workspace.watchlist.length} Watchlist-Einträge, ${workspace.analysis_snapshots.length} Snapshots.`,
+      "success",
+    );
   } catch (error) {
     setFeedback(error.message, "error");
   }

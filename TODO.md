@@ -54,7 +54,11 @@ die regulatorische Einordnung unter KWG/WpHG/MiFID II geklärt ist.
     `.secrets`, SQLite-Datei oder Brokerdaten.
   - In der App unter `Einstellungen -> Companion-Export -> Workspace exportieren (JSON)`.
   - Regressionstests: `tests/test_workspace_export.py`; Gesamtsuite jetzt 165/165 grün.
-- [ ] Importvalidierung für `financialproof-workspace-v1.json` ergänzen ~1d #quality
+- [x] Importvalidierung für `financialproof-workspace-v1.json` ergänzen ~1d #quality -- DONE 2026-06-03
+  - Der Web/PWA-Companion lehnt jetzt kaputte Top-Level-Listen, leere Pflichtfelder,
+    `NaN`/unendliche Confidence-Werte und widersprüchliche Legal-Flags sichtbar ab.
+  - Unbekannte Zusatzfelder bleiben weiterhin toleriert, damit spätere Exporterweiterungen
+    den Reader nicht unnötig brechen.
 - [x] PWA-Companion für Watchlist und Analyse-Snapshots planen/aufbauen ~3d #feature -- DONE 2026-05-30
   - `web_companion/` ist jetzt als statischer Offline-Reader umgesetzt.
   - Lokaler Datei-/Text-Import, Demo-Modus, Suche, Filter und Disclaimer-Box sind vorhanden.

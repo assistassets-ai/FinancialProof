@@ -144,6 +144,9 @@ dokumentiert und kann jetzt direkt in der App als
 `financialproof-workspace-v1.json` exportiert werden. Native Android-/iOS-Apps
 und ein Windows-Store-Release sind erst
 nach belegter Nachfrage und erneuter Rechts-/Datenschutzprüfung vorgesehen.
+Der Companion validiert beim Import jetzt auch kaputte Pflichtlisten,
+leere Pflichtfelder und nicht endliche Snapshot-Werte sichtbar, statt sie
+stillschweigend zu schlucken.
 
 ## Development and Tests
 

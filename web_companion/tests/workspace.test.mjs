@@ -48,6 +48,74 @@ test("parseWorkspace lehnt unbekanntes Schema ab", () => {
   );
 });
 
+test("parseWorkspace lehnt kaputte Top-Level-Listen sichtbar ab", () => {
+  assert.throws(
+    () => parseWorkspace(JSON.stringify({
+      schema: "financialproof-workspace-v1",
+      app: {},
+      legal: { not_financial_advice: true },
+      watchlist: {},
+      analysis_presets: [],
+      analysis_snapshots: [],
+    })),
+    /watchlist muss eine Liste sein/,
+  );
+});
+
+test("normalizeWorkspace lehnt leere Symbole in der Watchlist ab", () => {
+  assert.throws(
+    () => normalizeWorkspace({
+      schema: "financialproof-workspace-v1",
+      app: {},
+      legal: { not_financial_advice: true },
+      watchlist: [{ symbol: "   " }],
+      analysis_presets: [],
+      analysis_snapshots: [],
+    }),
+    /watchlist\[0\]\.symbol darf nicht leer sein/,
+  );
+});
+
+test("normalizeWorkspace lehnt nicht endliche Snapshot-Confidence ab", () => {
+  assert.throws(
+    () => normalizeWorkspace({
+      schema: "financialproof-workspace-v1",
+      app: {},
+      legal: { not_financial_advice: true },
+      watchlist: [],
+      analysis_presets: [],
+      analysis_snapshots: [{ symbol: "AAPL", confidence: "NaN" }],
+    }),
+    /analysis_snapshots\[0\]\.confidence muss eine endliche Zahl sein/,
+  );
+});
+
+test("normalizeWorkspace toleriert unbekannte Zusatzfelder bei gültigem Vertrag", () => {
+  const workspace = normalizeWorkspace({
+    schema: "financialproof-workspace-v1",
+    app: {
+      name: "FinancialProof",
+      version: "test",
+      source: "desktop",
+      unknown_field: "bleibt ignoriert",
+    },
+    legal: {
+      disclaimer_hash: "abc",
+      not_financial_advice: true,
+      warnings: ["Nur lokal lesen."],
+      another_unknown_field: true,
+    },
+    watchlist: [{ symbol: "aapl", extra: "ok" }],
+    analysis_presets: [{ name: "Basis", rules: { unknown: true } }],
+    analysis_snapshots: [{ symbol: "AAPL", unknown: { nested: true } }],
+    root_unknown: { ok: true },
+  });
+
+  assert.equal(workspace.watchlist[0].symbol, "AAPL");
+  assert.equal(workspace.analysis_presets[0].name, "Basis");
+  assert.equal(workspace.analysis_snapshots[0].confidence, 0);
+});
+
 test("createDemoWorkspace liefert mobile Companion-Daten mit Warnhinweisen", () => {
   const workspace = createDemoWorkspace();
 
