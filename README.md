@@ -135,15 +135,14 @@ all four checkboxes are confirmed.
 
 ### Plattformstrategie
 
-Die aktuelle Vollversion bleibt eine lokale Streamlit-Anwendung. Der
-Portierungsplan in [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) priorisiert
-macOS-/Linux-Smokes aus derselben Codebasis und einen späteren
-Web/PWA-Companion für mobile Watchlist- und Analyse-Snapshot-Ansichten. Das
-geplante Austauschformat ist in [EXPORTFORMAT.md](EXPORTFORMAT.md)
-dokumentiert und kann jetzt direkt in der App als
-`financialproof-workspace-v1.json` exportiert werden. Native Android-/iOS-Apps
-und ein Windows-Store-Release sind erst
-nach belegter Nachfrage und erneuter Rechts-/Datenschutzprüfung vorgesehen.
+Die aktuelle Vollversion bleibt eine lokale Streamlit-Anwendung. Die
+öffentliche Plattformstrategie priorisiert macOS-/Linux-Smokes aus derselben
+Codebasis und einen späteren Web/PWA-Companion für mobile Watchlist- und
+Analyse-Snapshot-Ansichten. Das geplante Austauschformat ist in
+[EXPORTFORMAT.md](EXPORTFORMAT.md) dokumentiert und kann jetzt direkt in der
+App als `financialproof-workspace-v1.json` exportiert werden. Native
+Android-/iOS-Apps und ein Windows-Store-Release sind erst nach belegter
+Nachfrage und erneuter Rechts-/Datenschutzprüfung vorgesehen.
 Der Companion validiert beim Import jetzt auch kaputte Pflichtlisten,
 leere Pflichtfelder und nicht endliche Snapshot-Werte sichtbar, statt sie
 stillschweigend zu schlucken.

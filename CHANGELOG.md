@@ -7,7 +7,13 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### Build / Release
+- EXE neu gebaut 2026-06-01 (PyInstaller --onefile, Launcher); 163/163 Tests grün, Smoke OK. EXE war 2026-05-01; Anlass: core/strategy.py + database.py 2026-05-22.
+
 ### Qualität und Repository-Hygiene
+- Interne Steuerdateien `PORTIERUNGSPLAN.md` und `TODO.md` aus dem Git-Tracking
+  entfernt; sie bleiben lokal durch `.gitignore` geschützt.
+- README-Plattformstrategie ohne Link auf interne Portierungsnotizen formuliert.
 - Web/PWA-Brücke für echte App-Daten geschlossen: neuer redigierter
   Workspace-Export `financialproof-workspace-v1.json` sammelt Watchlist,
   Analyse-Presets, abgeschlossene Analyse-Snapshots und Disclaimer-Metadaten
@@ -100,16 +106,16 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   Binärdatei-Behandlung für konsistente Checkouts.
 
 ### Rechtliche Korrekturen (Rechtsaudit Stufe 2, § 32 KWG / § 2 Abs. 9 WpHG)
-- **Terminologie neutralisiert:** UI-Labels „Kauf-/Verkaufssignal" durch
-  „bullisches/bärisches Muster" ersetzt. Interne Code-Identifier
+- **Terminologie neutralisiert:** UI-Labels "Kauf-/Verkaufssignal" durch
+  "bullisches/bärisches Muster" ersetzt. Interne Code-Identifier
   (`SignalType.BUY/SELL`, `SignalGenerator`) bleiben aus
   Rückwärtskompatibilitätsgründen erhalten. Docstrings klargestellt:
   rein deskriptive historische Muster, keine Anlageberatung.
-- **README:** Prominentes „Keine Anlageberatung / No Financial Advice"-Banner
-  direkt unter dem Titel. Marketing-Sprache („AI-powered deep analyses",
-  „automatic buy/sell signals") durch neutrale Formulierungen ersetzt
-  („Statistical pattern analyses", „Indicator calculation",
-  „historical pattern recognition"). Hinweis auf die Terminologie-Änderung.
+- **README:** Prominentes "Keine Anlageberatung / No Financial Advice"-Banner
+  direkt unter dem Titel. Marketing-Sprache ("AI-powered deep analyses",
+  "automatic buy/sell signals") durch neutrale Formulierungen ersetzt
+  ("Statistical pattern analyses", "Indicator calculation",
+  "historical pattern recognition"). Hinweis auf die Terminologie-Änderung.
 - **Erststart-Acknowledgement:** Neues Streamlit-Modul
   `ui/disclaimer_widget.py` blockiert die Haupt-UI bis der Nutzer vier
   Pflicht-Checkboxen bestätigt hat: keine Anlageberatung, historische
