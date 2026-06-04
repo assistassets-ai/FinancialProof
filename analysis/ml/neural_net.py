@@ -6,7 +6,7 @@ import logging
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Dict, Any, Tuple
 
 from analysis.base import (
     BaseAnalyzer, AnalysisResult, AnalysisParameters,
@@ -84,10 +84,9 @@ class NeuralNetAnalyzer(BaseAnalyzer):
         try:
             # Versuche TensorFlow/Keras zu laden
             try:
-                import tensorflow as tf
-                from tensorflow import keras
-                use_keras = True
-            except ImportError:
+                import importlib.util
+                use_keras = importlib.util.find_spec('tensorflow') is not None
+            except Exception:
                 use_keras = False
 
             # Parameter
@@ -179,7 +178,6 @@ class NeuralNetAnalyzer(BaseAnalyzer):
         """Trainiert ein Keras LSTM Modell"""
         from tensorflow import keras
         from tensorflow.keras import layers
-        from sklearn.model_selection import train_test_split
 
         # Train/Test Split
         split_idx = int(len(X) * 0.8)
@@ -257,8 +255,6 @@ class NeuralNetAnalyzer(BaseAnalyzer):
         high = df['High'].values
         low = df['Low'].values
 
-        patterns = []
-
         # 1. Aufwärts-/Abwärtskanal erkennen
         recent = close[-lookback:]
         slope = np.polyfit(range(len(recent)), recent, 1)[0]
@@ -276,8 +272,9 @@ class NeuralNetAnalyzer(BaseAnalyzer):
         recent_high = max(highs)
         current = close[-1]
 
-        near_support = (current - recent_low) / (recent_high - recent_low) < 0.2
-        near_resistance = (current - recent_low) / (recent_high - recent_low) > 0.8
+        price_range = recent_high - recent_low
+        near_support = (current - recent_low) / price_range < 0.2 if price_range > 0 else False
+        near_resistance = (current - recent_low) / price_range > 0.8 if price_range > 0 else False
 
         # Gesamtbewertung
         bullish_signals = 0
@@ -340,11 +337,11 @@ class NeuralNetAnalyzer(BaseAnalyzer):
         accuracy = metrics.get('accuracy', 0.5)
 
         if prediction == 1 and confidence > 0.6:
-            recommendation = "buy"
+            recommendation = "bullish"
         elif prediction == 0 and confidence > 0.6:
-            recommendation = "sell"
+            recommendation = "bearish"
         else:
-            recommendation = "hold"
+            recommendation = "neutral"
 
         summary = (
             f"Deep-Learning-Musteranalyse ({model_type}): "
@@ -385,7 +382,7 @@ class NeuralNetAnalyzer(BaseAnalyzer):
                 **metrics
             },
             signals=[{
-                'type': 'buy' if prediction == 1 else 'sell',
+                'type': 'bullish' if prediction == 1 else 'bearish',
                 'indicator': model_type,
                 'description': (
                     f'Muster-Klassifikation: Klasse "{direction}" '
