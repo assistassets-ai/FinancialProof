@@ -182,6 +182,17 @@ class ARIMAAnalyzer(BaseAnalyzer):
             logger.warning("ARIMA-Fit fehlgeschlagen: %s", e)
             return None
 
+    @staticmethod
+    def _z_from_alpha(alpha: float) -> float:
+        """Berechnet den z-Wert für ein Konfidenzintervall aus alpha."""
+        try:
+            from scipy.stats import norm as _norm
+            return float(_norm.ppf(1 - alpha / 2))
+        except ImportError:
+            # Näherung für häufige Werte
+            lookup = {0.01: 2.576, 0.05: 1.96, 0.10: 1.645, 0.20: 1.282}
+            return lookup.get(round(alpha, 2), 1.96)
+
     def _simple_forecast_model(self, data: pd.Series):
         """
         Einfaches Fallback-Modell wenn statsmodels nicht verfügbar.
@@ -229,7 +240,7 @@ class ARIMAAnalyzer(BaseAnalyzer):
                 pred = self.forecast(steps)
                 # Konfidenzintervall basierend auf historischer Volatilität
                 std = self.data.pct_change().std() * self.data.iloc[-1]
-                z = 1.96  # 95% Konfidenz
+                z = ARIMAAnalyzer._z_from_alpha(alpha)
 
                 conf_int = np.array([
                     [p - z * std * np.sqrt(i+1), p + z * std * np.sqrt(i+1)]
@@ -256,10 +267,10 @@ class ARIMAAnalyzer(BaseAnalyzer):
         """Erstellt Prognose mit Konfidenzintervall"""
         try:
             alpha = 1 - confidence
-            forecast_result = model.get_forecast(steps=steps, alpha=alpha)
+            forecast_result = model.get_forecast(steps=steps)
 
             forecast = forecast_result.predicted_mean
-            conf_int = forecast_result.conf_int()
+            conf_int = forecast_result.conf_int(alpha=alpha)
 
             return np.array(forecast), np.array(conf_int)
 
@@ -285,7 +296,10 @@ class ARIMAAnalyzer(BaseAnalyzer):
         """Baut das Analyse-Ergebnis zusammen"""
         current_price = historical.iloc[-1]
         forecast_end = forecast[-1]
-        change_pct = ((forecast_end - current_price) / current_price) * 100
+        if current_price == 0 or pd.isna(current_price):
+            change_pct = 0.0
+        else:
+            change_pct = ((forecast_end - current_price) / current_price) * 100
 
         # Trend bestimmen
         if change_pct > 5:

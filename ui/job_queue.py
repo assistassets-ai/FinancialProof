@@ -132,7 +132,7 @@ def _render_job_list(status_filter: JobStatus = None):
     df = pd.DataFrame(job_data)
     st.dataframe(
         df,
-        width="stretch",
+        use_container_width=True,
         hide_index=True,
         column_config={
             'ID': st.column_config.NumberColumn(width="small"),

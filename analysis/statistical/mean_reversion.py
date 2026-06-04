@@ -221,19 +221,19 @@ class MeanReversionAnalyzer(BaseAnalyzer):
         z_score = metrics['z_score']
         distance = metrics['distance_pct']
 
-        # Bestimme Signal basierend auf Z-Score
+        # Bestimme Muster basierend auf Z-Score
         if z_score < -z_threshold:
-            signal_type = "buy"
-            signal_desc = "Stark unterbewertet - Rückkehr zum Mittelwert erwartet"
-            recommendation = "buy"
+            signal_type = "bullish"
+            signal_desc = "Historisch tief bewertet - bullisches Reversion-Muster"
+            recommendation = "bullish"
         elif z_score > z_threshold:
-            signal_type = "sell"
-            signal_desc = "Stark überbewertet - Korrektur zum Mittelwert erwartet"
-            recommendation = "sell"
+            signal_type = "bearish"
+            signal_desc = "Historisch hoch bewertet - bärisches Reversion-Muster"
+            recommendation = "bearish"
         else:
-            signal_type = "hold"
-            signal_desc = "Nahe am Mittelwert - kein klares Reversion-Signal"
-            recommendation = "hold"
+            signal_type = "neutral"
+            signal_desc = "Nahe am Mittelwert - kein klares Muster"
+            recommendation = "neutral"
 
         # Konfidenz basierend auf Stationarität und Z-Score
         base_confidence = 0.5 if is_stationary else 0.3
@@ -256,12 +256,14 @@ class MeanReversionAnalyzer(BaseAnalyzer):
         )
 
         # Chart-Daten für Visualisierung
+        price_window = prices.iloc[-lookback:]
+        actual_lookback = len(price_window)
         chart_data = pd.DataFrame({
-            'price': prices.iloc[-lookback:],
-            'mean': [metrics['mean_short']] * lookback,
-            'upper': [metrics['upper_band']] * lookback,
-            'lower': [metrics['lower_band']] * lookback
-        }, index=prices.iloc[-lookback:].index)
+            'price': price_window,
+            'mean': [metrics['mean_short']] * actual_lookback,
+            'upper': [metrics['upper_band']] * actual_lookback,
+            'lower': [metrics['lower_band']] * actual_lookback
+        }, index=price_window.index)
 
         warnings = []
         if not is_stationary:
