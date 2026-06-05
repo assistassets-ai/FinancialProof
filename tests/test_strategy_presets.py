@@ -158,7 +158,7 @@ def test_strategy_engine_evaluates_and_persists_analysis_runs(strategy_context):
 
     market_data = pd.DataFrame(
         {
-            "RSI": [48.0, 55.0, 60.0],
+            "rsi": [48.0, 55.0, 60.0],
             "Volume": [100.0, 110.0, 180.0],
         }
     )
@@ -197,7 +197,7 @@ def test_strategy_engine_marks_failed_rules_as_neutral(strategy_context):
 
     market_data = pd.DataFrame(
         {
-            "RSI": [45.0, 58.0],
+            "rsi": [45.0, 58.0],
             "Volume": [120.0, 118.0],
         }
     )
@@ -214,3 +214,16 @@ def test_strategy_engine_marks_failed_rules_as_neutral(strategy_context):
     assert result["pattern_class"] == "neutral"
     assert "Unsicher" in result["reason"]
     assert "RSI zu hoch" in result["reason"]
+
+
+def test_extract_current_rsi_uses_lowercase_column(strategy_context):
+    """_extract_current_rsi muss 'rsi' (Kleinschreibung) lesen — calculate_all schreibt Kleinschreibung."""
+    engine = strategy_context["engine"]
+
+    df_lower = pd.DataFrame({"rsi": [30.0, 40.0, 75.0]})
+    df_upper = pd.DataFrame({"RSI": [30.0, 40.0, 75.0]})
+    df_empty = pd.DataFrame()
+
+    assert engine._extract_current_rsi(df_lower) == pytest.approx(75.0)
+    assert engine._extract_current_rsi(df_upper) == pytest.approx(50.0)
+    assert engine._extract_current_rsi(df_empty) == pytest.approx(50.0)

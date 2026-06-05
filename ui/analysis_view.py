@@ -164,7 +164,7 @@ def _render_job_card(job):
                 st.caption(f"Abgeschlossen: {job.completed_at}")
 
         with col2:
-            st.caption(f"Status: {texts.__dict__.get(f'JOB_{job.status.value.upper()}', job.status.value)}")
+            st.caption(f"Status: {getattr(texts, f'JOB_{job.status.value.upper()}', job.status.value)}")
 
         if job.status == JobStatus.PENDING:
             _render_pending_job(job)

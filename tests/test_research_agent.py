@@ -75,6 +75,25 @@ def test_research_agent_analyze_logs_unexpected_failure(monkeypatch, caplog):
     assert "Research-Agent-Analyse fuer AAPL fehlgeschlagen" in caplog.text
 
 
+def test_get_dividend_info_handles_none_dividend_yield(caplog):
+    """_get_dividend_info darf nicht mit TypeError scheitern wenn dividendYield=None."""
+
+    class FakeTicker:
+        @property
+        def info(self):
+            return {'dividendYield': None}  # yfinance gibt None fuer dividendenlose Aktien
+
+        @property
+        def dividends(self):
+            return None
+
+    analyzer = ResearchAgent()
+    result = analyzer._get_dividend_info(FakeTicker())
+
+    assert result.get('pays_dividend') is False
+    assert 'error' not in result
+
+
 def test_research_agent_fundamental_fallback_is_logged(caplog):
     """Helper-Fallbacks duerfen nicht still bleiben."""
 

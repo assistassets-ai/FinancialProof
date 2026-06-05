@@ -152,7 +152,7 @@ class APIKeyManager:
 
     def _save_secrets(self, secrets: dict):
         """Speichert die Secrets-Datei"""
-        with open(self._secrets_file, "w") as f:
+        with open(self._secrets_file, "w", encoding="utf-8") as f:
             json.dump(secrets, f)
 
 

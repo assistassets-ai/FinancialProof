@@ -92,7 +92,7 @@ class RandomForestAnalyzer(BaseAnalyzer):
 
             # Features erstellen
             self.set_progress(20)
-            X, y, feature_names = self._prepare_features(data, pred_days)
+            X, y, feature_names, X_predict = self._prepare_features(data, pred_days)
 
             if len(X) < 50:
                 return self.create_empty_result(
@@ -109,8 +109,8 @@ class RandomForestAnalyzer(BaseAnalyzer):
 
             self.set_progress(70)
 
-            # Vorhersage für morgen
-            prediction, probability = self._predict(model, X)
+            # Vorhersage für morgen (aktuellster Datenpunkt)
+            prediction, probability = self._predict(model, X_predict)
 
             self.set_progress(90)
 
@@ -200,7 +200,10 @@ class RandomForestAnalyzer(BaseAnalyzer):
         X = data[feature_cols].iloc[:-prediction_days].values
         y = data['target'].iloc[:-prediction_days].values
 
-        return X, y, feature_cols
+        # Aktuellste Features für die echte Vorhersage (letzter Datenpunkt)
+        X_predict = data[feature_cols].iloc[-1:].values
+
+        return X, y, feature_cols, X_predict
 
     def _train_model(
         self,
@@ -252,7 +255,10 @@ class RandomForestAnalyzer(BaseAnalyzer):
         """Macht Vorhersage für den aktuellsten Datenpunkt"""
         last_row = X[-1:].reshape(1, -1)
         prediction = model.predict(last_row)[0]
-        probability = model.predict_proba(last_row)[0][prediction]
+        proba_array = model.predict_proba(last_row)[0]
+        classes = list(model.classes_)
+        prob_idx = classes.index(prediction) if prediction in classes else 0
+        probability = proba_array[prob_idx]
         return prediction, probability
 
     def _build_result(
@@ -271,13 +277,13 @@ class RandomForestAnalyzer(BaseAnalyzer):
         direction = "steigend" if prediction == 1 else "fallend"
         direction_emoji = "📈" if prediction == 1 else "📉"
 
-        # Empfehlung basierend auf Vorhersage und Konfidenz
+        # Muster-Polarität basierend auf Vorhersage und Konfidenz
         if prediction == 1 and probability > 0.6:
-            recommendation = "buy"
+            recommendation = "bullish"
         elif prediction == 0 and probability > 0.6:
-            recommendation = "sell"
+            recommendation = "bearish"
         else:
-            recommendation = "hold"
+            recommendation = "neutral"
 
         # Konfidenz: Kombination aus Modell-Accuracy und Vorhersage-Wahrscheinlichkeit
         confidence = (metrics['accuracy'] * 0.5) + (probability * 0.5)
@@ -325,7 +331,7 @@ class RandomForestAnalyzer(BaseAnalyzer):
                 'feature_importance': importance
             },
             signals=[{
-                'type': 'buy' if prediction == 1 else 'sell',
+                'type': 'bullish' if prediction == 1 else 'bearish',
                 'indicator': 'Random Forest',
                 'description': f'KI-Prognose: {direction} ({probability*100:.1f}%)',
                 'confidence': probability

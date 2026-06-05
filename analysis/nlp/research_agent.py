@@ -244,7 +244,7 @@ class ResearchAgent(BaseAnalyzer):
                 info = {}
 
             return {
-                'pays_dividend': info.get('dividendYield', 0) > 0,
+                'pays_dividend': (info.get('dividendYield') or 0) > 0,
                 'dividend_yield': info.get('dividendYield', 0) * 100 if info.get('dividendYield') else 0,
                 'dividend_rate': info.get('dividendRate', 'N/A'),
                 'ex_dividend_date': info.get('exDividendDate', 'N/A'),

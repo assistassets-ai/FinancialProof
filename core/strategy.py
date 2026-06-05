@@ -131,10 +131,10 @@ class StrategyEngine:
 
     @staticmethod
     def _extract_current_rsi(market_data: pd.DataFrame) -> float:
-        if "RSI" not in market_data or market_data["RSI"].empty:
+        if "rsi" not in market_data or market_data["rsi"].empty:
             return 50.0
 
-        value = market_data["RSI"].iloc[-1]
+        value = market_data["rsi"].iloc[-1]
         if pd.isna(value):
             return 50.0
         return float(value)

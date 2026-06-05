@@ -210,9 +210,9 @@ class BaseAnalyzer(ABC):
 
     @staticmethod
     def calculate_volatility(prices: pd.Series, window: int = 20) -> float:
-        """Berechnet annualisierte Volatilität"""
+        """Berechnet annualisierte Volatilität über die letzten `window` Perioden."""
         returns = prices.pct_change().dropna()
-        return returns.std() * np.sqrt(252)
+        return returns.iloc[-window:].std() * np.sqrt(252)
 
     @staticmethod
     def calculate_sharpe_ratio(

@@ -90,6 +90,14 @@ class TestSignalSummary:
         summary = gen.get_signal_summary(df_with_indicators)
         assert summary["overall_signal"] in (SignalType.BUY, SignalType.SELL, SignalType.HOLD)
 
+    def test_summary_empty_dataframe_does_not_crash(self):
+        gen = SignalGenerator()
+        empty_df = pd.DataFrame(columns=["Open", "High", "Low", "Close", "Volume"])
+        summary = gen.get_signal_summary(empty_df)
+        assert summary["recent_signals"] == []
+        assert summary["buy_count"] == 0
+        assert summary["sell_count"] == 0
+
 
 class TestFormatSignal:
     def test_format_buy_signal(self):

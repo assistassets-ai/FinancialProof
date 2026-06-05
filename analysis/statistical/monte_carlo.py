@@ -219,15 +219,15 @@ class MonteCarloAnalyzer(BaseAnalyzer):
         # Konfidenz basierend auf Gewinnwahrscheinlichkeit
         confidence = sim_result.probability_profit
 
-        # Recommendation basierend auf Risiko/Rendite
+        # Muster-Polarität basierend auf Risiko/Rendite
         if sim_result.expected_return > 0.02 and sim_result.var_95 > -0.05:
-            recommendation = "buy"
+            recommendation = "bullish"
             risk_level = "niedrig"
         elif sim_result.var_95 < -0.10:
-            recommendation = "sell"
+            recommendation = "bearish"
             risk_level = "hoch"
         else:
-            recommendation = "hold"
+            recommendation = "neutral"
             risk_level = "mittel"
 
         summary = (

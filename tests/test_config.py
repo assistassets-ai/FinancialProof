@@ -58,6 +58,18 @@ class TestConfig:
         assert manager.get_api_key("twitter") == "token-123"
         assert json.loads(cfg.SECRETS_PATH.read_text(encoding="utf-8"))["twitter"]
 
+    def test_save_secrets_writes_utf8(self, tmp_path):
+        cfg = Config(BASE_DIR=tmp_path)
+        manager = APIKeyManager(cfg)
+
+        # Service-Name mit Nicht-ASCII prüft UTF-8-Schreibkonsistenz
+        manager.save_api_key("test_service", "wert-äöü")
+
+        raw = cfg.SECRETS_PATH.read_bytes()
+        assert b"\xe4" not in raw  # kein CP1252-Byte für 'ä'
+        text = cfg.SECRETS_PATH.read_text(encoding="utf-8")
+        assert json.loads(text)  # valides JSON in UTF-8
+
 
 class TestUIText:
     def test_periods_mapping(self):
@@ -77,3 +89,11 @@ class TestUIText:
         assert texts.JOB_PENDING == "Wartend"
         assert texts.JOB_COMPLETED == "Abgeschlossen"
         assert texts.JOB_FAILED == "Fehlgeschlagen"
+
+    def test_job_status_texts_accessible_via_getattr_not_instance_dict(self):
+        """Klassenattribute von UIText liegen NICHT in __dict__ — getattr verwenden."""
+        texts = UIText()
+        assert texts.__dict__.get("JOB_PENDING") is None
+        assert getattr(texts, "JOB_PENDING", None) == "Wartend"
+        assert getattr(texts, "JOB_COMPLETED", None) == "Abgeschlossen"
+        assert getattr(texts, "JOB_FAILED", None) == "Fehlgeschlagen"

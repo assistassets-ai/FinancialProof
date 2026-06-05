@@ -264,15 +264,15 @@ class SentimentAnalyzer(BaseAnalyzer):
         # Gesamtbewertung
         if avg_sentiment > 0.3:
             overall = "bullish"
-            recommendation = "buy"
+            recommendation = "bullish"
             emoji = "🐂"
         elif avg_sentiment < -0.3:
             overall = "bearish"
-            recommendation = "sell"
+            recommendation = "bearish"
             emoji = "🐻"
         else:
             overall = "neutral"
-            recommendation = "hold"
+            recommendation = "neutral"
             emoji = "😐"
 
         # Konfidenz basierend auf Konsistenz der Artikel

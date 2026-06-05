@@ -123,6 +123,19 @@ class TestBaseAnalyzer:
         assert result.summary == "Analyse konnte nicht durchgeführt werden"
         assert isinstance(result.timestamp, datetime)
 
+    def test_calculate_volatility_respects_window_parameter(self):
+        # Erst stabile Preise, dann volatile Preise — window=5 soll nur die volatilen erfassen
+        np.random.seed(42)
+        stable = pd.Series(np.ones(100) * 100.0)
+        volatile_part = pd.Series(100.0 + np.cumsum(np.random.randn(5) * 5))
+        prices = pd.concat([stable, volatile_part], ignore_index=True)
+
+        vol_full = DummyAnalyzer.calculate_volatility(prices, window=len(prices))
+        vol_window5 = DummyAnalyzer.calculate_volatility(prices, window=5)
+
+        # Fenster über nur die volatilen letzten 5 Werte muss höher sein
+        assert vol_window5 > vol_full
+
 
 class TestMethodSelector:
     def test_select_methods_uses_ml_model_when_available(self, valid_ohlcv):
