@@ -366,10 +366,40 @@ def test_render_watchlist_adds_current_symbol(monkeypatch):
     assert fake_st.rerun_called is True
 
 
-def test_render_settings_reports_permission_error_on_database_reset(monkeypatch):
+def test_render_settings_db_reset_button_sets_session_state(monkeypatch):
+    """Regression: st.button+st.checkbox anti-pattern — button click sets session_state."""
     fake_st = FakeStreamlit()
     fake_st.button_presses["🗑️ Datenbank zurücksetzen"] = True
-    fake_st.checkboxes["Bestätigen"] = True
+
+    monkeypatch.setattr(sidebar, "st", fake_st)
+    monkeypatch.setattr(sidebar.api_keys, "has_api_key", lambda name: False)
+
+    sidebar._render_settings()
+
+    assert fake_st.session_state.get("_confirm_db_reset") is True
+
+
+def test_render_settings_db_reset_cancel_clears_session_state(monkeypatch):
+    """Cancel button clears session_state without deleting the database."""
+    fake_st = FakeStreamlit()
+    fake_st.session_state["_confirm_db_reset"] = True
+    fake_st.button_presses["_db_reset_no"] = True
+
+    monkeypatch.setattr(sidebar, "st", fake_st)
+    monkeypatch.setattr(sidebar.api_keys, "has_api_key", lambda name: False)
+
+    sidebar._render_settings()
+
+    assert "_confirm_db_reset" not in fake_st.session_state
+    assert fake_st.rerun_called is True
+
+
+def test_render_settings_reports_permission_error_on_database_reset(monkeypatch):
+    """PermissionError on deletion shows error and clears session_state."""
+    fake_st = FakeStreamlit()
+    # Session_state persists across reruns — confirmation dialog was triggered earlier
+    fake_st.session_state["_confirm_db_reset"] = True
+    fake_st.button_presses["_db_reset_yes"] = True
 
     monkeypatch.setattr(sidebar, "st", fake_st)
     monkeypatch.setattr(sidebar.api_keys, "has_api_key", lambda name: False)
@@ -388,6 +418,27 @@ def test_render_settings_reports_permission_error_on_database_reset(monkeypatch)
     assert fake_st.error_messages == [
         "Datenbank ist gesperrt (OneDrive-Sync oder anderer Prozess). Bitte später erneut versuchen."
     ]
+    assert "_confirm_db_reset" not in fake_st.session_state
+
+
+def test_render_settings_db_reset_deletes_db_on_confirmation(monkeypatch, tmp_path):
+    """Confirmed deletion removes the DB file and clears session_state."""
+    fake_st = FakeStreamlit()
+    fake_st.session_state["_confirm_db_reset"] = True
+    fake_st.button_presses["_db_reset_yes"] = True
+
+    db_file = tmp_path / "financial.db"
+    db_file.write_text("fake-db-content")
+
+    monkeypatch.setattr(sidebar, "st", fake_st)
+    monkeypatch.setattr(sidebar.api_keys, "has_api_key", lambda name: False)
+    monkeypatch.setattr(sidebar.config, "DB_PATH", str(db_file))
+
+    sidebar._render_settings()
+
+    assert not db_file.exists()
+    assert "_confirm_db_reset" not in fake_st.session_state
+    assert fake_st.success_messages == ["Datenbank wurde zurückgesetzt"]
 
 
 def test_rate_limit_status_shows_stats_and_can_reset(monkeypatch):

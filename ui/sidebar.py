@@ -202,20 +202,31 @@ def _render_settings():
             else:  # pragma: no cover - Test-Doubles ohne Download-Widget
                 st.caption("Companion-Export ist im echten Streamlit als Download verfuegbar.")
 
-        # Datenbank-Reset
+        # Datenbank-Reset — session_state-basierte Bestätigung (Streamlit erfordert
+        # persistenten State, da st.button() nur in einem einzigen Render-Zyklus True ist)
         st.markdown("---")
         if st.button("🗑️ Datenbank zurücksetzen", type="secondary"):
-            if st.checkbox("Bestätigen"):
-                # Alle Jobs und Ergebnisse löschen
-                import os
-                db_path = config.DB_PATH
-                if os.path.exists(db_path):
-                    try:
-                        os.remove(db_path)
-                        st.success("Datenbank wurde zurückgesetzt")
-                        st.rerun()
-                    except PermissionError:
-                        st.error("Datenbank ist gesperrt (OneDrive-Sync oder anderer Prozess). Bitte später erneut versuchen.")
+            st.session_state['_confirm_db_reset'] = True
+
+        if st.session_state.get('_confirm_db_reset'):
+            st.warning("Alle Jobs und Ergebnisse werden unwiderruflich gelöscht!")
+            col_yes, col_no = st.columns(2)
+            with col_yes:
+                if st.button("✅ Ja, löschen", key="_db_reset_yes"):
+                    import os
+                    db_path = config.DB_PATH
+                    st.session_state.pop('_confirm_db_reset', None)
+                    if os.path.exists(db_path):
+                        try:
+                            os.remove(db_path)
+                            st.success("Datenbank wurde zurückgesetzt")
+                            st.rerun()
+                        except PermissionError:
+                            st.error("Datenbank ist gesperrt (OneDrive-Sync oder anderer Prozess). Bitte später erneut versuchen.")
+            with col_no:
+                if st.button("❌ Abbrechen", key="_db_reset_no"):
+                    st.session_state.pop('_confirm_db_reset', None)
+                    st.rerun()
 
 
 def _render_rate_limit_status():
