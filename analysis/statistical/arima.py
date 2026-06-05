@@ -252,7 +252,7 @@ class ARIMAAnalyzer(BaseAnalyzer):
 
                     def __init__(self, pred, conf):
                         self.predicted_mean = pred
-                        self.conf_int = lambda: conf
+                        self.conf_int = lambda **kw: conf
 
                 return ForecastResult(pred, conf_int)
 

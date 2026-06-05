@@ -80,3 +80,11 @@ class TestSimpleForecastAlpha:
         ci = result.conf_int()
         assert len(result.predicted_mean) == steps
         assert ci.shape == (steps, 2)
+
+    def test_conf_int_accepts_alpha_keyword_argument(self, price_series):
+        """Regression: conf_int war lambda: conf und warf TypeError bei conf_int(alpha=...)."""
+        model = ARIMAAnalyzer()._simple_forecast_model(price_series)
+        result = model.get_forecast(steps=5)
+        # Muss ohne TypeError aufrufbar sein (so wie _forecast es aufruft)
+        ci = result.conf_int(alpha=0.05)
+        assert ci.shape == (5, 2)
