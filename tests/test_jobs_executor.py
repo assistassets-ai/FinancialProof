@@ -313,3 +313,31 @@ class TestJobExecutor:
 
         assert seen == job_ids
         assert summary == {"completed": 2, "failed": 1, "total": 3}
+
+
+class TestAutoMethodSelector:
+    def test_get_selection_reasons_does_not_crash_with_fewer_than_20_rows(
+        self, executor_module
+    ):
+        """Regression: _get_selection_reasons raised IndexError via close.iloc[-20]
+        when len(data) < 20. Reproduces with any DataFrame with 1-19 rows."""
+        closes = [100.0 + i for i in range(5)]
+        data = pd.DataFrame(
+            {
+                "Open": [v - 0.5 for v in closes],
+                "High": [v + 0.5 for v in closes],
+                "Low": [v - 1.0 for v in closes],
+                "Close": closes,
+                "Volume": [1_000_000] * 5,
+            }
+        )
+
+        selector = executor_module.AutoMethodSelector()
+        try:
+            reasons = selector._get_selection_reasons(data)
+        except IndexError as e:
+            pytest.fail(
+                f"_get_selection_reasons raised IndexError with {len(data)} rows: {e}"
+            )
+
+        assert isinstance(reasons, dict)

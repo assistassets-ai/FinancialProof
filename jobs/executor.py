@@ -255,7 +255,10 @@ class AutoMethodSelector:
         returns = close.pct_change().dropna()
 
         volatility = returns.std() * np.sqrt(252)
-        trend = (close.iloc[-1] - close.iloc[-20]) / close.iloc[-20]
+        if len(close) >= 20:
+            trend = (close.iloc[-1] - close.iloc[-20]) / close.iloc[-20]
+        else:
+            trend = 0.0
 
         reasons = {}
 
