@@ -13,7 +13,8 @@ Primary entry points:
 - `analysis/` for ARIMA, Monte Carlo, mean-reversion, ML and NLP modules.
 - `indicators/` for technical indicators and historical pattern detection.
 - `ui/` for Streamlit views and disclaimer acknowledgement.
-- `PORTIERUNGSPLAN.md` and `EXPORTFORMAT.md` for platform and export plans.
+- `EXPORTFORMAT.md` for the redacted local workspace export format.
+- `web_companion/` for the read-only offline browser companion.
 
 Safety and compliance context:
 - This is not financial advice, tax advice, legal advice, investment advice or
@@ -31,7 +32,7 @@ Current technical profile:
 - Plotly charts
 - pandas, numpy, scipy and statsmodels for statistical processing
 - scikit-learn, TensorFlow and transformers for optional ML/NLP modules
-- 163 automated unit and regression tests documented in `TESTLOG.md`
+- 208 automated unit and regression tests documented in `TESTLOG.md`
 
 Recommended automation checks:
 - `python -m pytest tests -q`
@@ -46,3 +47,14 @@ Public positioning:
 - no-trading research tool
 - SQLite watchlist
 - statistical market-pattern analysis
+
+Useful search phrases:
+- FinancialProof assistassets-ai
+- local-first Streamlit stock analysis no trading
+- historical technical indicators yfinance SQLite watchlist
+- financialproof workspace export PWA companion
+
+Disambiguation:
+- Not a brokerage bot, auto-trader, robo-advisor or signal-selling product.
+- Not a proof-of-reserve, credit-scoring, invoice-proof or cryptographic attestation product.
+- Not a hosted finance SaaS; runtime data, API keys, SQLite databases and exports stay local.

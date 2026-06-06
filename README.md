@@ -26,6 +26,16 @@ Use it when you want to inspect historical indicators, compare analysis
 modules, keep a local watchlist, and document technical market patterns without
 connecting a brokerage account or sending private API keys to a hosted service.
 
+## Start Here
+
+| Goal | Open | Notes |
+|------|------|-------|
+| Run the local app | [`app.py`](app.py) | Start with `streamlit run app.py`; first launch requires the no-advice acknowledgement. |
+| Understand the scope | [`EXPORTFORMAT.md`](EXPORTFORMAT.md) | Describes the redacted `financialproof-workspace-v1.json` export and local-only boundary. |
+| Use the offline reader | [`web_companion/`](web_companion/) | Read-only browser companion for exported watchlists and analysis snapshots. |
+| Verify changes | [`TESTLOG.md`](TESTLOG.md) | Current suite is run with `python -m pytest tests -q`. |
+| Review safety rules | [`SECURITY.md`](SECURITY.md) | Keep `.env`, `.secrets`, SQLite databases, logs and API keys local. |
+
 ## Features
 
 - **Technical Indicators**: SMA, EMA, RSI, Bollinger Bands, MACD, Stochastic, ATR
@@ -48,6 +58,23 @@ connecting a brokerage account or sending private API keys to a hosted service.
 **Discovery keywords:** local-first finance analysis, Streamlit stock analysis,
 historical technical indicators, yfinance dashboard, no-trading research tool,
 SQLite watchlist, statistical market-pattern analysis.
+
+## Search and Disambiguation
+
+FinancialProof is best described as a **local-first Streamlit dashboard for
+historical market-pattern analysis**. It is intentionally different from:
+
+- brokerage bots, auto-trading systems and signal-selling tools
+- portfolio advice, robo-advisors, tax advice or regulated investment services
+- proof-of-reserve, invoice-proof, credit-scoring or cryptographic attestation products
+- hosted finance SaaS dashboards that upload watchlists, API keys or runtime data
+
+Useful search phrases:
+
+- `FinancialProof assistassets-ai`
+- `local-first Streamlit stock analysis no trading`
+- `historical technical indicators yfinance SQLite watchlist`
+- `financialproof workspace export PWA companion`
 
 > **Note on terminology:** Earlier versions of this project used the term
 > "buy/sell signals". This has been replaced by "technical indicators" and
@@ -157,7 +184,7 @@ python -m pytest tests -q
 
 Current repository status:
 
-- 165 unit and regression tests cover analysis modules, job execution,
+- 208 unit and regression tests cover analysis modules, job execution,
   logging, rate limiting/telemetry, strategy presets, disclaimer persistence and Streamlit helper flows.
 - OHLCV input validation reports missing columns cleanly before running
   missing-value checks, so incomplete market data fails with diagnostics

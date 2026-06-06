@@ -224,6 +224,18 @@ _Aktuell keine Tests in Durchführung_
 
 **Ergebnis:** 163/163 Tests bestanden (`python -m pytest tests -q`).
 
+### AUTO-2026-06-06: Discoverability-Refresh Regression
+**Durchgeführt:** 2026-06-06
+**Status:** Bestanden
+
+**Umfang:**
+- Vollständige Python-Regression nach README-/`llms.txt`-/Changelog-Refresh
+- PyCompile-Smoke für `app.py`, `config.py` und `financialproof_launcher.py`
+- Web/PWA-Companion-Workspace-Tests
+- Markdown-Linkcheck und UTF-8-/Umlautscan der geänderten Dokumente
+
+**Ergebnis:** 208/208 Tests bestanden (`python -m pytest tests -q`).
+
 <!--
 ### TEST-XXX: Beispiel abgeschlossener Test
 **Durchgeführt:** 2026-01-20
@@ -258,7 +270,7 @@ _Aktuell keine Tests in Durchführung_
 | jobs/ | automatisierte Tests vorhanden | Aktiv |
 | ui/ | automatisierte Tests vorhanden | Aktiv |
 
-**Gesamtabdeckung:** 163 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
+**Gesamtabdeckung:** 208 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
 **Ziel:** 80%
 
 ---
@@ -301,4 +313,4 @@ python -m pytest -m "slow"
 
 ---
 
-*Letzte Aktualisierung: 2026-05-16*
+*Letzte Aktualisierung: 2026-06-06*

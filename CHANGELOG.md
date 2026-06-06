@@ -11,6 +11,11 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - EXE neu gebaut 2026-06-01 (PyInstaller --onefile, Launcher); 163/163 Tests grün, Smoke OK. EXE war 2026-05-01; Anlass: core/strategy.py + database.py 2026-05-22.
 
 ### Qualität und Repository-Hygiene
+- Discoverability-Refresh: README um eine Start-Here-Tabelle und
+  Such-/Abgrenzungskontext für local-first Streamlit-Finanzanalyse,
+  historische technische Indikatoren, yfinance, SQLite-Watchlists und
+  No-Trading-Scope ergänzt; `llms.txt` auf denselben öffentlichen
+  Projektkontext und den verifizierten 208-Teststand synchronisiert.
 - Interne Steuerdateien `PORTIERUNGSPLAN.md` und `TODO.md` aus dem Git-Tracking
   entfernt; sie bleiben lokal durch `.gitignore` geschützt.
 - README-Plattformstrategie ohne Link auf interne Portierungsnotizen formuliert.
