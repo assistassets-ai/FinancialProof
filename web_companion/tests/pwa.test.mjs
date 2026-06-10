@@ -11,6 +11,7 @@ const manifest = JSON.parse(readFileSync(join(root, "manifest.webmanifest"), "ut
 const swSrc = readFileSync(join(root, "sw.js"), "utf8");
 const indexSrc = readFileSync(join(root, "index.html"), "utf8");
 const appSrc = readFileSync(join(root, "app.mjs"), "utf8");
+const cssSrc = readFileSync(join(root, "app.css"), "utf8");
 
 describe("manifest — installability", () => {
   it("has display:standalone", () => {
@@ -68,8 +69,8 @@ describe("service worker", () => {
     assert.match(swSrc, /financialproof/);
   });
 
-  it("CACHE_NAME is v2", () => {
-    assert.match(swSrc, /financialproof-web-companion-v2/);
+  it("CACHE_NAME is v3", () => {
+    assert.match(swSrc, /financialproof-web-companion-v3/);
   });
 
   it("has skipWaiting()", () => {
@@ -78,6 +79,10 @@ describe("service worker", () => {
 
   it("has clients.claim()", () => {
     assert.match(swSrc, /self\.clients\.claim\(\)/);
+  });
+
+  it("uses ignoreSearch in cache lookup (query-param offline fix)", () => {
+    assert.match(swSrc, /ignoreSearch\s*:\s*true/);
   });
 
   it("all manifest PNG icons are in SW ASSETS (offline defect fix)", () => {
@@ -97,5 +102,64 @@ describe("integration", () => {
 
   it("app.mjs registers sw.js", () => {
     assert.match(appSrc, /sw\.js/);
+  });
+
+  it("app.mjs definiert escHtml (XSS-Schutz für innerHTML)", () => {
+    assert.match(appSrc, /function escHtml/);
+  });
+
+  it("app.mjs schützt alle innerHTML-Blöcke mit escHtml", () => {
+    const inlineCount = (appSrc.match(/article\.innerHTML\s*=/g) || []).length + (appSrc.match(/row\.innerHTML\s*=/g) || []).length;
+    const escHtmlCount = (appSrc.match(/escHtml\(/g) || []).length;
+    assert.ok(escHtmlCount >= inlineCount, `escHtml-Aufrufe (${escHtmlCount}) sollen >= innerHTML-Blöcke (${inlineCount}) sein`);
+  });
+
+  it("app.mjs restoreWorkspace hat Guard gegen überschreiben geladener Workspaces", () => {
+    assert.match(appSrc, /if \(state\.workspace\) return/);
+  });
+});
+
+describe("iOS Safari installability", () => {
+  it("index.html: viewport meta enthält viewport-fit=cover", () => {
+    assert.match(indexSrc, /viewport-fit\s*=\s*cover/);
+  });
+
+  it("index.html: apple-touch-icon Link vorhanden und zeigt auf PNG", () => {
+    assert.match(indexSrc, /rel="apple-touch-icon"/);
+    assert.match(indexSrc, /apple-touch-icon.*\.png/s);
+  });
+
+  it("apple-touch-icon-180.png existiert und ist 180×180", () => {
+    const iconPath = join(root, "icons", "apple-touch-icon-180.png");
+    assert.ok(existsSync(iconPath), "icons/apple-touch-icon-180.png fehlt");
+    const buf = readFileSync(iconPath);
+    const width = buf.readUInt32BE(16);
+    const height = buf.readUInt32BE(20);
+    assert.equal(width, 180, `Breite muss 180 sein, ist ${width}`);
+    assert.equal(height, 180, `Höhe muss 180 sein, ist ${height}`);
+  });
+
+  it("index.html: apple-mobile-web-app-title gesetzt", () => {
+    assert.match(indexSrc, /apple-mobile-web-app-title/);
+  });
+
+  it("index.html: apple-mobile-web-app-status-bar-style ist default", () => {
+    assert.match(indexSrc, /apple-mobile-web-app-status-bar-style/);
+    assert.match(indexSrc, /content="default"/);
+  });
+
+  it("app.css: safe-area-inset auf allen vier Seiten (Notch-Schutz)", () => {
+    assert.match(cssSrc, /safe-area-inset-top/);
+    assert.match(cssSrc, /safe-area-inset-bottom/);
+    assert.match(cssSrc, /safe-area-inset-left/);
+    assert.match(cssSrc, /safe-area-inset-right/);
+  });
+
+  it("app.css: Button-Elemente haben min-height von 44px (Apple HIG)", () => {
+    assert.match(cssSrc, /min-height\s*:\s*44px/);
+  });
+
+  it("sw.js ASSETS enthält apple-touch-icon-180.png", () => {
+    assert.match(swSrc, /apple-touch-icon-180\.png/);
   });
 });

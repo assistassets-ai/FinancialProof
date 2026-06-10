@@ -39,6 +39,7 @@ button {
   background: var(--accent);
   color: #fff8f0;
   padding: 0.78rem 1.2rem;
+  min-height: 44px;
   cursor: pointer;
   transition: transform 120ms ease;
 }
@@ -55,6 +56,10 @@ button.secondary {
   width: min(1180px, calc(100vw - 2rem));
   margin: 0 auto;
   padding: 1.25rem 0 2rem;
+  padding-top: max(1.25rem, env(safe-area-inset-top));
+  padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  padding-left: max(0rem, env(safe-area-inset-left));
+  padding-right: max(0rem, env(safe-area-inset-right));
 }
 
 .hero {
@@ -333,7 +338,7 @@ textarea {
 @media (max-width: 720px) {
   .page-shell {
     width: min(100vw - 1rem, 1180px);
-    padding-top: 0.5rem;
+    padding-top: max(0.5rem, env(safe-area-inset-top));
   }
 
   .hero,

@@ -1,4 +1,4 @@
-const CACHE_NAME = "financialproof-web-companion-v2";
+const CACHE_NAME = "financialproof-web-companion-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -10,6 +10,7 @@ const ASSETS = [
   "./icons/Icon-512.png",
   "./icons/Icon-maskable-192.png",
   "./icons/Icon-maskable-512.png",
+  "./icons/apple-touch-icon-180.png",
 ];
 
 self.addEventListener("install", (event) => {
@@ -33,6 +34,6 @@ self.addEventListener("fetch", (event) => {
   }
 
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request)),
+    caches.match(event.request, { ignoreSearch: true }).then((cached) => cached || fetch(event.request)),
   );
 });
