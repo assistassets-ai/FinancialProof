@@ -129,6 +129,8 @@ temp/
 *.temp
 *.bak
 *.backup
+*_PREFIXBAK_*
+*_FINAL_*
 
 # ===== Model Files =====
 models/*.h5

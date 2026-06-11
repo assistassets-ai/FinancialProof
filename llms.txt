@@ -32,29 +32,43 @@ Current technical profile:
 - Plotly charts
 - pandas, numpy, scipy and statsmodels for statistical processing
 - scikit-learn, TensorFlow and transformers for optional ML/NLP modules
-- 208 automated unit and regression tests documented in `TESTLOG.md`
+- 211 automated unit and regression tests documented in `TESTLOG.md`
 
 Recommended automation checks:
 - `python -m pytest tests -q`
 - `python -m py_compile app.py config.py financialproof_launcher.py`
 - `git diff --check`
 
-Public positioning:
-- local-first finance analysis
-- Streamlit stock analysis
-- historical technical indicators
-- yfinance dashboard
-- no-trading research tool
-- SQLite watchlist
-- statistical market-pattern analysis
+## Audience
 
-Useful search phrases:
-- FinancialProof assistassets-ai
-- local-first Streamlit stock analysis no trading
-- historical technical indicators yfinance SQLite watchlist
-- financialproof workspace export PWA companion
+- Retail investors and analysts who want a local, no-cloud tool for historical
+  technical-indicator analysis without uploading private data to a hosted service
+- Privacy-conscious users who need a self-hosted Streamlit stock-analysis
+  dashboard with offline access via the PWA companion
+- Developers integrating yfinance, ARIMA, Monte Carlo or ML-based pattern
+  detection into local Python finance pipelines
+- Compliance-aware users who need clear no-advice framing (§ 32 KWG,
+  § 2 Abs. 9 WpHG) baked into the tool
+- Researchers and students exploring historical market-pattern analysis,
+  signal detection and statistical finance without a brokerage account
 
-Disambiguation:
+## Search Phrases
+
+```
+FinancialProof assistassets-ai
+local-first Streamlit stock analysis no trading
+historical technical indicators yfinance SQLite watchlist
+financialproof workspace export PWA companion
+local finance analysis no advice open source
+Streamlit yfinance ARIMA Monte Carlo local dashboard
+historical market pattern analysis Python
+SQLite watchlist Streamlit no brokerage
+```
+
+## Disambiguation
+
 - Not a brokerage bot, auto-trader, robo-advisor or signal-selling product.
 - Not a proof-of-reserve, credit-scoring, invoice-proof or cryptographic attestation product.
 - Not a hosted finance SaaS; runtime data, API keys, SQLite databases and exports stay local.
+
+## Last-checked: 2026-06-11

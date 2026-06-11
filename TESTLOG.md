@@ -236,6 +236,17 @@ _Aktuell keine Tests in Durchführung_
 
 **Ergebnis:** 208/208 Tests bestanden (`python -m pytest tests -q`).
 
+### AUTO-2026-06-11: PWA-Härtung, XSS-Fix und None-Crash-Fix Regression
+**Durchgeführt:** 2026-06-11
+**Status:** Bestanden
+
+**Umfang:**
+- Vollständige Python-Regression nach PWA-Härtung, XSS-Fix, None-Crash-Fix und `delta_color`-Fix
+- Neue Tests: `test_research_agent.py` (None-Check-Pfade), `test_ui_interactions.py` (UI-Integration)
+- Web/PWA-Companion-Tests: `workspace.test.mjs`, `pwa.test.mjs` (38/38 JS-Tests)
+
+**Ergebnis:** 211/211 Tests bestanden (`python -m pytest tests -q`).
+
 <!--
 ### TEST-XXX: Beispiel abgeschlossener Test
 **Durchgeführt:** 2026-01-20
@@ -270,7 +281,7 @@ _Aktuell keine Tests in Durchführung_
 | jobs/ | automatisierte Tests vorhanden | Aktiv |
 | ui/ | automatisierte Tests vorhanden | Aktiv |
 
-**Gesamtabdeckung:** 208 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
+**Gesamtabdeckung:** 211 automatisierte Tests; keine separate Coverage-Prozentzahl ausgewiesen.
 **Ziel:** 80%
 
 ---
@@ -313,4 +324,4 @@ python -m pytest -m "slow"
 
 ---
 
-*Letzte Aktualisierung: 2026-06-06*
+*Letzte Aktualisierung: 2026-06-11*

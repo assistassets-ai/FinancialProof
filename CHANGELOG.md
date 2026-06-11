@@ -7,6 +7,25 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### Hinzugefügt / Added
+- `web_companion/`: PWA-Härtung — Offline-Fix (Service-Worker-Registrierung robuster), Manifest-Icons und Installierbarkeit verbessert (`0798d06`).
+- `web_companion/`: iOS-Installierbarkeit — `apple-touch-icon-180`, `viewport-fit=cover`, Safe-Area-CSS, 44px Touch-Targets, Service-Worker CACHE_NAME v3 (`4d1420b`).
+
+### Behoben / Fixed
+- `analysis/nlp/research_agent.py`: None-Multiplikations-Crash für `profitMargins`, `revenueGrowth`, `earningsGrowth` behoben — `is not None`-Prüfung statt Truthiness-Check (`info.get(x, 0) * 100` schluckte lautlos echte Nullwerte).
+- `app.py`: Veraltetes `delta_color`-Argument aus `st.metric()` entfernt (deprecated in neueren Streamlit-Versionen).
+- `web_companion/app.mjs`: XSS-Schutz — `escHtml()`-Funktion ergänzt, alle `innerHTML`-Zuweisungen mit Nutzerdaten escapen Symbol, Name, Notizen, Preset-Felder und Summary-Cards.
+- `web_companion/library.mjs`: `Date.parse(x || 0)` → `Date.parse(x) || 0` — null/undefined-Timestamps werden korrekt auf 0 Fallback gesetzt statt `Date.parse` mit Zahl aufzurufen.
+
+### Dependencies
+- scikit-learn auf `>=1.4.0,<1.10.0` angehoben (Dependabot PR #23; `659b6ee`).
+
+### Tests
+- Neue Regressionstests für `research_agent.py` (None-Check-Pfade) in `tests/test_research_agent.py`.
+- Neue UI-Integrationstests in `tests/test_ui_interactions.py`.
+- Neue Web-Companion-Tests in `web_companion/tests/workspace.test.mjs`.
+- Aktuelle Testzahl: 211/211 (`python -m pytest tests -q`).
+
 ### Build / Release
 - EXE neu gebaut 2026-06-01 (PyInstaller --onefile, Launcher); 163/163 Tests grün, Smoke OK. EXE war 2026-05-01; Anlass: core/strategy.py + database.py 2026-05-22.
 

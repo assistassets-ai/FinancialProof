@@ -9,6 +9,26 @@ import {
   parseWorkspace,
 } from "../library.mjs";
 
+test("normalizeWorkspace sortiert Snapshot ohne created_at ans Ende (nicht Jahr-2000-Bug)", () => {
+  // Vergleichs-Datum vor Jahr 2000: altes Date.parse(created_at || 0) würde
+  // leeres created_at als Jahr 2000 (≈946681200000) > 1990 einordnen und falsch
+  // an den Anfang stellen. Neues (Date.parse(created_at) || 0) gibt 0 → Ende.
+  const workspace = normalizeWorkspace({
+    schema: "financialproof-workspace-v1",
+    app: { name: "FP", version: "t" },
+    legal: { not_financial_advice: true },
+    watchlist: [],
+    analysis_presets: [],
+    analysis_snapshots: [
+      { symbol: "AAPL", created_at: null, summary: "leer" },
+      { symbol: "MSFT", created_at: "1990-01-01T00:00:00Z", summary: "vor-2000" },
+    ],
+  });
+
+  assert.equal(workspace.analysis_snapshots[0].summary, "vor-2000");
+  assert.equal(workspace.analysis_snapshots[1].summary, "leer");
+});
+
 test("normalizeWorkspace akzeptiert gültigen Workspace und sortiert Snapshots absteigend", () => {
   const workspace = normalizeWorkspace({
     schema: "financialproof-workspace-v1",

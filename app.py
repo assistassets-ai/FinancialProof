@@ -135,12 +135,10 @@ def _render_header(symbol: str, info: dict, data):
         st.caption(f"{symbol} | {sector} | {industry}")
 
     with col2:
-        delta_color = "normal" if change >= 0 else "inverse"
         st.metric(
             label="Aktueller Kurs",
             value=f"{current_price:.2f}",
             delta=f"{change:+.2f} ({change_pct:+.2f}%)",
-            delta_color=delta_color
         )
 
     with col3:

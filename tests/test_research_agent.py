@@ -109,3 +109,23 @@ def test_research_agent_fundamental_fallback_is_logged(caplog):
 
     assert result == {"error": "info boom"}
     assert "Fundamentaldaten konnten nicht geladen werden" in caplog.text
+
+
+def test_get_fundamentals_zero_margins_shown_as_zero_not_na():
+    """profit_margins=0 darf nicht als 'N/A' erscheinen (Falsy-Null-Regression)."""
+
+    class FakeTicker:
+        @property
+        def info(self):
+            return {
+                'profitMargins': 0.0,
+                'revenueGrowth': 0.0,
+                'earningsGrowth': 0.0,
+            }
+
+    analyzer = ResearchAgent()
+    result = analyzer._get_fundamentals(FakeTicker())
+
+    assert result['profit_margins'] == 0.0, "profitMargins=0.0 darf nicht als N/A behandelt werden"
+    assert result['revenue_growth'] == 0.0, "revenueGrowth=0.0 darf nicht als N/A behandelt werden"
+    assert result['earnings_growth'] == 0.0, "earningsGrowth=0.0 darf nicht als N/A behandelt werden"

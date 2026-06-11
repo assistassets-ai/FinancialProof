@@ -733,3 +733,56 @@ def test_render_failed_job_retries_with_new_job(monkeypatch):
     assert deleted == [23]
     assert fake_st.success_messages == ["Neuer Auftrag #99 erstellt"]
     assert fake_st.rerun_called is True
+
+
+def test_app_render_header_no_inverse_delta_color_in_source():
+    """Regression: _render_header darf kein delta_color='inverse' mehr an st.metric übergeben.
+
+    delta_color='inverse' macht Kursrückgänge grün (Streamlit: 'inverse' = gut wenn niedrig).
+    Korrekt ist der Streamlit-Standard 'normal' (kein explizites delta_color).
+    """
+    app_path = Path(__file__).parent.parent / "app.py"
+    source = app_path.read_text(encoding="utf-8")
+    assert 'delta_color="inverse"' not in source, (
+        "delta_color='inverse' in app.py gefunden — Fix wurde rückgängig gemacht! "
+        "Kursrückgänge würden grün angezeigt."
+    )
+    assert "delta_color='inverse'" not in source, (
+        "delta_color='inverse' in app.py gefunden — Fix wurde rückgängig gemacht!"
+    )
+
+
+def test_render_header_metric_has_no_inverse_delta_color():
+    """Behavioral regression: _render_header ruft st.metric ohne delta_color='inverse' auf.
+
+    delta_color='inverse' lässt Kursrückgänge grün erscheinen — der Fix entfernte
+    den Parameter vollständig; der Streamlit-Default 'normal' ist korrekt.
+    Dieser Test führt _render_header tatsächlich aus (kein Quelltext-Grep).
+    """
+    from unittest.mock import MagicMock, patch
+
+    # MagicMock als streamlit — module-level Aufrufe (set_page_config, markdown)
+    # werden transparent zu No-Ops, ohne dass weitere Stub-Einträge nötig sind.
+    magic_st = MagicMock()
+    magic_st.session_state = {}
+
+    with patch.dict(sys.modules, {"streamlit": magic_st}):
+        with patch("ui.disclaimer_widget.ensure_acknowledged", return_value=None):
+            import app as _app_module
+            importlib.reload(_app_module)
+
+    # FakeStreamlit übernimmt das Modul-st für den tatsächlichen Aufruf
+    fake_st = FakeStreamlit()
+    _app_module.st = fake_st
+
+    data = pd.DataFrame({"Close": [100.0, 105.0], "Volume": [1_000, 1_100]})
+    _app_module._render_header("AAPL", {}, data)
+
+    kurs_metrics = [m for m in fake_st.metrics if m["label"] == "Aktueller Kurs"]
+    assert kurs_metrics, (
+        "_render_header muss st.metric('Aktueller Kurs', ...) aufrufen — keiner gefunden"
+    )
+    for m in kurs_metrics:
+        assert m.get("delta_color") != "inverse", (
+            f"delta_color='inverse' in st.metric-Aufruf gefunden — Regression: {m}"
+        )

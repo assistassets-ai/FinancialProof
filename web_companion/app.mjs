@@ -10,6 +10,12 @@ import {
 } from "./library.mjs";
 
 const STORAGE_KEY = "financialproof-workspace-v1";
+
+function escHtml(s) {
+  return String(s ?? "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
 const CACHE_STATUS = document.querySelector("#cache-status");
 const RESTORE_STATUS = document.querySelector("#restore-status");
 const IMPORT_FEEDBACK = document.querySelector("#import-feedback");
@@ -73,9 +79,9 @@ function renderSummary(workspace) {
     const article = document.createElement("article");
     article.className = "summary-card";
     article.innerHTML = `
-      <h3>${card.label}</h3>
-      <p class="summary-number">${card.value}</p>
-      <p>${card.detail}</p>
+      <h3>${escHtml(card.label)}</h3>
+      <p class="summary-number">${escHtml(card.value)}</p>
+      <p>${escHtml(card.detail)}</p>
     `;
     container.append(article);
   }
@@ -101,11 +107,11 @@ function renderWatchlist(items) {
     const article = document.createElement("article");
     article.className = "entity-card";
     article.innerHTML = `
-      <h3>${item.symbol}</h3>
-      <p class="meta">${item.display_name} · ${item.asset_type}</p>
-      <p class="tagline">${item.notes || "Keine Notiz hinterlegt."}</p>
+      <h3>${escHtml(item.symbol)}</h3>
+      <p class="meta">${escHtml(item.display_name)} · ${escHtml(item.asset_type)}</p>
+      <p class="tagline">${escHtml(item.notes || "Keine Notiz hinterlegt.")}</p>
       <div class="badge-row">
-        <span class="badge">${formatTimestamp(item.created_at)}</span>
+        <span class="badge">${escHtml(formatTimestamp(item.created_at))}</span>
       </div>
     `;
     container.append(article);
@@ -129,19 +135,19 @@ function renderPresets(presets) {
 
     const signalText = requiredSignals.length ? requiredSignals.join(", ") : "keine Pflichtsignale";
     article.innerHTML = `
-      <h3>${preset.name}</h3>
-      <p class="meta">${preset.asset_type}</p>
+      <h3>${escHtml(preset.name)}</h3>
+      <p class="meta">${escHtml(preset.asset_type)}</p>
       <div class="badge-row">
         <span class="badge ${preset.is_active ? "active" : ""}">
           ${preset.is_active ? "Aktiv" : "Nicht aktiv"}
         </span>
-        <span class="badge">Min. Confidence ${preset.rules.pattern_rules.min_confidence ?? "–"}</span>
+        <span class="badge">Min. Confidence ${escHtml(preset.rules.pattern_rules.min_confidence ?? "–")}</span>
       </div>
       <ul class="rule-list">
-        <li>Max. RSI: ${preset.rules.pattern_rules.max_rsi ?? "–"}</li>
-        <li>Min. Volumenfaktor: ${preset.rules.pattern_rules.min_volume_ratio ?? "–"}</li>
-        <li>Pflichtsignale: ${signalText}</li>
-        <li>Volatilitätswarnung: ${preset.rules.risk_notes.volatility_warning_percent ?? "–"}%</li>
+        <li>Max. RSI: ${escHtml(preset.rules.pattern_rules.max_rsi ?? "–")}</li>
+        <li>Min. Volumenfaktor: ${escHtml(preset.rules.pattern_rules.min_volume_ratio ?? "–")}</li>
+        <li>Pflichtsignale: ${escHtml(signalText)}</li>
+        <li>Volatilitätswarnung: ${escHtml(preset.rules.risk_notes.volatility_warning_percent ?? "–")}%</li>
       </ul>
     `;
     container.append(article);
@@ -168,8 +174,8 @@ function renderSnapshots(snapshots) {
       const row = document.createElement("div");
       row.className = "indicator-row";
       row.innerHTML = `
-        <span>${key}</span>
-        <strong>${formatIndicatorValue(value)}</strong>
+        <span>${escHtml(key)}</span>
+        <strong>${escHtml(formatIndicatorValue(value))}</strong>
       `;
       indicators.append(row);
     }
@@ -183,12 +189,12 @@ function renderSnapshots(snapshots) {
     }
 
     article.innerHTML = `
-      <h3>${snapshot.symbol}</h3>
-      <p class="meta">${snapshot.timeframe} · ${formatTimestamp(snapshot.created_at)} · Klasse ${snapshot.pattern_class}</p>
+      <h3>${escHtml(snapshot.symbol)}</h3>
+      <p class="meta">${escHtml(snapshot.timeframe)} · ${escHtml(formatTimestamp(snapshot.created_at))} · Klasse ${escHtml(snapshot.pattern_class)}</p>
       <div class="badge-row">
         <span class="badge">Confidence ${formatIndicatorValue(snapshot.confidence)}</span>
       </div>
-      <p class="tagline">${snapshot.summary}</p>
+      <p class="tagline">${escHtml(snapshot.summary)}</p>
     `;
 
     article.append(indicators, warningList);
@@ -261,6 +267,7 @@ function importText(rawText, sourceLabel) {
 }
 
 function restoreWorkspace() {
+  if (state.workspace) return;
   const stored = localStorage.getItem(STORAGE_KEY);
   if (!stored) {
     renderWorkspace();
@@ -308,8 +315,12 @@ function bindEvents() {
     if (!file) {
       return;
     }
-    JSON_INPUT.value = await file.text();
-    importText(JSON_INPUT.value, `Datei ${file.name}`);
+    try {
+      JSON_INPUT.value = await file.text();
+      importText(JSON_INPUT.value, `Datei ${file.name}`);
+    } catch (error) {
+      setFeedback(`Datei konnte nicht gelesen werden: ${error.message}`, "error");
+    }
   });
 
   SEARCH_INPUT.addEventListener("input", (event) => {

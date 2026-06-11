@@ -330,8 +330,8 @@ export function normalizeWorkspace(workspace) {
   };
 
   normalized.analysis_snapshots.sort((left, right) => {
-    const leftTime = Date.parse(left.created_at || 0);
-    const rightTime = Date.parse(right.created_at || 0);
+    const leftTime = Date.parse(left.created_at) || 0;
+    const rightTime = Date.parse(right.created_at) || 0;
     return rightTime - leftTime;
   });
 
