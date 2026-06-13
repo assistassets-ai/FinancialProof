@@ -182,6 +182,18 @@ Run the local test suite before submitting changes:
 python -m pytest tests -q
 ```
 
+For the cross-platform start path, run the dedicated source smoke:
+
+```bash
+python tests/source_platform_smoke.py
+```
+
+This headless smoke checks the local config/data paths, SQLite schema,
+workspace export, stubbed market-data path, analyzer-registry bootstrap and
+the Streamlit app import/header path without requiring a GUI session. The
+same script is now executed in GitHub Actions on `ubuntu-latest` and
+`macos-latest` via `.github/workflows/source-platform-smoke.yml`.
+
 Current repository status:
 
 - 208 unit and regression tests cover analysis modules, job execution,
@@ -329,6 +341,14 @@ Windows launcher scripts:
   rate-limit telemetry block (`total`, `delayed`, `timeouts`, `last shortage`).
 - If startup shows no data, remove stale lock/artefact files listed in `.gitignore`
   and restart cleanly.
+
+### Verified Source Smoke
+
+- 2026-06-13: `python tests/source_platform_smoke.py` locally verified.
+- Scope: config and API-key roundtrip, SQLite bootstrap, companion export,
+  data-provider stub path, analyzer-registry init and headless app import.
+- CI follow-up: `.github/workflows/source-platform-smoke.yml` runs the same
+  smoke on Linux and macOS for future changes.
 
 ## Analysis Modules
 
