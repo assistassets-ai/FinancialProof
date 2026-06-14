@@ -117,6 +117,10 @@ describe("integration", () => {
   it("app.mjs restoreWorkspace hat Guard gegen überschreiben geladener Workspaces", () => {
     assert.match(appSrc, /if \(state\.workspace\) return/);
   });
+
+  it("app.mjs Demo-Button normalisiert Workspace (konsistente Sortierung beim Erstladen)", () => {
+    assert.match(appSrc, /normalizeWorkspace\(createDemoWorkspace\(\)\)/);
+  });
 });
 
 describe("iOS Safari installability", () => {

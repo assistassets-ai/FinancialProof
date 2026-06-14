@@ -184,8 +184,16 @@ function normalizeIndicators(rawIndicators, label = "indicators") {
 function normalizePresetRules(rawRules, label = "rules") {
   if (rawRules === undefined || rawRules === null) {
     return {
-      pattern_rules: {},
-      risk_notes: {},
+      pattern_rules: {
+        min_confidence: null,
+        max_rsi: null,
+        required_signals: [],
+        min_volume_ratio: null,
+      },
+      risk_notes: {
+        max_rsi_warning: null,
+        volatility_warning_percent: null,
+      },
     };
   }
   assertObject(rawRules, label);

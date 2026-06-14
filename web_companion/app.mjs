@@ -19,7 +19,9 @@ function escHtml(s) {
 const CACHE_STATUS = document.querySelector("#cache-status");
 const RESTORE_STATUS = document.querySelector("#restore-status");
 const IMPORT_FEEDBACK = document.querySelector("#import-feedback");
+const FILE_TRIGGER = document.querySelector("#file-trigger");
 const FILE_INPUT = document.querySelector("#file-input");
+const FILE_SELECTION = document.querySelector("#file-selection");
 const JSON_INPUT = document.querySelector("#json-input");
 const SEARCH_INPUT = document.querySelector("#search-input");
 const ASSET_FILTER = document.querySelector("#asset-filter");
@@ -300,10 +302,14 @@ async function registerServiceWorker() {
 
 function bindEvents() {
   document.querySelector("#load-demo").addEventListener("click", () => {
-    const workspace = createDemoWorkspace();
+    const workspace = normalizeWorkspace(createDemoWorkspace());
     JSON_INPUT.value = JSON.stringify(workspace, null, 2);
     activateWorkspace(workspace, "Demo-Workspace");
     setFeedback("Demo-Workspace geladen.", "success");
+  });
+
+  FILE_TRIGGER.addEventListener("click", () => {
+    FILE_INPUT.click();
   });
 
   document.querySelector("#import-json").addEventListener("click", () => {
@@ -313,12 +319,15 @@ function bindEvents() {
   FILE_INPUT.addEventListener("change", async (event) => {
     const [file] = event.target.files || [];
     if (!file) {
+      FILE_SELECTION.textContent = "Noch keine Datei ausgewählt.";
       return;
     }
     try {
+      FILE_SELECTION.textContent = `Ausgewählt: ${file.name}`;
       JSON_INPUT.value = await file.text();
       importText(JSON_INPUT.value, `Datei ${file.name}`);
     } catch (error) {
+      FILE_SELECTION.textContent = `Datei konnte nicht gelesen werden: ${file.name}`;
       setFeedback(`Datei konnte nicht gelesen werden: ${error.message}`, "error");
     }
   });
@@ -339,7 +348,7 @@ function bindEvents() {
   });
 
   if (new URLSearchParams(window.location.search).get("demo") === "1") {
-    const workspace = createDemoWorkspace();
+    const workspace = normalizeWorkspace(createDemoWorkspace());
     JSON_INPUT.value = JSON.stringify(workspace, null, 2);
     activateWorkspace(workspace, "Demo-Workspace per URL");
     setFeedback("Demo-Workspace per URL geladen.", "success");

@@ -158,6 +158,26 @@ test("Filter berücksichtigen Suche, Asset-Typ und Musterklasse", () => {
   assert.equal(filtered.analysis_snapshots[0].pattern_class, "neutral");
 });
 
+test("normalizeWorkspace mit rules:null erzeugt vollständige pattern_rules (kein required_signals-Crash)", () => {
+  const workspace = normalizeWorkspace({
+    schema: "financialproof-workspace-v1",
+    app: {},
+    legal: { not_financial_advice: true },
+    watchlist: [],
+    analysis_presets: [{ name: "Leer-Preset", rules: null }],
+    analysis_snapshots: [],
+  });
+  const preset = workspace.analysis_presets[0];
+  const signals = preset.rules.pattern_rules.required_signals;
+  assert.ok(Array.isArray(signals), "required_signals muss ein Array sein");
+  assert.equal(signals.length, 0);
+  assert.equal(preset.rules.pattern_rules.min_confidence, null);
+  assert.equal(preset.rules.risk_notes.volatility_warning_percent, null);
+
+  const filtered = matchesWorkspaceFilters(workspace, { query: "", assetType: "", patternClass: "" });
+  assert.ok(Array.isArray(filtered.presets), "matchesWorkspaceFilters darf bei rules:null nicht crashen");
+});
+
 test("buildFilterOptions sammelt Asset-Typen und Musterklassen", () => {
   const workspace = normalizeWorkspace(createDemoWorkspace());
   const options = buildFilterOptions(workspace);
