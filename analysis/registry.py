@@ -3,6 +3,7 @@ FinancialProof - Analyse-Registry
 Zentrales Register für alle verfügbaren Analyse-Algorithmen
 """
 import logging
+import threading
 from typing import Dict, List, Type, Optional, Any
 from analysis.base import BaseAnalyzer, AnalysisCategory
 
@@ -18,6 +19,7 @@ class AnalysisRegistry:
 
     _analyzers: Dict[str, Type[BaseAnalyzer]] = {}
     _instances: Dict[str, BaseAnalyzer] = {}
+    _instances_lock: threading.Lock = threading.Lock()
 
     @classmethod
     def register(cls, analyzer_class: Type[BaseAnalyzer]) -> Type[BaseAnalyzer]:
@@ -67,12 +69,14 @@ class AnalysisRegistry:
         if name not in cls._analyzers:
             return None
 
-        if name not in cls._instances:
-            cls._instances[name] = cls._analyzers[name]()
+        with cls._instances_lock:
+            if name not in cls._instances:
+                cls._instances[name] = cls._analyzers[name]()
+            instance = cls._instances[name]
 
         # Reset vor Verwendung
-        cls._instances[name].reset()
-        return cls._instances[name]
+        instance.reset()
+        return instance
 
     @classmethod
     def get_class(cls, name: str) -> Optional[Type[BaseAnalyzer]]:
@@ -176,14 +180,17 @@ def _register_all_analyzers():
 # Dies geschieht beim ersten Zugriff auf das Registry
 
 _initialized = False
+_init_lock = threading.Lock()
 
 
 def ensure_initialized():
     """Stellt sicher, dass alle Analyzer registriert sind"""
     global _initialized
     if not _initialized:
-        _register_all_analyzers()
-        _initialized = True
+        with _init_lock:
+            if not _initialized:
+                _register_all_analyzers()
+                _initialized = True
 
 
 # ===== HILFSFUNKTIONEN =====

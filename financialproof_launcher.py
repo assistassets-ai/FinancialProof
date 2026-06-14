@@ -45,6 +45,7 @@ def _streamlit_available(python_cmd: List[str]) -> bool:
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             check=False,
+            timeout=10,
         )
     except OSError:
         return False

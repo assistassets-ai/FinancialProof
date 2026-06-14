@@ -174,8 +174,8 @@ class SentimentAnalyzer(BaseAnalyzer):
             use_transformers = True
         except ImportError:
             pass
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("Transformers-Pipeline konnte nicht geladen werden, Fallback aktiv: %s", exc)
 
         for article in articles:
             title = article['title']

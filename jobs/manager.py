@@ -103,8 +103,8 @@ class JobManager:
     def update_status(
         job_id: int,
         status: JobStatus,
-        progress: int = None,
-        error: str = None
+        progress: Optional[int] = None,
+        error: Optional[str] = None
     ):
         """
         Aktualisiert den Job-Status.

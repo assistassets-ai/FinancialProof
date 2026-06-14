@@ -304,7 +304,7 @@ class DatabaseManager:
             return [self._row_to_job(row) for row in rows]
 
     def update_job_status(self, job_id: int, status: JobStatus,
-                          progress: int = None, error: str = None):
+                          progress: Optional[int] = None, error: Optional[str] = None):
         """Aktualisiert den Status eines Jobs"""
         updates = ["status = ?"]
         params = [status.value]

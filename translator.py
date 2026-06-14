@@ -14,9 +14,12 @@ translator.set_language('en')
 """
 
 import json
+import logging
 import re
 from pathlib import Path
 from typing import Dict, List, Set
+
+logger = logging.getLogger(__name__)
 
 
 class TranslationSystem:
@@ -33,7 +36,7 @@ class TranslationSystem:
         self.current_lang = default_lang
 
         if app_dir is None:
-            app_dir = Path.cwd()
+            app_dir = Path(__file__).parent
         self.app_dir = Path(app_dir)
 
         self.translations_file = self.app_dir / "locales" / "translations.json"
@@ -63,7 +66,8 @@ class TranslationSystem:
             try:
                 with open(self.translations_file, 'r', encoding='utf-8') as f:
                     self.translations = json.load(f)
-            except Exception:
+            except Exception as exc:
+                logger.warning("Übersetzungsdatei konnte nicht geladen werden: %s", exc)
                 self.translations = {}
         else:
             self.translations = {}
