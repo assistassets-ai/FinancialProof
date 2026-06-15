@@ -1,4 +1,11 @@
+<img src="assets/banner.svg" width="100%" alt="FinancialProof Banner"/>
+
 # FinancialProof
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.x-red.svg)](https://streamlit.io)
+[![No Financial Advice](https://img.shields.io/badge/⚠️_No_Financial_Advice-critical.svg)](#disclaimer)
 
 > ⚠️ **Keine Anlageberatung / No Financial Advice**
 >
