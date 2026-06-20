@@ -1,36 +1,29 @@
-# Dependabot Konfiguration für automatische Dependency-Updates
-# https://docs.github.com/en/code-security/dependabot
-
+# Security-only: keine version-updates (limit 0), Security-Fixes gruppiert
 version: 2
 updates:
-  # Python Dependencies (pip)
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 0
     labels:
       - "dependencies"
       - "python"
-    commit-message:
-      prefix: "deps"
     groups:
-      # Gruppiere Minor/Patch Updates
-      minor-and-patch:
+      security:
+        applies-to: security-updates
         patterns:
           - "*"
-        update-types:
-          - "minor"
-          - "patch"
-
-  # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
+    open-pull-requests-limit: 0
     labels:
       - "dependencies"
       - "github-actions"
-    commit-message:
-      prefix: "ci"
+    groups:
+      security:
+        applies-to: security-updates
+        patterns:
+          - "*"
