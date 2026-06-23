@@ -47,7 +47,7 @@ def _streamlit_available(python_cmd: List[str]) -> bool:
             check=False,
             timeout=10,
         )
-    except OSError:
+    except (OSError, subprocess.TimeoutExpired):
         return False
     return result.returncode == 0
 
