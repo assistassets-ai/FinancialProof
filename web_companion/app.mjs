@@ -8,6 +8,8 @@ import {
   normalizeWorkspace,
   parseWorkspace,
   snapshotsToCsv,
+  sortSnapshots,
+  sortWatchlist,
   summarizeWorkspace,
   watchlistToCsv,
 } from "./library.mjs";
@@ -40,6 +42,10 @@ const SEARCH_INPUT = document.querySelector("#search-input");
 const ASSET_FILTER = document.querySelector("#asset-filter");
 const PATTERN_FILTER = document.querySelector("#pattern-filter");
 const LANG_SELECT = document.querySelector("#lang-select");
+const WATCHLIST_SORT_FIELD = document.querySelector("#watchlist-sort-field");
+const WATCHLIST_SORT_DIR = document.querySelector("#watchlist-sort-dir");
+const SNAPSHOTS_SORT_FIELD = document.querySelector("#snapshots-sort-field");
+const SNAPSHOTS_SORT_DIR = document.querySelector("#snapshots-sort-dir");
 
 const state = {
   workspace: null,
@@ -48,6 +54,8 @@ const state = {
     assetType: "",
     patternClass: "",
   },
+  watchlistSort: { field: "symbol", dir: "asc" },
+  snapshotsSort: { field: "created_at", dir: "desc" },
 };
 
 function setFeedback(message, tone = "") {
@@ -279,9 +287,11 @@ function renderWorkspace() {
   populateFilters(state.workspace);
 
   const filtered = matchesWorkspaceFilters(state.workspace, state.filters);
-  renderWatchlist(filtered.watchlist);
+  const sortedWatchlist = sortWatchlist(filtered.watchlist, state.watchlistSort.field, state.watchlistSort.dir);
+  const sortedSnapshots = sortSnapshots(filtered.analysis_snapshots, state.snapshotsSort.field, state.snapshotsSort.dir);
+  renderWatchlist(sortedWatchlist);
   renderPresets(filtered.presets);
-  renderSnapshots(filtered.analysis_snapshots);
+  renderSnapshots(sortedSnapshots);
 }
 
 function activateWorkspace(workspace, sourceLabel) {
@@ -392,6 +402,34 @@ function bindEvents() {
     LANG_SELECT.addEventListener("change", (event) => {
       setLocale(event.target.value);
       hydrateI18n();
+      renderWorkspace();
+    });
+  }
+
+  if (WATCHLIST_SORT_FIELD) {
+    WATCHLIST_SORT_FIELD.addEventListener("change", (event) => {
+      state.watchlistSort.field = event.target.value;
+      renderWorkspace();
+    });
+  }
+
+  if (WATCHLIST_SORT_DIR) {
+    WATCHLIST_SORT_DIR.addEventListener("change", (event) => {
+      state.watchlistSort.dir = event.target.value;
+      renderWorkspace();
+    });
+  }
+
+  if (SNAPSHOTS_SORT_FIELD) {
+    SNAPSHOTS_SORT_FIELD.addEventListener("change", (event) => {
+      state.snapshotsSort.field = event.target.value;
+      renderWorkspace();
+    });
+  }
+
+  if (SNAPSHOTS_SORT_DIR) {
+    SNAPSHOTS_SORT_DIR.addEventListener("change", (event) => {
+      state.snapshotsSort.dir = event.target.value;
       renderWorkspace();
     });
   }

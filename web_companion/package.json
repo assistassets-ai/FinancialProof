@@ -1,6 +1,6 @@
 {
   "type": "module",
   "scripts": {
-    "test": "node --test tests/workspace.test.mjs tests/accessibility.test.mjs tests/pwa.test.mjs tests/i18n.test.mjs tests/export.test.mjs"
+    "test": "node --test tests/workspace.test.mjs tests/accessibility.test.mjs tests/pwa.test.mjs tests/i18n.test.mjs tests/export.test.mjs tests/sort.test.mjs"
   }
 }

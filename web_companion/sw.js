@@ -1,4 +1,4 @@
-const CACHE_NAME = "financialproof-web-companion-v5";
+const CACHE_NAME = "financialproof-web-companion-v6";
 const ASSETS = [
   "./",
   "./index.html",

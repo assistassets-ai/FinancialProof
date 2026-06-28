@@ -69,8 +69,8 @@ describe("service worker", () => {
     assert.match(swSrc, /financialproof/);
   });
 
-  it("CACHE_NAME is v5", () => {
-    assert.match(swSrc, /financialproof-web-companion-v5/);
+  it("CACHE_NAME is v6", () => {
+    assert.match(swSrc, /financialproof-web-companion-v6/);
   });
 
   it("has skipWaiting()", () => {

@@ -89,6 +89,17 @@ export const catalogs = {
     "export.json": "Workspace als JSON",
     "export.noData": "Kein Workspace geladen — bitte zuerst importieren.",
     "export.downloaded": "Heruntergeladen:",
+
+    "sort.fieldLabel": "Sortieren nach",
+    "sort.dirLabel": "Reihenfolge",
+    "sort.asc": "Aufsteigend",
+    "sort.desc": "Absteigend",
+    "sort.field.symbol": "Symbol",
+    "sort.field.name": "Name",
+    "sort.field.assetType": "Asset-Typ",
+    "sort.field.createdAt": "Datum",
+    "sort.field.confidence": "Confidence",
+    "sort.field.patternClass": "Musterklasse",
   },
   en: {
     "hero.title": "Local Reader for Watchlist and Analysis Snapshots",
@@ -178,6 +189,17 @@ export const catalogs = {
     "export.json": "Workspace as JSON",
     "export.noData": "No workspace loaded — please import first.",
     "export.downloaded": "Downloaded:",
+
+    "sort.fieldLabel": "Sort by",
+    "sort.dirLabel": "Order",
+    "sort.asc": "Ascending",
+    "sort.desc": "Descending",
+    "sort.field.symbol": "Symbol",
+    "sort.field.name": "Name",
+    "sort.field.assetType": "Asset Type",
+    "sort.field.createdAt": "Date",
+    "sort.field.confidence": "Confidence",
+    "sort.field.patternClass": "Pattern Class",
   },
 };
 

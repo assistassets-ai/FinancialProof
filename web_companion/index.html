@@ -148,6 +148,24 @@
               <p data-i18n="watchlist.description">Lokale Symbol- und Notizübersicht.</p>
             </div>
           </div>
+          <div class="sort-controls">
+            <label>
+              <span data-i18n="sort.fieldLabel">Sortieren nach</span>
+              <select id="watchlist-sort-field">
+                <option value="symbol" data-i18n="sort.field.symbol">Symbol</option>
+                <option value="display_name" data-i18n="sort.field.name">Name</option>
+                <option value="asset_type" data-i18n="sort.field.assetType">Asset-Typ</option>
+                <option value="created_at" data-i18n="sort.field.createdAt">Datum</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="sort.dirLabel">Reihenfolge</span>
+              <select id="watchlist-sort-dir">
+                <option value="asc" data-i18n="sort.asc">Aufsteigend</option>
+                <option value="desc" data-i18n="sort.desc">Absteigend</option>
+              </select>
+            </label>
+          </div>
           <div id="watchlist" class="card-grid empty-state" data-i18n="general.noWorkspace">
             Noch kein Workspace geladen.
           </div>
@@ -171,6 +189,24 @@
               <h2 data-i18n="snapshots.title">Analyse-Snapshots</h2>
               <p data-i18n="snapshots.description">Historische Auswertungen, keine Prognosen.</p>
             </div>
+          </div>
+          <div class="sort-controls">
+            <label>
+              <span data-i18n="sort.fieldLabel">Sortieren nach</span>
+              <select id="snapshots-sort-field">
+                <option value="created_at" data-i18n="sort.field.createdAt">Datum</option>
+                <option value="symbol" data-i18n="sort.field.symbol">Symbol</option>
+                <option value="confidence" data-i18n="sort.field.confidence">Confidence</option>
+                <option value="pattern_class" data-i18n="sort.field.patternClass">Musterklasse</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="sort.dirLabel">Reihenfolge</span>
+              <select id="snapshots-sort-dir">
+                <option value="desc" data-i18n="sort.desc">Absteigend</option>
+                <option value="asc" data-i18n="sort.asc">Aufsteigend</option>
+              </select>
+            </label>
           </div>
           <div id="snapshots" class="snapshot-list empty-state" data-i18n="general.noWorkspace">
             Noch kein Workspace geladen.

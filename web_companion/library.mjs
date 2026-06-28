@@ -491,6 +491,69 @@ export function filteredToJson(workspace, filtered) {
   return JSON.stringify(out, null, 2);
 }
 
+// --- Sortierung (Pure Logic, kein DOM) ---
+
+export const WATCHLIST_SORT_FIELDS = [
+  { value: "symbol", labelKey: "sort.field.symbol" },
+  { value: "display_name", labelKey: "sort.field.name" },
+  { value: "asset_type", labelKey: "sort.field.assetType" },
+  { value: "created_at", labelKey: "sort.field.createdAt" },
+];
+
+export const SNAPSHOT_SORT_FIELDS = [
+  { value: "created_at", labelKey: "sort.field.createdAt" },
+  { value: "symbol", labelKey: "sort.field.symbol" },
+  { value: "confidence", labelKey: "sort.field.confidence" },
+  { value: "pattern_class", labelKey: "sort.field.patternClass" },
+];
+
+/**
+ * Sortiert eine Watchlist-Kopie nach field und direction.
+ * Mutiert das Original nicht.
+ * Unbekannte field-Werte fallen auf "symbol" zurück.
+ */
+export function sortWatchlist(items, field = "symbol", direction = "asc") {
+  const known = WATCHLIST_SORT_FIELDS.map((f) => f.value);
+  const sortField = known.includes(field) ? field : "symbol";
+  const sign = direction === "desc" ? -1 : 1;
+
+  return [...items].sort((left, right) => {
+    if (sortField === "created_at") {
+      const leftTime = Date.parse(left.created_at) || 0;
+      const rightTime = Date.parse(right.created_at) || 0;
+      return sign * (leftTime - rightTime);
+    }
+    const leftVal = String(left[sortField] ?? "");
+    const rightVal = String(right[sortField] ?? "");
+    return sign * leftVal.localeCompare(rightVal);
+  });
+}
+
+/**
+ * Sortiert eine Snapshot-Kopie nach field und direction.
+ * Mutiert das Original nicht.
+ * Unbekannte field-Werte fallen auf "created_at" zurück.
+ */
+export function sortSnapshots(snapshots, field = "created_at", direction = "desc") {
+  const known = SNAPSHOT_SORT_FIELDS.map((f) => f.value);
+  const sortField = known.includes(field) ? field : "created_at";
+  const sign = direction === "desc" ? -1 : 1;
+
+  return [...snapshots].sort((left, right) => {
+    if (sortField === "created_at") {
+      const leftTime = Date.parse(left.created_at) || 0;
+      const rightTime = Date.parse(right.created_at) || 0;
+      return sign * (leftTime - rightTime);
+    }
+    if (sortField === "confidence") {
+      return sign * ((left.confidence ?? 0) - (right.confidence ?? 0));
+    }
+    const leftVal = String(left[sortField] ?? "");
+    const rightVal = String(right[sortField] ?? "");
+    return sign * leftVal.localeCompare(rightVal);
+  });
+}
+
 export function matchesWorkspaceFilters(workspace, filters) {
   const query = cleanText(filters.query).toLowerCase();
   const assetType = cleanText(filters.assetType).toUpperCase();
