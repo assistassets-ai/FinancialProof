@@ -18,24 +18,46 @@
   <body>
     <div class="page-shell">
       <header class="hero">
-        <p class="eyebrow">FinancialProof Web/PWA Companion</p>
-        <h1>Lokaler Reader für Watchlist und Analyse-Snapshots</h1>
-        <p class="hero-copy">
+        <div class="hero-top-row">
+          <p class="eyebrow">FinancialProof Web/PWA Companion</p>
+          <select id="lang-select" class="lang-select" aria-label="Language">
+            <option value="de">DE</option>
+            <option value="en">EN</option>
+          </select>
+        </div>
+        <h1 data-i18n="hero.title">Lokaler Reader für Watchlist und Analyse-Snapshots</h1>
+        <p class="hero-copy" data-i18n-html="hero.description">
           Dieser Companion liest nur lokale
           <code>financialproof-workspace-v1.json</code>-Dateien. Er lädt keine
           Marktdaten nach, speichert keine API-Keys und bleibt klar im Modus
           "historische Auswertung, keine Anlageberatung".
         </p>
         <div class="hero-actions">
-          <button id="load-demo" type="button">Demo laden</button>
-          <label class="file-picker">
-            <span>JSON auswählen</span>
-            <input id="file-input" type="file" accept=".json,application/json">
-          </label>
+          <button id="load-demo" type="button" data-i18n="hero.demo">Demo laden</button>
+          <div class="file-action">
+            <button
+              id="file-trigger"
+              type="button"
+              class="secondary"
+              aria-describedby="file-selection"
+              data-i18n="hero.fileSelect"
+            >Datei auswählen</button>
+            <p id="file-selection" class="file-selection" aria-live="polite" data-i18n="status.noFile">
+              Noch keine Datei ausgewählt.
+            </p>
+            <input
+              id="file-input"
+              class="visually-hidden-input"
+              type="file"
+              accept=".json,application/json"
+              tabindex="-1"
+              aria-hidden="true"
+            >
+          </div>
         </div>
         <div class="status-row">
-          <span id="cache-status" class="status-pill">Offline-Cache wird geprüft …</span>
-          <span id="restore-status" class="status-pill muted">Noch kein lokaler Workspace geladen</span>
+          <span id="cache-status" class="status-pill" data-i18n="status.cacheChecking">Offline-Cache wird geprüft …</span>
+          <span id="restore-status" class="status-pill muted" data-i18n="status.noWorkspace">Noch kein lokaler Workspace geladen</span>
         </div>
       </header>
 
@@ -43,10 +65,10 @@
         <section class="panel panel-accent">
           <div class="panel-header">
             <div>
-              <h2>Import</h2>
-              <p>JSON lokal einfügen oder per Datei laden.</p>
+              <h2 data-i18n="import.title">Import</h2>
+              <p data-i18n="import.description">JSON lokal einfügen oder per Datei laden.</p>
             </div>
-            <button id="import-json" type="button" class="secondary">Text importieren</button>
+            <button id="import-json" type="button" class="secondary" data-i18n="import.button">Text importieren</button>
           </div>
           <textarea
             id="json-input"
@@ -60,8 +82,8 @@
         <section class="panel panel-legal">
           <div class="panel-header">
             <div>
-              <h2>Rechtlicher Rahmen</h2>
-              <p>Immer sichtbar, auch im Offline-Modus.</p>
+              <h2 data-i18n="legal.title">Rechtlicher Rahmen</h2>
+              <p data-i18n="legal.description">Immer sichtbar, auch im Offline-Modus.</p>
             </div>
           </div>
           <div id="legal-box" class="legal-box"></div>
@@ -70,8 +92,8 @@
         <section class="panel">
           <div class="panel-header">
             <div>
-              <h2>Workspace-Überblick</h2>
-              <p>Zusammenfassung des zuletzt geladenen Exports.</p>
+              <h2 data-i18n="summary.title">Workspace-Überblick</h2>
+              <p data-i18n="summary.description">Zusammenfassung des zuletzt geladenen Exports.</p>
             </div>
           </div>
           <div id="summary-cards" class="summary-grid"></div>
@@ -80,25 +102,25 @@
         <section class="panel">
           <div class="panel-header">
             <div>
-              <h2>Filter</h2>
-              <p>Suche über Watchlist, Presets und Snapshots.</p>
+              <h2 data-i18n="filter.title">Filter</h2>
+              <p data-i18n="filter.description">Suche über Watchlist, Presets und Snapshots.</p>
             </div>
           </div>
           <div class="filter-grid">
             <label>
-              <span>Suche</span>
+              <span data-i18n="filter.search">Suche</span>
               <input id="search-input" type="search" placeholder="AAPL, ETF defensiv, RSI …">
             </label>
             <label>
-              <span>Asset-Typ</span>
+              <span data-i18n="filter.assetType">Asset-Typ</span>
               <select id="asset-filter">
-                <option value="">Alle</option>
+                <option value="" data-i18n="filter.all">Alle</option>
               </select>
             </label>
             <label>
-              <span>Musterklasse</span>
+              <span data-i18n="filter.patternClass">Musterklasse</span>
               <select id="pattern-filter">
-                <option value="">Alle</option>
+                <option value="" data-i18n="filter.all">Alle</option>
               </select>
             </label>
           </div>
@@ -107,11 +129,26 @@
         <section class="panel">
           <div class="panel-header">
             <div>
-              <h2>Watchlist</h2>
-              <p>Lokale Symbol- und Notizübersicht.</p>
+              <h2 data-i18n="export.title">Gefilterter Export</h2>
+              <p data-i18n="export.description">Aktuelle Ansicht als Datei herunterladen.</p>
             </div>
           </div>
-          <div id="watchlist" class="card-grid empty-state">
+          <div class="export-actions">
+            <button id="export-watchlist-csv" type="button" class="secondary" data-i18n="export.csvWatchlist">Watchlist als CSV</button>
+            <button id="export-snapshots-csv" type="button" class="secondary" data-i18n="export.csvSnapshots">Snapshots als CSV</button>
+            <button id="export-json" type="button" class="secondary" data-i18n="export.json">Workspace als JSON</button>
+          </div>
+          <p id="export-feedback" class="feedback" aria-live="polite"></p>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 data-i18n="watchlist.title">Watchlist</h2>
+              <p data-i18n="watchlist.description">Lokale Symbol- und Notizübersicht.</p>
+            </div>
+          </div>
+          <div id="watchlist" class="card-grid empty-state" data-i18n="general.noWorkspace">
             Noch kein Workspace geladen.
           </div>
         </section>
@@ -119,11 +156,11 @@
         <section class="panel">
           <div class="panel-header">
             <div>
-              <h2>Analyse-Presets</h2>
-              <p>Aktive Regeln und Risikohinweise im Snapshot.</p>
+              <h2 data-i18n="presets.title">Analyse-Presets</h2>
+              <p data-i18n="presets.description">Aktive Regeln und Risikohinweise im Snapshot.</p>
             </div>
           </div>
-          <div id="presets" class="card-grid empty-state">
+          <div id="presets" class="card-grid empty-state" data-i18n="general.noWorkspace">
             Noch kein Workspace geladen.
           </div>
         </section>
@@ -131,11 +168,11 @@
         <section class="panel">
           <div class="panel-header">
             <div>
-              <h2>Analyse-Snapshots</h2>
-              <p>Historische Auswertungen, keine Prognosen.</p>
+              <h2 data-i18n="snapshots.title">Analyse-Snapshots</h2>
+              <p data-i18n="snapshots.description">Historische Auswertungen, keine Prognosen.</p>
             </div>
           </div>
-          <div id="snapshots" class="snapshot-list empty-state">
+          <div id="snapshots" class="snapshot-list empty-state" data-i18n="general.noWorkspace">
             Noch kein Workspace geladen.
           </div>
         </section>

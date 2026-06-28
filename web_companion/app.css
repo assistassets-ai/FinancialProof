@@ -48,6 +48,14 @@ button:hover {
   transform: translateY(-1px);
 }
 
+button:focus-visible,
+input[type="search"]:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(181, 74, 30, 0.32);
+  outline-offset: 3px;
+}
+
 button.secondary {
   background: var(--accent-dark);
 }
@@ -70,6 +78,27 @@ button.secondary {
   border-radius: 28px;
   box-shadow: var(--shadow);
   padding: 1.6rem;
+}
+
+.hero-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lang-select {
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.lang-select:focus-visible {
+  outline: 3px solid rgba(181, 74, 30, 0.32);
+  outline-offset: 2px;
 }
 
 .eyebrow {
@@ -106,19 +135,29 @@ button.secondary {
   margin-top: 1.25rem;
 }
 
-.file-picker {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.78rem 1.2rem;
-  border-radius: 999px;
-  border: 1px dashed rgba(108, 39, 17, 0.35);
-  background: rgba(255, 255, 255, 0.58);
-  cursor: pointer;
+.file-action {
+  display: grid;
+  gap: 0.35rem;
+  align-items: start;
 }
 
-.file-picker input {
-  display: none;
+.file-selection {
+  margin: 0;
+  min-height: 1.3rem;
+  color: var(--muted);
+}
+
+.visually-hidden-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  border: 0;
+  white-space: nowrap;
 }
 
 .status-row {
@@ -305,6 +344,12 @@ textarea {
   color: var(--warning);
 }
 
+.export-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
 .snapshot-list {
   display: grid;
   gap: 0.85rem;
@@ -354,9 +399,5 @@ textarea {
   .hero-actions {
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .file-picker {
-    justify-content: center;
   }
 }

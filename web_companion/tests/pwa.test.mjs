@@ -69,8 +69,8 @@ describe("service worker", () => {
     assert.match(swSrc, /financialproof/);
   });
 
-  it("CACHE_NAME is v3", () => {
-    assert.match(swSrc, /financialproof-web-companion-v3/);
+  it("CACHE_NAME is v5", () => {
+    assert.match(swSrc, /financialproof-web-companion-v5/);
   });
 
   it("has skipWaiting()", () => {
@@ -112,6 +112,18 @@ describe("integration", () => {
     const inlineCount = (appSrc.match(/article\.innerHTML\s*=/g) || []).length + (appSrc.match(/row\.innerHTML\s*=/g) || []).length;
     const escHtmlCount = (appSrc.match(/escHtml\(/g) || []).length;
     assert.ok(escHtmlCount >= inlineCount, `escHtml-Aufrufe (${escHtmlCount}) sollen >= innerHTML-Blöcke (${inlineCount}) sein`);
+  });
+
+  it("app.mjs importiert i18n.mjs", () => {
+    assert.match(appSrc, /from\s+["']\.\/i18n\.mjs["']/);
+  });
+
+  it("sw.js ASSETS enthält i18n.mjs", () => {
+    assert.match(swSrc, /i18n\.mjs/);
+  });
+
+  it("index.html enthält lang-select Element", () => {
+    assert.match(indexSrc, /id="lang-select"/);
   });
 
   it("app.mjs restoreWorkspace hat Guard gegen überschreiben geladener Workspaces", () => {
@@ -165,5 +177,17 @@ describe("iOS Safari installability", () => {
 
   it("sw.js ASSETS enthält apple-touch-icon-180.png", () => {
     assert.match(swSrc, /apple-touch-icon-180\.png/);
+  });
+});
+
+describe("bugfix-library-transfer W1/W2 (2026-06-20)", () => {
+  it("W1: sw.js fetch(event.request) hat .catch() — Offline-Fallback statt unhandled rejection", () => {
+    assert.match(swSrc, /fetch\(event\.request\)\.catch\(/,
+      "fetch(event.request) muss .catch() haben um Offline-Fehler sauber abzufangen");
+  });
+
+  it("W2: app.mjs localStorage.setItem ist in try/catch eingeschlossen (QuotaExceededError/SecurityError)", () => {
+    assert.match(appSrc, /try\s*\{\s*localStorage\.setItem\(/,
+      "localStorage.setItem muss in try/catch sein — Safari Private/Firefox Full-Storage wirft sonst Exception");
   });
 });

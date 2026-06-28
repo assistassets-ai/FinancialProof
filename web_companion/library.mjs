@@ -369,38 +369,42 @@ export function buildFilterOptions(workspace) {
   };
 }
 
-export function summarizeWorkspace(workspace) {
+export function summarizeWorkspace(workspace, locale) {
   return [
     {
+      key: "watchlist",
       label: "Watchlist",
       value: String(workspace.watchlist.length),
       detail: "Symbole im geladenen Snapshot",
     },
     {
+      key: "presets",
       label: "Presets",
       value: String(workspace.analysis_presets.length),
       detail: "Deskriptive Regelsets",
     },
     {
+      key: "snapshots",
       label: "Snapshots",
       value: String(workspace.analysis_snapshots.length),
       detail: "Historische Analyseergebnisse",
     },
     {
+      key: "export",
       label: "Export",
-      value: formatTimestamp(workspace.app.exported_at),
+      value: formatTimestamp(workspace.app.exported_at, locale),
       detail: `${workspace.app.name} ${workspace.app.version}`,
     },
   ];
 }
 
-export function formatTimestamp(value) {
+export function formatTimestamp(value, locale = "de-DE") {
   const text = cleanText(value, "unbekannt");
   const parsed = new Date(text);
   if (Number.isNaN(parsed.getTime())) {
     return text;
   }
-  return new Intl.DateTimeFormat("de-DE", {
+  return new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(parsed);
@@ -411,6 +415,80 @@ export function formatIndicatorValue(value) {
     return Number.isInteger(value) ? String(value) : value.toFixed(2);
   }
   return cleanText(value, "–");
+}
+
+// --- CSV/JSON-Export (Pure Logic, kein DOM) ---
+
+/**
+ * Escaped einen Zellwert für CSV mit Semikolon-Delimiter.
+ * - CSV-Injection-Schutz: Formeln (=, +, -, @, |) werden mit Tab-Präfix neutralisiert.
+ * - Alle Zellen werden in doppelte Anführungszeichen eingeschlossen.
+ */
+function escapeCsvCell(value) {
+  const text = String(value ?? "");
+  const safe = /^[=+\-@|]/.test(text) ? `\t${text}` : text;
+  return `"${safe.replace(/"/g, '""')}"`;
+}
+
+/**
+ * Wandelt eine Watchlist-Liste in einen CSV-String (Semikolon-Delimiter, kein BOM).
+ * Bei leerer Liste wird nur die Header-Zeile zurückgegeben.
+ */
+export function watchlistToCsv(items) {
+  const D = ";";
+  const header = ["Symbol", "Name", "Asset-Typ", "Notiz", "Erstellt"]
+    .map(escapeCsvCell).join(D);
+  const rows = items.map((item) =>
+    [item.symbol, item.display_name, item.asset_type, item.notes, item.created_at]
+      .map(escapeCsvCell).join(D),
+  );
+  return [header, ...rows].join("\r\n");
+}
+
+/**
+ * Wandelt eine Snapshot-Liste in einen CSV-String (Semikolon-Delimiter, kein BOM).
+ * Indicator-Spalten: rsi, macd, volatility_percent (feste Spalten mit Fallback "").
+ */
+export function snapshotsToCsv(snapshots) {
+  const D = ";";
+  const header = ["Symbol", "Zeitraum", "Musterklasse", "Confidence",
+    "RSI", "MACD", "Volatilität %", "Erstellt", "Zusammenfassung"]
+    .map(escapeCsvCell).join(D);
+  const rows = snapshots.map((snapshot) =>
+    [
+      snapshot.symbol,
+      snapshot.timeframe,
+      snapshot.pattern_class,
+      snapshot.confidence,
+      snapshot.indicators?.rsi ?? "",
+      snapshot.indicators?.macd ?? "",
+      snapshot.indicators?.volatility_percent ?? "",
+      snapshot.created_at,
+      snapshot.summary,
+    ]
+      .map(escapeCsvCell).join(D),
+  );
+  return [header, ...rows].join("\r\n");
+}
+
+/**
+ * Erzeugt einen schema-validen JSON-String aus den gefilterten Workspace-Daten.
+ * Das Ergebnis kann per parseWorkspace() re-importiert werden.
+ * filtered = { watchlist, presets, analysis_snapshots } (Rückgabe von matchesWorkspaceFilters).
+ */
+export function filteredToJson(workspace, filtered) {
+  const out = {
+    schema: workspace.schema,
+    app: {
+      ...workspace.app,
+      source: "companion-export",
+    },
+    legal: workspace.legal,
+    watchlist: filtered.watchlist,
+    analysis_presets: filtered.presets,
+    analysis_snapshots: filtered.analysis_snapshots,
+  };
+  return JSON.stringify(out, null, 2);
 }
 
 export function matchesWorkspaceFilters(workspace, filters) {

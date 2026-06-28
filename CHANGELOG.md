@@ -8,6 +8,16 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ## [Unreleased]
 
 ### Hinzugefügt / Added
+- `web_companion/`: Gefilterter Export (CSV/JSON) — drei neue Buttons unterhalb des Filter-Panels; Watchlist als CSV, Snapshots als CSV, gefilterte Daten als re-importierbares Workspace-JSON (2026-06-28).
+  - `library.mjs`: `watchlistToCsv`, `snapshotsToCsv`, `filteredToJson` (Pure Logic, DOM-frei).
+  - CSV: Semikolon-Delimiter (Excel-DE), UTF-8-BOM im Download-Blob, CSV-Injection-Schutz (Tab-Präfix für Formeln).
+  - JSON: schema-valider Companion-Export (`source: "companion-export"`), direkt per `parseWorkspace()` re-importierbar.
+  - `i18n.mjs`: 7 neue `export.*`-Schlüssel in DE und EN.
+  - `index.html`: Export-Sektion mit `aria-live="polite"` Feedback.
+  - `sw.js`: CACHE_NAME v4 → v5.
+  - `tests/export.test.mjs`: 32 neue Tests — CSV-Spalten, Injection-Schutz, Escaping, Roundtrip, I18N-Parität.
+  - `package.json`: Test-Script auf alle 5 Test-Dateien (inkl. bisher fehlendem `i18n.test.mjs`) erweitert.
+  - Gesamttestzahl: 100/100 grün.
 - `web_companion/`: PWA-Härtung — Offline-Fix (Service-Worker-Registrierung robuster), Manifest-Icons und Installierbarkeit verbessert (`0798d06`).
 - `web_companion/`: iOS-Installierbarkeit — `apple-touch-icon-180`, `viewport-fit=cover`, Safe-Area-CSS, 44px Touch-Targets, Service-Worker CACHE_NAME v3 (`4d1420b`).
 
@@ -18,6 +28,8 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - `web_companion/library.mjs`: `Date.parse(x || 0)` → `Date.parse(x) || 0` — null/undefined-Timestamps werden korrekt auf 0 Fallback gesetzt statt `Date.parse` mit Zahl aufzurufen.
 
 ### Dependencies
+- requests auf `>=2.33.1,<3.0.0` angehoben; OSV meldete für `2.31.0`
+  drei Advisories, für `2.33.1` keine Treffer.
 - scikit-learn auf `>=1.4.0,<1.10.0` angehoben (Dependabot PR #23; `659b6ee`).
 
 ### Tests
