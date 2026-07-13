@@ -17,6 +17,14 @@ test("Dateiimport nutzt fokussierbaren Trigger, Live-Status und verstecktes File
   assert.match(html, /id="file-input"[\s\S]*aria-hidden="true"/);
 });
 
+test("Export-Aktionen starten ohne Workspace deaktiviert", () => {
+  const html = readFileSync(join(ROOT, "index.html"), "utf8");
+
+  assert.match(html, /id="export-watchlist-csv"[\s\S]*disabled/);
+  assert.match(html, /id="export-snapshots-csv"[\s\S]*disabled/);
+  assert.match(html, /id="export-json"[\s\S]*disabled/);
+});
+
 test("Companion-Skript aktualisiert Dateistatus und öffnet das versteckte Input gezielt", () => {
   const script = readFileSync(join(ROOT, "app.mjs"), "utf8");
 
@@ -25,6 +33,17 @@ test("Companion-Skript aktualisiert Dateistatus und öffnet das versteckte Input
   assert.match(script, /FILE_TRIGGER\.addEventListener\("click", \(\) => \{\s*FILE_INPUT\.click\(\);/s);
   assert.match(script, /FILE_SELECTION\.textContent\s*=\s*t\("status\.noFile"\)/);
   assert.match(script, /FILE_SELECTION\.textContent\s*=.*t\("feedback\.fileSelected"\)/);
+});
+
+test("Companion-Skript synchronisiert Export-Buttons mit dem Workspace-Zustand", () => {
+  const script = readFileSync(join(ROOT, "app.mjs"), "utf8");
+
+  assert.match(script, /function syncExportButtons\(\) \{/);
+  assert.match(script, /const disabled = !state\.workspace;/);
+  assert.match(script, /button\.disabled = disabled;/);
+  assert.match(script, /button\.setAttribute\("aria-disabled", String\(disabled\)\);/);
+  assert.match(script, /button\.title = disabledReason;/);
+  assert.match(script, /syncExportButtons\(\);\s*return;/s);
 });
 
 test("Fokuszustände bleiben für Tastaturnutzung sichtbar", () => {

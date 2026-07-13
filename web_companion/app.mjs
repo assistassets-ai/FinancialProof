@@ -46,6 +46,11 @@ const WATCHLIST_SORT_FIELD = document.querySelector("#watchlist-sort-field");
 const WATCHLIST_SORT_DIR = document.querySelector("#watchlist-sort-dir");
 const SNAPSHOTS_SORT_FIELD = document.querySelector("#snapshots-sort-field");
 const SNAPSHOTS_SORT_DIR = document.querySelector("#snapshots-sort-dir");
+const EXPORT_BUTTONS = [
+  document.querySelector("#export-watchlist-csv"),
+  document.querySelector("#export-snapshots-csv"),
+  document.querySelector("#export-json"),
+];
 
 const state = {
   workspace: null,
@@ -66,6 +71,17 @@ function setFeedback(message, tone = "") {
 function setExportFeedback(message, tone = "") {
   EXPORT_FEEDBACK.textContent = message;
   EXPORT_FEEDBACK.className = `feedback ${tone}`.trim();
+}
+
+function syncExportButtons() {
+  const disabled = !state.workspace;
+  const disabledReason = disabled ? t("export.noData") : "";
+
+  for (const button of EXPORT_BUTTONS) {
+    button.disabled = disabled;
+    button.setAttribute("aria-disabled", String(disabled));
+    button.title = disabledReason;
+  }
 }
 
 /**
@@ -279,6 +295,7 @@ function renderWorkspace() {
     renderEmpty("#snapshots", t("general.noWorkspace"), "snapshot-list empty-state");
     document.querySelector("#summary-cards").replaceChildren();
     document.querySelector("#legal-box").replaceChildren();
+    syncExportButtons();
     return;
   }
 
@@ -292,6 +309,7 @@ function renderWorkspace() {
   renderWatchlist(sortedWatchlist);
   renderPresets(filtered.presets);
   renderSnapshots(sortedSnapshots);
+  syncExportButtons();
 }
 
 function activateWorkspace(workspace, sourceLabel) {
