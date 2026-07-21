@@ -7,6 +7,8 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.x-red.svg)](https://streamlit.io)
 [![No Financial Advice](https://img.shields.io/badge/⚠️_No_Financial_Advice-critical.svg)](#disclaimer)
 
+**English** | [Deutsch](README_de.md)
+
 > ⚠️ **Keine Anlageberatung / No Financial Advice**
 >
 > FinancialProof ist ein **technisches Werkzeug** zur statistischen
@@ -43,6 +45,18 @@ connecting a brokerage account or sending private API keys to a hosted service.
 | Verify changes | [`TESTLOG.md`](TESTLOG.md) | Current suite is run with `python -m pytest tests -q`. |
 | Review safety rules | [`SECURITY.md`](SECURITY.md) | Keep `.env`, `.secrets`, SQLite databases, logs and API keys local. |
 
+## Architecture
+
+```mermaid
+flowchart LR
+    A[yfinance API] --> B[Data Provider & Throttler]
+    B --> C[SQLite Local Database]
+    C --> D[Analysis Engine<br/>ARIMA / Monte Carlo / ML / Indicators]
+    D --> E[Streamlit Dashboard UI]
+    E --> F[Redacted JSON Export]
+    F --> G[Offline PWA Companion]
+```
+
 ## Features
 
 - **Technical Indicators**: SMA, EMA, RSI, Bollinger Bands, MACD, Stochastic, ATR
@@ -73,6 +87,7 @@ historical market-pattern analysis**. It is intentionally different from:
 
 - brokerage bots, auto-trading systems and signal-selling tools
 - portfolio advice, robo-advisors, tax advice or regulated investment services
+- bank statement generators, proof-of-funds generators or loan documentation scam tools
 - proof-of-reserve, invoice-proof, credit-scoring or cryptographic attestation products
 - hosted finance SaaS dashboards that upload watchlists, API keys or runtime data
 
@@ -82,12 +97,14 @@ Useful search phrases:
 - `local-first Streamlit stock analysis no trading`
 - `historical technical indicators yfinance SQLite watchlist`
 - `financialproof workspace export PWA companion`
+- `offline-first market data analysis tool`
 
 > **Note on terminology:** Earlier versions of this project used the term
 > "buy/sell signals". This has been replaced by "technical indicators" and
 > "statistical patterns" throughout the UI and documentation, to avoid any
 > implication of investment advice (§ 32 KWG, § 2 Abs. 9 WpHG). The
 > underlying mathematical logic is unchanged; only the naming and framing
+
 > have been adjusted.
 
 ## Screenshots

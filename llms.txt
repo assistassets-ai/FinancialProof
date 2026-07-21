@@ -63,12 +63,14 @@ local finance analysis no advice open source
 Streamlit yfinance ARIMA Monte Carlo local dashboard
 historical market pattern analysis Python
 SQLite watchlist Streamlit no brokerage
+offline-first market data analysis tool
 ```
 
 ## Disambiguation
 
 - Not a brokerage bot, auto-trader, robo-advisor or signal-selling product.
+- Not a bank statement generator, proof-of-funds tool, loan documentation generator, or financial attestation software.
 - Not a proof-of-reserve, credit-scoring, invoice-proof or cryptographic attestation product.
 - Not a hosted finance SaaS; runtime data, API keys, SQLite databases and exports stay local.
 
-## Last-checked: 2026-06-11
+## Last-checked: 2026-07-21

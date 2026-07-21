@@ -8,6 +8,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ## [Unreleased]
 
 ### Hinzugefügt / Added
+- Documentation & Discoverability: Deutsche Startseite [`README_de.md`](README_de.md) erstellt, Sprachwahl-Navigation (`[English](README.md) | [Deutsch](README_de.md)`) oben im README integriert, Mermaid-Architekturdiagramm für Datenfluss & PWA-Offline-Companion ergänzt, Disambiguation gegen Namenskollisionen mit Bankauszugs-/Krediteinreichungs-Generatoren in README/README_de/llms.txt geschärft, `llms.txt` `Last-checked` Datum auf `2026-07-21` aktualisiert.
 - `web_companion/`: Gefilterter Export (CSV/JSON) — drei neue Buttons unterhalb des Filter-Panels; Watchlist als CSV, Snapshots als CSV, gefilterte Daten als re-importierbares Workspace-JSON (2026-06-28).
   - `library.mjs`: `watchlistToCsv`, `snapshotsToCsv`, `filteredToJson` (Pure Logic, DOM-frei).
   - CSV: Semikolon-Delimiter (Excel-DE), UTF-8-BOM im Download-Blob, CSV-Injection-Schutz (Tab-Präfix für Formeln).
