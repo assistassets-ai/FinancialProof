@@ -32,10 +32,11 @@ Current technical profile:
 - Plotly charts
 - pandas, numpy, scipy and statsmodels for statistical processing
 - scikit-learn, TensorFlow and transformers for optional ML/NLP modules
-- 211 automated unit and regression tests documented in `TESTLOG.md`
+- 204 passing Python unit tests + 151 passing Web Companion tests (355 verified tests total)
 
 Recommended automation checks:
 - `python -m pytest tests -q`
+- `npm test` (inside `web_companion/`)
 - `python -m py_compile app.py config.py financialproof_launcher.py`
 - `git diff --check`
 
@@ -73,4 +74,4 @@ offline-first market data analysis tool
 - Not a proof-of-reserve, credit-scoring, invoice-proof or cryptographic attestation product.
 - Not a hosted finance SaaS; runtime data, API keys, SQLite databases and exports stay local.
 
-## Last-checked: 2026-07-21
+## Last-checked: 2026-07-25

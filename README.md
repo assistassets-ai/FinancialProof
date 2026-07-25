@@ -5,9 +5,17 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.x-red.svg)](https://streamlit.io)
+[![Pytest](https://img.shields.io/badge/Pytest-204%20passed-brightgreen.svg)](#start-here)
+[![Web Companion](https://img.shields.io/badge/Web%20Companion-151%20passed-brightgreen.svg)](#architecture)
+[![Local-First](https://img.shields.io/badge/Local--First-Offline--First-success.svg)](#architecture)
+[![LLM-Context](https://img.shields.io/badge/LLM--Context-llms.txt-blue.svg)](llms.txt)
 [![No Financial Advice](https://img.shields.io/badge/⚠️_No_Financial_Advice-critical.svg)](#disclaimer)
 
 **English** | [Deutsch](README_de.md)
+
+> [!NOTE]
+> **AI / LLM Integration & Machine-Readable Context**
+> Automated AI agents, LLM assistants, and code analysis crawlers can read [`llms.txt`](llms.txt) for project structure, safety parameters, search terms, and test verification entry points.
 
 > ⚠️ **Keine Anlageberatung / No Financial Advice**
 >

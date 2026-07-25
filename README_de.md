@@ -5,9 +5,17 @@
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-green.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.x-red.svg)](https://streamlit.io)
+[![Pytest](https://img.shields.io/badge/Pytest-204%20bestanden-brightgreen.svg)](#schnelleinstieg)
+[![Web Companion](https://img.shields.io/badge/Web%20Companion-151%20bestanden-brightgreen.svg)](#architektur)
+[![Local-First](https://img.shields.io/badge/Local--First-Offline--First-success.svg)](#architektur)
+[![LLM-Kontext](https://img.shields.io/badge/LLM--Kontext-llms.txt-blue.svg)](llms.txt)
 [![Keine Anlageberatung](https://img.shields.io/badge/⚠️_Keine_Anlageberatung-critical.svg)](#hinweis-keine-anlageberatung)
 
 [English](README.md) | **Deutsch**
+
+> [!NOTE]
+> **KI- / LLM-Integration & Maschinenlesbarer Kontext**
+> Automatisierte KI-Agenten, LLM-Assistenten und Code-Analyse-Crawler finden in [`llms.txt`](llms.txt) strukturierten Kontext, Sicherheitsregeln, Suchanker und Einstiegspunkte zur Testverifikation.
 
 > ⚠️ **Keine Anlageberatung / No Financial Advice**
 >

@@ -6,6 +6,12 @@ authors = [{ name = "Lukas Geiger", email = "lukasgeiger@googlemail.com" }]
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
 readme = "README.md"
+keywords = ["finance", "streamlit", "yfinance", "technical-analysis", "market-patterns", "local-first", "offline-first", "sqlite"]
+
+[project.urls]
+Repository = "https://github.com/assistassets-ai/FinancialProof"
+Documentation = "https://github.com/assistassets-ai/FinancialProof#readme"
+Issues = "https://github.com/assistassets-ai/FinancialProof/issues"
 
 dependencies = [
     "streamlit>=1.57.0,<2.0.0",
@@ -33,6 +39,7 @@ dev = ["pytest>=8.0", "ruff>=0.5"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 
 [tool.ruff]
 target-version = "py311"
