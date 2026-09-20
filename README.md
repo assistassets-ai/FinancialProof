@@ -1,4 +1,5 @@
 <img src="assets/banner.svg" width="100%" alt="FinancialProof Banner"/>
+<!-- alternate banner: assets/banner-b.png (swap on occasion) -->
 
 # FinancialProof
 
