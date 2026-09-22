@@ -1,4 +1,4 @@
-﻿# ===== Python =====
+# ===== Python =====
 __pycache__/
 *.py[cod]
 *$py.class
@@ -45,6 +45,7 @@ env/
 
 # ===== Testing =====
 .pytest_cache/
+.pytest_tmp/
 .coverage
 htmlcov/
 .tox/

@@ -1,0 +1,18 @@
+# FinancialProof Marketing & Discoverability Log
+
+Project: assistassets-ai/FinancialProof
+Scope: Pfad B (Discoverability, Bilingual Documentation, Visual Presentation, Level 1 SBOM, Governance Invariants)
+Maintainer: Lukas Geiger (assistassets-ai / open-bricks)
+
+2026-09-22 — Pfad B Marketing & Discoverability Audit (Antigravity Agent)
+- GitHub Topics: Saturated from 18 to 20 topics on GitHub remote via GitHub CLI (+market-patterns, +statistical-analysis).
+- Attribution & Licensing: Created formal NOTICE attributing Lukas Geiger, assistassets-ai, and open-bricks.
+- Level 1 SBOM: Created THIRD_PARTY_LICENSES.md documenting runtime dependencies (MIT/Apache/BSD/PSFL), RunAsInvoker unprivileged execution, and 10 runtime invariants (INV-LOCAL-01 to INV-SLA-10).
+- PEP 621 Metadata: Updated pyproject.toml with license-files, enriched URLs (Notice, Third-Party Licenses, Marketing Log, LLM Ready), saturated keywords, and pytest basetemp protection; version strictly kept at 1.0.0 (T-20260920-167562623).
+- Bilingual 18-Point Navigation: Complete 1:1 structural and anchor parity between README.md and README_de.md with dual HTML anchors (<a id="1-..."></a><a id="..."></a>).
+- Target Personas: Documented [PERSONA-01] to [PERSONA-04] covering Quant Researchers, Algorithmic Analysts, Privacy/Compliance Officers, and OSS/AI Engineers with high-intent SEO queries.
+- Comparison Matrix: 10-dimension comparison vs SaaS Brokerages, Trading Bots, Cloud Terminals, and Spreadsheets mapped to INV-LOCAL-01..INV-SLA-10.
+- Dual Mermaid Diagrams: Added System Topology (flowchart TD) and Execution Lifecycle (sequenceDiagram with autonumber and 0 unquoted semicolons).
+- Contract Tests: Implemented tests/test_metadata.py (6 contract tests) verifying NOTICE, SBOM, PEP 621, bilingual parity, Mermaid syntax, and § 521 BGB disclaimer.
+- Offline Smoke & Companion: Enhanced tests/source_platform_smoke.py with headless stubs (6/6 passed); verified web_companion (151 tests passed).
+- Total verified tests: 218 Python tests + 151 Web Companion tests = 369 passing tests.

@@ -32,7 +32,7 @@ Current technical profile:
 - Plotly charts
 - pandas, numpy, scipy and statsmodels for statistical processing
 - scikit-learn, TensorFlow and transformers for optional ML/NLP modules
-- 204 passing Python unit tests + 151 passing Web Companion tests (355 verified tests total)
+- 218 passing Python unit and contract tests + 151 passing Web Companion tests (369 verified tests total)
 
 Recommended automation checks:
 - `python -m pytest tests -q`
@@ -74,4 +74,4 @@ offline-first market data analysis tool
 - Not a proof-of-reserve, credit-scoring, invoice-proof or cryptographic attestation product.
 - Not a hosted finance SaaS; runtime data, API keys, SQLite databases and exports stay local.
 
-## Last-checked: 2026-07-25
+## Last-checked: 2026-09-22

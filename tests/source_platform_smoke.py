@@ -198,8 +198,70 @@ def _install_plotly_stub() -> None:
     sys.modules["plotly.subplots"] = subplots
 
 
+def _install_yfinance_stub() -> None:
+    try:
+        __import__("yfinance")
+        return
+    except ModuleNotFoundError:
+        pass
+
+    yfinance = types.ModuleType("yfinance")
+
+    class DummyTicker:
+        def __init__(self, *args, **kwargs):
+            self.info = {}
+            self.news = []
+            self.income_stmt = pd.DataFrame()
+            self.balance_sheet = pd.DataFrame()
+            self.cashflow = pd.DataFrame()
+            self.dividends = pd.Series(dtype=float)
+            self.recommendations = pd.DataFrame()
+
+        def history(self, *args, **kwargs):
+            return pd.DataFrame()
+
+    def download(*args, **kwargs):
+        return pd.DataFrame()
+
+    yfinance.Ticker = DummyTicker
+    yfinance.download = download
+    sys.modules["yfinance"] = yfinance
+
+
+def _install_cryptography_stub() -> None:
+    try:
+        __import__("cryptography.fernet")
+        return
+    except ModuleNotFoundError:
+        pass
+
+    cryptography = types.ModuleType("cryptography")
+    fernet_module = types.ModuleType("cryptography.fernet")
+
+    class DummyFernet:
+        def __init__(self, key):
+            self.key = key
+
+        @staticmethod
+        def generate_key():
+            return b"0" * 32
+
+        def encrypt(self, value: bytes) -> bytes:
+            return value
+
+        def decrypt(self, value: bytes) -> bytes:
+            return value
+
+    fernet_module.Fernet = DummyFernet
+    cryptography.fernet = fernet_module
+    sys.modules["cryptography"] = cryptography
+    sys.modules["cryptography.fernet"] = fernet_module
+
+
 STREAMLIT_STUB = _install_streamlit_stub()
 _install_plotly_stub()
+_install_yfinance_stub()
+_install_cryptography_stub()
 
 
 def _check(label: str, fn) -> None:

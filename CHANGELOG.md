@@ -8,6 +8,18 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ## [Unreleased]
 
 ### Hinzugefügt / Added
+- **Pfad B Marketing, Discoverability & Governance Audit (2026-09-22)**:
+  - **18-Punkte-Navigationsparität**: Vollständige wechselseitige 18-Punkte-Struktur- und Anker-Parität zwischen [`README.md`](README.md) und [`README_de.md`](README_de.md) mit dualen HTML-Ankern (`<a id="1-..."></a><a id="..."></a>`).
+  - **Duale Mermaid-Diagramme**: Systemtopologie (`flowchart TD`) und Ausführungs-Lebenszyklus (`sequenceDiagram` mit `autonumber` und strikt 0 unquotierten Semikolons) integriert und über `_tools/lint_mermaid.py` validiert.
+  - **Ziel-Personas & SEO**: Vier detaillierte Benutzerprofile (`[PERSONA-01]` bis `[PERSONA-04]`) für quantitative Forscher, algorithmische Händler, Datenschutzbeauftragte und Open-Source-Entwickler mit High-Intent-Suchphrasen.
+  - **10-Dimensionen-Vergleichsmatrix**: Detaillierter Vergleich gegen kommerzielle Broker-SaaS, Trading-Bots, Cloud-Terminals und Spreadsheets gemappt auf die 10 Invarianten `INV-LOCAL-01` bis `INV-SLA-10`.
+  - **Level 1 SBOM & Lizenz-Audit**: [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md) mit vollständigem Abhängigkeitsinventar (MIT, Apache-2.0, BSD, PSFL), Bestätigung des unprivilegierten Benutzer-Modus (`RunAsInvoker`) und Zuordnung der Governance-Invarianten.
+  - **Attribution & Urheberschaft**: Formelle [`NOTICE`](NOTICE) für Lukas Geiger, `assistassets-ai` und das Dach-Ökosystem `open-bricks`.
+  - **Vertragstest-Suite**: [`tests/test_metadata.py`](tests/test_metadata.py) mit 6 automatisierten CI-Tests zur Prüfung von `NOTICE`, `THIRD_PARTY_LICENSES.md`, PEP 621 Metadaten, 18-Punkte-Navigation, Mermaid-Syntax und Haftungsausschluss (§ 521 BGB).
+  - **PEP 621 Metadaten**: `pyproject.toml` mit `license-files`, erweiterten URLs (Notice, Third-Party Licenses, Marketing Log, LLM Ready) und gesättigten Keywords; Version strikt bei `1.0.0` belassen.
+  - **GitHub-Topics**: Auf remote via GitHub CLI auf 20/20 gesättigt (`market-patterns`, `statistical-analysis`).
+  - **Headless-Smoketest**: `tests/source_platform_smoke.py` um Stubs für `yfinance` und `cryptography` erweitert (6/6 grün).
+  - **Marketing-Log & KI-Kontext**: [`MARKETING-LOG.txt`](MARKETING-LOG.txt) im Repo angelegt und [`llms.txt`](llms.txt) aktualisiert.
 - Documentation & Discoverability (2026-07-25): `pyproject.toml` um PEP 621 Standard-Metadaten (`keywords`, `project.urls`) und Pytest `pythonpath = ["."]` ergänzt. `llms.txt` Header auf `Last-checked: 2026-07-25` und 355 verifizierte Unit- & Companion-Tests (204 Python + 151 Web Companion) aktualisiert. Shields.io-Badges (Pytest, Web Companion, Local-First, LLM-Context) und KI/LLM-Integrationshinweise (`> [!NOTE]`) in [`README.md`](README.md) und [`README_de.md`](README_de.md) eingebunden.
 - Documentation & Discoverability: Deutsche Startseite [`README_de.md`](README_de.md) erstellt, Sprachwahl-Navigation (`[English](README.md) | [Deutsch](README_de.md)`) oben im README integriert, Mermaid-Architekturdiagramm für Datenfluss & PWA-Offline-Companion ergänzt, Disambiguation gegen Namenskollisionen mit Bankauszugs-/Krediteinreichungs-Generatoren in README/README_de/llms.txt geschärft, `llms.txt` `Last-checked` Datum auf `2026-07-21` aktualisiert.
 - `web_companion/`: Gefilterter Export (CSV/JSON) — drei neue Buttons unterhalb des Filter-Panels; Watchlist als CSV, Snapshots als CSV, gefilterte Daten als re-importierbares Workspace-JSON (2026-06-28).
