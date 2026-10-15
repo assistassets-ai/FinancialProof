@@ -7,6 +7,15 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### CI-Korrekturen
+
+- Vollständige CI auf die unterstützten Python-Versionen 3.11 und 3.12 begrenzt;
+  Python 3.10 scheiterte bereits bei der Testsammlung am `tomllib`-Import und
+  liegt unter dem in `pyproject.toml` erklärten Mindeststand.
+- Matrixjobs brechen einander nicht mehr ab. Windows ergänzt den bestehenden
+  Source-Smoke für Linux und macOS; beide Workflows sind manuell auslösbar.
+  Der Source-Smoke nutzt Stubs und ist keine vollständige GUI-/Produktabnahme.
+
 ### Hinzugefügt / Added
 - **Pfad B Marketing, Discoverability & Governance Audit (2026-09-22)**:
   - **18-Punkte-Navigationsparität**: Vollständige wechselseitige 18-Punkte-Struktur- und Anker-Parität zwischen [`README.md`](README.md) und [`README_de.md`](README_de.md) mit dualen HTML-Ankern (`<a id="1-..."></a><a id="..."></a>`).
