@@ -77,3 +77,17 @@ jobs:
         python -c "import streamlit; print('Streamlit OK')"
         python -c "from config import config; print('Config OK')"
         python -c "from core.database import db; print('Database OK')"
+
+  sw-asset-hash:
+    name: Service-Worker-Asset-Hash
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+
+    - uses: actions/setup-node@v6
+      with:
+        node-version: 24
+
+    - name: Waechter ausfuehren
+      working-directory: web_companion
+      run: node --test tests/sw_asset_hash.test.mjs
