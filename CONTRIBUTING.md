@@ -81,6 +81,11 @@ pip install pytest pytest-cov black flake8 mypy
 
 ### Tests ausführen
 
+Die vollständige CI prüft Python 3.11 und 3.12 unter Linux. Der separate
+Source-Smoke läuft mit Python 3.11 unter Linux, Windows und macOS und prüft
+sechs Quellcodepfade mit Stubs; er ersetzt keine echte Streamlit-/Browserabnahme.
+Beide Workflows können über „Run workflow“ manuell gestartet werden.
+
 ```bash
 # Alle Tests
 pytest
